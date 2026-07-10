@@ -20,7 +20,6 @@ mkdir -p "${FIGURES}"
 python "${HERE}/../scripts/run_gsea_figures.py" \
     --de "${DE_OUT}" \
     --liu "${DE_OUT}/liu_cs_vs_icm" \
-    --projection "${HEARTMAP}/projection" \
     --figdir "${FIGURES}" \
     --tabledir "${DE_OUT}/tables"
 echo "GSEA + figures complete -> ${FIGURES}"

@@ -39,7 +39,6 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--de", required=True, help="DE dir with DE_<contrast>.tsv")
     ap.add_argument("--liu", required=True, help="Liu DE dir")
-    ap.add_argument("--projection", required=True)
     ap.add_argument("--figdir", required=True)
     ap.add_argument("--tabledir", required=True)
     ap.add_argument("--fdr", type=float, default=0.05)

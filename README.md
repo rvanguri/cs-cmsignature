@@ -91,7 +91,7 @@ derived directly from the `slurm/*.sbatch` files.
 | Step | Runner | Script(s) invoked | Purpose |
 |---|---|---|---|
 | 00 | `00_setup_env.sbatch` | (conda env create; `singularity pull`) | Provision the conda env and pull the CellBender Singularity image |
-| 01 | `01_download.sbatch` | `download_geo.py`, `download_reichart_cxg.py`, `download_heartmap_scp3689.py`, `build_manifest.py` | Download public GEO / CELLxGENE / SCP datasets and build the sample manifest |
+| 01 | `01_download.sbatch` | `download_geo.py`, `download_reichart_cxg.py`, `build_manifest.py` | Download public GEO / CELLxGENE datasets and build the sample manifest |
 | 02 | `02_cellbender.sbatch` | CellBender `remove-background` (via Singularity; job array) | Ambient-RNA removal on raw count matrices |
 | 03 | `03_decontx.sbatch` | `run_decontx.R` | DecontX ambient-contamination correction |
 | 04 | `04_qc.sbatch` | `run_qc.py` | Per-dataset QC filtering; merge sample metadata onto obs |
@@ -99,23 +99,22 @@ derived directly from the `slurm/*.sbatch` files.
 | 06 | `06_validate_gates.sbatch` | `run_gates.py` | Cell-type gate validation and QC UMAPs |
 | 07 | `07_pseudobulk_de.sbatch` | `subtype_tnk.py`, `pseudobulk_cm.py`, `run_pseudobulk_de.R` | Pseudobulk aggregation and cross-cardiomyopathy differential expression (limma-voom / pyDESeq2) |
 | 08 | `08_liu_standalone.sbatch` | `run_liu_standalone.py` | Within-study Liu CS-vs-ICM differential expression |
-| 09 | `09_heartmap_projection.sbatch` | `run_heartmap_projection.py` | Projection onto the HeartMap reference atlas (composition / niche) |
 | 10 | `10_gsea_figures.sbatch` | `run_gsea_figures.py`, `annotate_foong_validation.py`, `panel_robustness.py` | GSEA, volcano/enrichment figures, Foong validation annotation, panel robustness |
 | 11 | `11_foong_spatial.sbatch` | `download_foong_spatial.sh`, `foong_spatial_figures.py` | Download Foong Visium data and generate spatial figures |
 | 12 | `12_cm_signature.sbatch` | `cm_disease_distance.py`, `cm_spatial_crossdisease.py`, `cm_content_normalized.py`, `foong_regional.py` | Cardiomyocyte signature: within-patient distance-to-lesion, cross-disease spatial, CM-content normalization, regional analysis |
 
 **Smoke test.** `slurm/smoke_test.sbatch` runs the whole chain (make_synthetic_data →
 build_manifest → decontx → cellbender → qc → scanvi → gates → pseudobulk_de → liu_standalone →
-heartmap_projection → gsea_figures) on small synthetic data to verify wiring before committing
+gsea_figures) on small synthetic data to verify wiring before committing
 cluster resources.
 
 **Full submission.** `slurm/submit_all.sh` launches steps 01–10 as an `afterok` dependency chain
-(07/08/09 fan out in parallel after the gates step, 10 joins them). Edit the `02_cellbender.sbatch`
+(07/08 fan out in parallel after the gates step, 10 joins them). Edit the `02_cellbender.sbatch`
 `--array` range to match your manifest sample count before launching.
 
 Helper scripts not wired into a numbered step are run manually: `composite_figure.py` (assembles
 the final Figure 1), `combine_contrasts.py`, `diagnose_neyazi_liu.py`, `foong_panelF_candidates.py`,
-`relabel_genes.py`, `make_sample_meta.py`, `inspect_heartmap.py`. `_common.py` is a shared import
+`relabel_genes.py`, `make_sample_meta.py`. `_common.py` is a shared import
 (logging, gene panels). See `scripts/README.md` for the full per-script contract.
 
 ## Environment setup

@@ -23,10 +23,6 @@ multi-day real run.
       (default — uses the 80 GB atlas you already have; no controlled raw needed).
 - [ ] Only if a reviewer requires raw co-processing: flip an arm to `raw-reprocess` and start the dbGaP
       **phs001539** DAR + DUA + restricted-dir request now (approvals take weeks).
-- [ ] Inspect + slim the atlas for projection:
-      `python scripts/inspect_heartmap.py --h5ad $PROJ/heartmap/atlas/HeartMap_V1.0.h5ad`
-      then `--slim $PROJ/heartmap/atlas/heartmap_slim.h5ad`.
-- [ ] Note from inspect output which `obsm` embedding to project onto (e.g. `X_scANVI`).
 
 ## Phase 3 — Stage real data + metadata (biggest manual lift)
 - [ ] Write `raw/accessions.tsv` (dataset⇥gse⇥supp_url?) for the GEO pulls.

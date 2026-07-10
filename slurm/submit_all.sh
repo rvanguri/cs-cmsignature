@@ -27,15 +27,13 @@ jid5=$(sbatch --parsable ${LOGDIR_FLAG} --dependency=afterok:$jid4 05_scanvi.sba
 echo "05 scanvi          : $jid5"
 jid6=$(sbatch --parsable ${LOGDIR_FLAG} --dependency=afterok:$jid5 06_validate_gates.sbatch)
 echo "06 gates           : $jid6"
-# 07, 08, 09 all depend on the gates (06) and run in parallel:
+# 07, 08 both depend on the gates (06) and run in parallel:
 jid7=$(sbatch --parsable ${LOGDIR_FLAG} --dependency=afterok:$jid6 07_pseudobulk_de.sbatch)
 echo "07 pseudobulk DE   : $jid7"
 jid8=$(sbatch --parsable ${LOGDIR_FLAG} --dependency=afterok:$jid6 08_liu_standalone.sbatch)
 echo "08 liu standalone  : $jid8"
-jid9=$(sbatch --parsable ${LOGDIR_FLAG} --dependency=afterok:$jid6 09_heartmap_projection.sbatch)
-echo "09 heartmap project: $jid9"
-# 10 waits for all three:
-jid10=$(sbatch --parsable ${LOGDIR_FLAG} --dependency=afterok:$jid7:$jid8:$jid9 10_gsea_figures.sbatch)
+# 10 waits for both:
+jid10=$(sbatch --parsable ${LOGDIR_FLAG} --dependency=afterok:$jid7:$jid8 10_gsea_figures.sbatch)
 echo "10 gsea + figures  : $jid10"
 
 echo

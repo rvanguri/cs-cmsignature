@@ -60,7 +60,6 @@ $PROJ/
   qc/             # per-dataset QC'd h5ad
   integrated/     # scANVI model + integrated h5ad
   de/             # pseudobulk + DE tables (per contrast)
-  heartmap/       # SCP3689 atlas + projection outputs
   figures/        # final figures
   logs/           # Slurm .out/.err (or keep in $SCRATCH/logs and copy)
   env/            # environment.yml, modules.sh, paths.sh, *.sif build recipes
@@ -244,10 +243,6 @@ panels. `cpu_medium`, `--mem=16G` (R + Python).
 ### Step 7b — Liu CS-vs-ICM standalone co-primary (`08_liu_standalone.sbatch`)
 5′ arm, **not co-embedded**, recomputed fresh through QC+DecontX+pseudobulk+apeglm. Small CPU job.
 
-### Step 7c — HeartMap projection (`09_heartmap_projection.sbatch`)
-Project CS CM/macrophage/fibroblast onto SCP3689 (scArches/scANVI transfer, **no raw co-embed**).
-COL22A1⁺/TNC⁺ fibroblast niche occupancy. GPU short or CPU. → `$PROJ/heartmap/`.
-
 ### Step 8 — GSEA + figures (`10_gsea_figures.sbatch`)
 Pre-ranked gseapy (Hallmark, GO BP, KEGG, Reactome) on procurement-matched primaries + high-confidence
 set. All v2.1 figures/tables incl. decontamination + procurement-robustness + HeartMap-positioning.
@@ -267,7 +262,6 @@ set. All v2.1 figures/tables incl. decontamination + procurement-robustness + He
 | Validation + gates | 06 | cpu_medium | — | 32 G | ~45 min | single |
 | Pseudobulk DE | 07 | cpu_medium | — | 16 G | ~30 min | single |
 | Liu standalone | 08 | cpu_short | — | 8 G | ~15 min | single |
-| HeartMap projection | 09 | gpu4_short / cpu_medium | 0–1 | 32 G | ~30–60 min | single |
 | GSEA + figures | 10 | cpu_short | — | 8 G | ~30 min | single |
 
 **Wall-clock driver is still CellBender.** With `--array=...%4` (4 concurrent GPU tasks) over ~52
@@ -293,8 +287,7 @@ jid5=$(sbatch --parsable --dependency=afterok:$jid4 05_scanvi.sbatch)
 jid6=$(sbatch --parsable --dependency=afterok:$jid5 06_validate_gates.sbatch)
 jid7=$(sbatch --parsable --dependency=afterok:$jid6 07_pseudobulk_de.sbatch)
 jid8=$(sbatch --parsable --dependency=afterok:$jid6 08_liu_standalone.sbatch)   # parallel to 07
-jid9=$(sbatch --parsable --dependency=afterok:$jid6 09_heartmap_projection.sbatch)
-sbatch --dependency=afterok:$jid7:$jid8:$jid9 10_gsea_figures.sbatch
+sbatch --dependency=afterok:$jid7:$jid8 10_gsea_figures.sbatch
 ```
 
 **Run open-data arms first.** If controlled raw isn't cleared, the chain runs fully on the open arms;

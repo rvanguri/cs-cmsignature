@@ -23,11 +23,6 @@ python "${HERE}/../scripts/download_geo.py" --manifest "${RAW}/accessions.tsv" -
 python "${HERE}/../scripts/download_reichart_cxg.py" --out "${RAW}/reichart"
 #   -> writes ${RAW}/reichart_provenance.md : is the matrix CellBender output or other? DO NOT ASSUME.
 
-# --- HeartMap SCP3689 atlas (open if downloadable) ---
-#   Verify SCP3689 download access; pull harmonized atlas for label/signature transfer.
-python "${HERE}/../scripts/download_heartmap_scp3689.py" --out "${HEARTMAP}/atlas" || \
-    echo "WARN: SCP3689 not auto-downloadable — fetch manually from Broad Single Cell Portal."
-
 # --- CONTROLLED arms (only if env/access_status.md says raw-reprocess) ---
 #   dbGaP phs001539 via SRA Toolkit with .ngc key, into $CONTROLLED (restricted ACLs).
 #   Run on data-mover nodes; coordinate with your HPC support team first. NOT executed by default.

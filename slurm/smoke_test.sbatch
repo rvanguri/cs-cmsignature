@@ -11,7 +11,7 @@
 # their file handoffs end-to-end. Writes everything under $SCRATCH/smoke (never touches real $PROJ).
 #
 # By default it exercises: synth-data -> build_manifest -> QC -> scANVI(2 epochs) -> gates -> DE ->
-# Liu -> projection(skips, no atlas) -> GSEA  — all REAL script calls.
+# Liu -> GSEA  — all REAL script calls.
 # The GPU CellBender leg and the R DecontX leg are validated separately (opt-in):
 #   SMOKE_DECONTX=1   sbatch slurm/smoke_test.sbatch     # also runs run_decontx.R on synthetic raw
 #   SMOKE_CELLBENDER=1 sbatch slurm/smoke_test.sbatch    # also runs the CellBender .sif on 1 sample (needs GPU)
@@ -23,7 +23,7 @@ source "${HERE}/../env/modules.sh"
 SC="${HERE}/../scripts"
 
 SMOKE="${SCRATCH_ROOT}/smoke"
-rm -rf "${SMOKE}"; mkdir -p "${SMOKE}"/{qc,integrated,de/tables,de/gates,figures,heartmap/projection,cellbender,scanvi_work}
+rm -rf "${SMOKE}"; mkdir -p "${SMOKE}"/{qc,integrated,de/tables,de/gates,figures,cellbender,scanvi_work}
 
 PASS=0; FAIL=0
 step () {  # step "name" command...
@@ -88,14 +88,9 @@ step "pseudobulk_de" Rscript "${SC}/run_pseudobulk_de.R" \
 step "liu_standalone" python "${SC}/run_liu_standalone.py" --raw "${SMOKE}/raw/liu" \
   --out "${SMOKE}/de/liu_cs_vs_icm"
 
-# 7) HeartMap projection (non-fatal: no atlas in smoke -> exits 0)
-step "heartmap_projection" python "${SC}/run_heartmap_projection.py" \
-  --integrated "${SMOKE}/integrated/integrated_scanvi.h5ad" \
-  --heartmap_atlas "${SMOKE}/heartmap/atlas" --out "${SMOKE}/heartmap/projection"
-
-# 8) GSEA + figures + high-confidence set
+# 7) GSEA + figures + high-confidence set
 step "gsea_figures" python "${SC}/run_gsea_figures.py" --de "${SMOKE}/de" \
-  --liu "${SMOKE}/de/liu_cs_vs_icm" --projection "${SMOKE}/heartmap/projection" \
+  --liu "${SMOKE}/de/liu_cs_vs_icm" \
   --figdir "${SMOKE}/figures" --tabledir "${SMOKE}/de/tables" --fdr 0.5 --lfc 0.1
 
 echo
