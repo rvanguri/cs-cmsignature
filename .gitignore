@@ -1,0 +1,32 @@
+# OS / editor cruft
+.DS_Store
+~$*
+*.swp
+.idea/
+.vscode/
+
+# Python
+*.pyc
+__pycache__/
+*.egg-info/
+.ipynb_checkpoints/
+
+# temp / working artifacts (never commit)
+*.eoX*
+slurmlogs/
+scripts/exploratory/
+results/exploratory/
+
+# manuscript & review artifacts (kept out of the code repo)
+*.docx
+Cover_Letter*
+cover_letter_paragraph.md
+response_to_code_review.md
+code_review_package/
+codereview/
+allscripts.tar
+
+# raw data & large intermediate objects (regenerated from public accessions)
+*.h5ad
+*.h5
+raw/

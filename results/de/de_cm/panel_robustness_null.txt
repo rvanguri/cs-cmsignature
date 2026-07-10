@@ -1,0 +1,1 @@
+base_foong_up_rate=0.335 obs=4/4 p_perm=0.0118 nperm=10000

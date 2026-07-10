@@ -1,0 +1,48 @@
+# sample_meta.TEMPLATE.tsv — copy to  $PROJ/raw/sample_meta.tsv  and fill one row per sample.
+#
+# TAB-separated. Lines starting with '#' are ignored by build_manifest.py.
+# Columns: sample_id  dataset  accession  chemistry  procurement  region  disease  sex  individual
+#   - sample_id : MUST match the per-sample folder name under raw/<dataset>/<sample>/ (build_manifest
+#                 keys on this). For GEO, use the GSM / sample name you downloaded the matrix into.
+#   - chemistry : 3p (10x 3') or 5p (10x 5'). Liu is 5p; everything else 3p.
+#   - procurement: explant | VAD | autopsy | myectomy | donor   (drives the procurement-robustness gate)
+#   - region    : LV | RV | IVS | SP | apex   (goes into the DE model as 'anatomy')
+#   - disease   : CS | DCM | ICM | ARVC | HCM | NF
+#   - sex       : M | F | NA   (NA if unknown; fill where you can — it's a DE covariate)
+#   - individual: donor id; default = sample_id if one sample per donor. Set the SAME value across a
+#                 donor's multiple samples so the DE model groups them (enables duplicateCorrelation).
+#
+# WHICH DATASETS NEED ROWS HERE:
+#   These go through CellBender (per-sample raw matrices) and have NO embedded metadata, so they REQUIRE
+#   rows: Neyazi, Larson, Chin2022, Chin2021, and Liu (5' standalone).
+#   Reichart is a single CELLxGENE h5ad whose obs already carries disease/region/sex — it does NOT need
+#   rows here (it isn't in the CellBender array). Same for the HeartMap atlas arms (atlas-transfer).
+#
+# The rows below are EXAMPLES with the constant columns pre-filled per the plan. Replace the placeholder
+# sample_ids with your real ones and expand to the full sample counts (e.g. Neyazi has 41 CS samples).
+#
+sample_id	dataset	accession	chemistry	procurement	region	disease	sex	individual
+# ---- Neyazi CS (GSE319770, 3' v3, explant/VAD/autopsy, LV/RV/SP). 41 samples — expand this block. ----
+NEYAZI_CS01	neyazi	GSE319770	3p	explant	LV	CS	NA	NEYAZI_CS01
+NEYAZI_CS02	neyazi	GSE319770	3p	explant	RV	CS	NA	NEYAZI_CS02
+NEYAZI_CS03	neyazi	GSE319770	3p	VAD	LV	CS	NA	NEYAZI_CS03
+NEYAZI_CS04	neyazi	GSE319770	3p	autopsy	SP	CS	NA	NEYAZI_CS04
+# ... continue through all 41 Neyazi samples ...
+# ---- Larson HCM (GSE174691, 3' v3, septal myectomy, IVS only). ~9 samples. ----
+LARSON_HCM01	larson	GSE174691	3p	myectomy	IVS	HCM	NA	LARSON_HCM01
+LARSON_HCM02	larson	GSE174691	3p	myectomy	IVS	HCM	NA	LARSON_HCM02
+# ... continue ...
+# ---- Chin2022 (GSE181764, 3' v3): HCM = myectomy/IVS ; NF = donor/IVS. ----
+CHIN2022_HCM01	chin2022	GSE181764	3p	myectomy	IVS	HCM	NA	CHIN2022_HCM01
+CHIN2022_NF01	chin2022	GSE181764	3p	donor	IVS	NF	NA	CHIN2022_NF01
+# ... continue ...
+# ---- Chin2021 NF (GSE161921, 3' v3, donor, IVS). ~4 samples. ----
+CHIN2021_NF01	chin2021	GSE161921	3p	donor	IVS	NF	NA	CHIN2021_NF01
+CHIN2021_NF02	chin2021	GSE161921	3p	donor	IVS	NF	NA	CHIN2021_NF02
+# ... continue ...
+# ---- Liu (GSE205734, 5' v1.1, explant, LV): CS x4 + ICM x3. Standalone 5' arm. ----
+LIU_CS01	liu	GSE205734	5p	explant	LV	CS	NA	LIU_CS01
+LIU_CS02	liu	GSE205734	5p	explant	LV	CS	NA	LIU_CS02
+LIU_ICM01	liu	GSE205734	5p	explant	LV	ICM	NA	LIU_ICM01
+LIU_ICM02	liu	GSE205734	5p	explant	LV	ICM	NA	LIU_ICM02
+# ... continue (CS x4, ICM x3) ...
