@@ -82,6 +82,13 @@ def main() -> None:
     if not recs:
         sys.exit("no CM-dominant spots collected")
     df = pd.DataFrame(recs)
+    conds = set(df["condition"].unique())
+    if not {"CS", "control"} <= conds:
+        sys.exit(
+            "cm_content_normalized needs BOTH a 'CS' and a 'control' condition, but the "
+            f"manifest only yielded {sorted(conds)}. Add control (Kuppe) rows to the "
+            "visium manifest (condition<TAB>path) before running this comparison."
+        )
     df.to_csv(os.path.join(args.out, "cm_content_perspot.tsv.gz"), sep="\t", index=False)
 
     # ---- per-gene stats: raw, ratio, decile-matched ----

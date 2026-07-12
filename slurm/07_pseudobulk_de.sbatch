@@ -30,6 +30,14 @@ python "${HERE}/../scripts/subtype_tnk.py" \
 #   tcell = T/NK cells (refined label 'Tcell' from subtype_tnk)
 #   bcell = B/plasma cells (refined label 'Bcell' from subtype_tnk)
 # The Python backed-read only materializes the matching lineage, so T/B passes are cheap.
+#
+# The disease-vs-study design is rank-deficient: single-study diseases (neyazi, reichart) are
+# aliased with their study covariate, so those CS-vs-mimic contrasts are CONFOUNDED / EXPLORATORY
+# (this is how the Research Letter frames them — not batch-controlled specificity evidence).
+# run_pseudobulk_de.R refuses a rank-deficient design unless ALLOW_RANK_DEFICIENT=1; the headline
+# CM contrasts (CS_vs_DCM/ARVC/HCM/NF) are exactly these exploratory contrasts, so set it here.
+# Without this the R step halts and de_cm/ is left empty -> gsea/foong/cm_signature get no CM DEGs.
+export ALLOW_RANK_DEFICIENT=1
 LINEAGES=( "cm:ardiomyocyte" "tcell:Tcell" "bcell:Bcell" )
 for spec in "${LINEAGES[@]}"; do
     label="${spec%%:*}"; pat="${spec#*:}"

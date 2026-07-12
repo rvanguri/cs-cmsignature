@@ -3,8 +3,10 @@
 This is the **battle-tested** path: every step here reflects a real constraint we hit on BigPurple
 (login-node memory cap, GPFS quota, ancient system conda, the R↔Python bridge). Follow it top to bottom.
 
-Assumes the bundle is deployed (`scaffold.sh` run, so `$PROJ` exists and `env/paths.sh` has your `LAB`
-set). Replace `<conda-module>`, `<lab>`, `<kid>` where noted.
+Assumes the repo is deployed to `$PROJ` (clone or copy the bundle there) and you have edited
+`env/paths.sh` to set your `LAB` (and `KID` if it differs from `$USER`). Each pipeline runner
+creates the output subdirs it needs via `mkdir -p`, so no separate scaffold step is required.
+Replace `<conda-module>`, `<lab>`, `<kid>` where noted.
 
 > **TL;DR of the gotchas** (details inline below):
 > 1. System `conda` is 4.13 (can't solve this env) and a stray `mamba` on PATH is a test-runner — install a project **Miniforge**.

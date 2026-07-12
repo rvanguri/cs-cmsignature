@@ -51,7 +51,7 @@ The validation design is deliberately tiered and confound-aware:
 │   ├── paths.sh             # central path/identity config sourced by every sbatch (edit LAB)
 │   └── modules.sh           # Lmod modules + conda activation sourced by every sbatch
 ├── scripts/                 # all analysis scripts (Python + R) + scripts/README.md
-├── slurm/                   # SLURM runners, steps 00–12 + smoke_test + submit_all.sh
+├── slurm/                   # SLURM runners, steps 00–11 + smoke_test + submit_all.sh
 ├── docs/
 │   ├── pipeline.md          # pipeline overview
 │   ├── setup_bigpurple.md   # cluster setup notes
@@ -84,7 +84,7 @@ repository; only analysis code and derived result tables are included.
 
 ## Pipeline / reproducibility
 
-The pipeline is a SLURM dependency chain, run in order 00 → 12. Each step is an
+The pipeline is a SLURM dependency chain, run in order 00 → 11. Each step is an
 `sbatch` runner in `slurm/` that calls one or more scripts in `scripts/`. The table below is
 derived directly from the `slurm/*.sbatch` files.
 
@@ -96,21 +96,23 @@ derived directly from the `slurm/*.sbatch` files.
 | 03 | `03_decontx.sbatch` | `run_decontx.R` | DecontX ambient-contamination correction |
 | 04 | `04_qc.sbatch` | `run_qc.py` | Per-dataset QC filtering; merge sample metadata onto obs |
 | 05 | `05_scanvi.sbatch` | `run_scanvi.py` | scANVI integration across cohorts (batch correction) |
+| 05b | `05b_relabel.sbatch` | `relabel_genes.py` | Relabel integrated + liu_qc var_names from Ensembl IDs to HGNC symbols (required by all symbol-space downstream stages) |
 | 06 | `06_validate_gates.sbatch` | `run_gates.py` | Cell-type gate validation and QC UMAPs |
 | 07 | `07_pseudobulk_de.sbatch` | `subtype_tnk.py`, `pseudobulk_cm.py`, `run_pseudobulk_de.R` | Pseudobulk aggregation and cross-cardiomyopathy differential expression (limma-voom / pyDESeq2) |
 | 08 | `08_liu_standalone.sbatch` | `run_liu_standalone.py` | Within-study Liu CS-vs-ICM differential expression |
-| 10 | `10_gsea_figures.sbatch` | `run_gsea_figures.py`, `annotate_foong_validation.py`, `panel_robustness.py` | GSEA, volcano/enrichment figures, Foong validation annotation, panel robustness |
-| 11 | `11_foong_spatial.sbatch` | `download_foong_spatial.sh`, `foong_spatial_figures.py` | Download Foong Visium data and generate spatial figures |
-| 12 | `12_cm_signature.sbatch` | `cm_disease_distance.py`, `cm_spatial_crossdisease.py`, `cm_content_normalized.py`, `foong_regional.py` | Cardiomyocyte signature: within-patient distance-to-lesion, cross-disease spatial, CM-content normalization, regional analysis |
+| 09 | `09_gsea_figures.sbatch` | `run_gsea_figures.py`, `annotate_foong_validation.py`, `panel_robustness.py` | GSEA, volcano/enrichment figures, Foong validation annotation, panel robustness |
+| 10 | `10_foong_spatial.sbatch` | `download_foong_spatial.sh`, `foong_spatial_figures.py` | Download Foong Visium data and generate spatial figures |
+| 11 | `11_cm_signature.sbatch` | `cm_disease_distance.py`, `cm_spatial_crossdisease.py`, `cm_content_normalized.py`, `foong_regional.py` | Cardiomyocyte signature: within-patient distance-to-lesion, cross-disease spatial, CM-content normalization, regional analysis |
 
 **Smoke test.** `slurm/smoke_test.sbatch` runs the whole chain (make_synthetic_data →
-build_manifest → decontx → cellbender → qc → scanvi → gates → pseudobulk_de → liu_standalone →
+build_manifest → decontx → cellbender → qc → scanvi → relabel → gates → pseudobulk_de → liu_standalone →
 gsea_figures) on small synthetic data to verify wiring before committing
 cluster resources.
 
-**Full submission.** `slurm/submit_all.sh` launches steps 01–10 as an `afterok` dependency chain
-(07/08 fan out in parallel after the gates step, 10 joins them). Edit the `02_cellbender.sbatch`
-`--array` range to match your manifest sample count before launching.
+**Full submission.** `slurm/submit_all.sh` launches steps 01–11 as an `afterok` dependency chain
+(07/08 fan out in parallel after the gates step, 09 joins them, then 10 spatial and 11 CM-signature
+run in sequence). Edit the `02_cellbender.sbatch` `--array` range to match your manifest sample count
+before launching.
 
 Helper scripts not wired into a numbered step are run manually: `composite_figure.py` (assembles
 the final Figure 1), `combine_contrasts.py`, `diagnose_neyazi_liu.py`, `foong_panelF_candidates.py`,
@@ -143,9 +145,10 @@ for your site (verify partitions with `sinfo -s`).
 4. **Gates** (step 06) — cell-type gate validation.
 5. **Pseudobulk DE** (step 07) — cross-cardiomyopathy contrasts (hypothesis-generating).
 6. **Liu within-study** (step 08) — batch-clean CS-vs-ICM validation tier.
-7. **GSEA / validation / robustness** (step 10) — enrichment, Foong annotation, panel robustness.
-8. **Spatial** (step 11) — Foong Visium figures.
-9. **Composite figure** (step 12 + `composite_figure.py`) — assemble Figure 1.
+7. **GSEA / validation / robustness** (step 09) — enrichment, Foong annotation, panel robustness.
+8. **Spatial** (step 10) — Foong Visium figures.
+9. **CM signature** (step 11) — within-patient distance-to-lesion, cross-disease spatial, CM-content
+   normalization, regional analysis. Assemble Figure 1 with `composite_figure.py`.
 
 ## Known limitations
 

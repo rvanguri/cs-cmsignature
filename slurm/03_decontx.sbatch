@@ -2,8 +2,10 @@
 #SBATCH --job-name=hm_decontx
 #SBATCH --partition=YOUR_PARTITION          # VERIFY. Reichart (880k nuclei) + Neyazi are memory-heavy.
 #SBATCH --cpus-per-task=8
-#SBATCH --mem=128G                       # was 16G -> OOM on neyazi/reichart. If reichart still OOMs,
-                                         # resubmit just that index on an fn_* high-mem node (--mem=256G).
+#SBATCH --mem=256G                       # Reichart (880k nuclei) peaks here: DecontX itself is cheap, but
+                                         # the final t()+reticulate write_h5ad holds transient R+Python
+                                         # copies of the ~880k-cell sparse matrix. 128G OOM'd on the write;
+                                         # 256G clears it (fits on a standard cpu_short node, 320G/node).
 #SBATCH --time=08:00:00
 #SBATCH --array=1-6                      # 6 datasets: Neyazi, Larson, Chin2022, Chin2021, Reichart, Liu(5')
 #SBATCH --output=%x_%A_%a.out

@@ -58,7 +58,18 @@ disease <- factor(make.names(as.character(pmeta[[opt$disease_col]])))
 study   <- factor(make.names(as.character(pmeta[[opt$study_col]])))
 anatomy <- factor(make.names(as.character(pmeta[[opt$anatomy_col]])))
 sex     <- factor(make.names(as.character(pmeta[[opt$sex_col]])))
-design  <- model.matrix(~ 0 + disease + study + anatomy + sex)
+# Build the design from disease + only the covariates that actually vary (>=2 levels). A
+# single-level covariate (e.g. one study in a within-cohort run, or an all-missing sex column)
+# contributes no design columns and makes model.matrix() abort with "contrasts can be applied only
+# to factors with 2 or more levels"; dropping it is a no-op for the fit. disease is always retained
+# (the contrasts of interest are built from its coefficients).
+covars  <- c("study", "anatomy", "sex")
+kept    <- covars[vapply(covars, function(v) nlevels(get(v)) >= 2, logical(1))]
+dropped <- setdiff(covars, kept)
+if (length(dropped))
+  message(sprintf("[DE] dropped single-level covariate(s) from design (uninformative): %s",
+                  paste(dropped, collapse = ", ")))
+design  <- model.matrix(as.formula(paste("~", paste(c("0", "disease", kept), collapse = " + "))))
 
 # ---- rank / estimability guard (Concern 1) ----
 # If a disease is present in only one study, its disease coefficient is perfectly aliased with that

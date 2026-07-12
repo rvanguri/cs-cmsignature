@@ -5,7 +5,7 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=32G
 #SBATCH --time=08:00:00
-#SBATCH --array=1-52%4                   # set N = manifest rows w/ raw droplets; %4 = 4 concurrent GPU tasks
+#SBATCH --array=1-70%4                   # set N = total manifest rows (filtered samples self-skip); %4 = 4 concurrent GPU tasks
 #SBATCH --output=%x_%A_%a.out
 #SBATCH --error=%x_%A_%a.err
 set -euo pipefail
@@ -44,10 +44,18 @@ rm -rf "${WORK}"; mkdir -p "${WORK}" "${CB_OUT}"     # rm clears any stale check
 cd "${WORK}"
 echo "[$(date)] CellBender ${SAMPLE_ID}  expected_cells=${EXP_CELLS}  total_droplets=${TOT_DROP}  cwd=${WORK}  src=${RAW_PATH}"
 
+# --- resolve symlinks: $RAW (or a per-dataset subdir) may be symlinked to shared storage that is
+#     OUTSIDE the container's default binds. Singularity only sees paths you -B mount, and it does
+#     not follow a host symlink that escapes a mounted tree. Resolve RAW_PATH to its real location
+#     and bind that real directory, so the matrix is visible inside the container regardless of where
+#     the raw data physically lives. ---
+REAL_RAW_PATH=$(readlink -f "${RAW_PATH}")
+REAL_RAW_DIR=$(dirname "${REAL_RAW_PATH}")
+
 # --- identical params across all RAW samples; --pwd pins the container cwd to this sample's dir ---
-singularity exec --nv --pwd "${WORK}" -B "${SCRATCH_ROOT}","${PROJ}" "${CELLBENDER_SIF}" \
+singularity exec --nv --pwd "${WORK}" -B "${SCRATCH_ROOT}","${PROJ}","${REAL_RAW_DIR}" "${CELLBENDER_SIF}" \
     cellbender remove-background --cuda \
-      --input  "${RAW_PATH}" \
+      --input  "${REAL_RAW_PATH}" \
       --output "${WORK}/${SAMPLE_ID}_cellbender.h5" \
       --expected-cells "${EXP_CELLS}" \
       --total-droplets-included "${TOT_DROP}" \

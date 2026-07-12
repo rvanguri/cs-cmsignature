@@ -179,6 +179,21 @@ def main() -> None:
         adata.write_h5ad(out)
         LOG.info("%s_decontx_counts.h5ad: %d nuclei x %d genes", ds, adata.n_obs, adata.n_vars)
 
+    # 2b) Reichart CELLxGENE-style h5ad (raw/reichart/reichart_cxg.h5ad) so the opt-in DecontX
+    #     reichart branch (which reads .raw + obs donor/disease/tissue/sex/cell_type) has an input.
+    reichart_samps = [s for s in SAMPLES if s[0] == "reichart"]
+    rr = build_anndata(reichart_samps)
+    # Match the 10x features.tsv col1 namespace (ENSG_<symbol>) that read10xCounts puts on the GEO
+    # DecontX rownames, so the opt-in DecontX leg intersects on a COMMON gene id across all datasets
+    # (mirrors the real pipeline: GEO 10x + Reichart CELLxGENE are both Ensembl-indexed post-DecontX;
+    # symbol relabeling happens later via relabel_genes.py). Without this, scANVI's feature
+    # intersection is empty (Ensembl GEO vs symbol Reichart).
+    rr.var_names = ["ENSG_" + str(g) for g in rr.var_names]
+    rr.raw = rr                       # reichart branch reads raw$X + raw$var_names
+    reichart_dir = ensure_dir(os.path.join(raw, "reichart"))
+    rr.write_h5ad(os.path.join(reichart_dir, "reichart_cxg.h5ad"))
+    LOG.info("reichart_cxg.h5ad: %d nuclei x %d genes", rr.n_obs, rr.n_vars)
+
     # 3) Liu QC'd h5ad (standalone 5' arm) — give it predicted_cell_type for run_liu's CM filter
     liu = build_anndata(LIU_SAMPLES)
     liu.obs["predicted_cell_type"] = liu.obs["cell_type"]

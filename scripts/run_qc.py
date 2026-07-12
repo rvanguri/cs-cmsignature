@@ -60,7 +60,11 @@ def main() -> None:
         if "individual" not in adata.obs.columns:
             adata.obs["individual"] = adata.obs["sample_id"].values
         else:
-            adata.obs["individual"] = adata.obs["individual"].fillna(adata.obs["sample_id"])
+            # cast to object first: a dataset carrying 'individual' as a pandas Categorical (e.g. Reichart
+            # from CELLxGENE) raises "Cannot set a Categorical ... without identical categories" when
+            # filling NaNs with sample_id values outside its category set. Fill on plain strings instead.
+            adata.obs["individual"] = (adata.obs["individual"].astype(object)
+                                       .fillna(adata.obs["sample_id"].astype(object)).astype(str))
     elif "sample_id" not in adata.obs:
         LOG.warning("no 'sample_id' in obs — skipping sample_meta merge (Reichart/atlas carry own obs)")
 
@@ -90,17 +94,29 @@ def main() -> None:
     # gene filter: present in >= 3 nuclei
     sc.pp.filter_genes(adata, min_cells=3)
 
-    # doublets on decontaminated counts. Scrublet doubles the data to simulate doublets, so it OOMs on
-    # very large datasets; skip it there (Reichart etc. are already doublet-filtered upstream).
-    SCRUBLET_MAX_CELLS = 200_000
-    if adata.n_obs > SCRUBLET_MAX_CELLS:
-        LOG.warning("%s: %d cells > %d -> skipping scrublet (too large; treat as pre-curated)",
-                    args.dataset, adata.n_obs, SCRUBLET_MAX_CELLS)
+    # doublets on decontaminated counts. Scrublet simulates doublets by DOUBLING the matrix, so its peak
+    # memory scales with the largest object it processes. Run it PER SAMPLE (batch_key="sample_id") so the
+    # peak is bounded by the largest single sample, not the whole cohort — a multi-sample dataset like
+    # neyazi (41 samples, ~283k nuclei total but only ~7-15k per sample) then gets doublet-filtered exactly
+    # as intended without OOM. A pre-curated single mega-object with no per-sample structure (e.g. Reichart,
+    # one ~880k-nucleus CELLxGENE object, no sample_id) has no batching to bound the peak, so it is skipped
+    # (already doublet-filtered upstream). The guard is therefore on the largest BATCH, not total cells.
+    SCRUBLET_MAX_BATCH = 200_000
+    batch_key = "sample_id" if ("sample_id" in adata.obs and adata.obs["sample_id"].nunique() > 1) else None
+    max_batch = int(adata.obs[batch_key].value_counts().max()) if batch_key else adata.n_obs
+    if max_batch > SCRUBLET_MAX_BATCH:
+        LOG.warning("%s: largest scrublet batch %d > %d -> skipping scrublet "
+                    "(pre-curated mega-object; treat as already doublet-filtered)",
+                    args.dataset, max_batch, SCRUBLET_MAX_BATCH)
     else:
         try:
-            sc.external.pp.scrublet(adata)  # adds 'predicted_doublet'
+            sc.external.pp.scrublet(adata, batch_key=batch_key)  # per-sample; adds 'predicted_doublet'
             if "predicted_doublet" in adata.obs:
+                n_before = adata.n_obs
                 adata = adata[~adata.obs["predicted_doublet"].astype(bool)].copy()
+                LOG.info("%s: scrublet removed %d doublets (batch_key=%s, %d batches)",
+                         args.dataset, n_before - adata.n_obs, batch_key,
+                         adata.obs[batch_key].nunique() if batch_key else 1)
         except Exception as e:  # noqa: BLE001
             LOG.warning("scrublet skipped (%s) — run scDblFinder in R as fallback", e)
 

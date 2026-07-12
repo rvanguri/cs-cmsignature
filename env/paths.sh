@@ -14,7 +14,7 @@ export SCRATCH_ROOT="/gpfs/scratch/${KID}/heartmap-cs"
 export CONDA_ENV="${PROJ}/env/conda/heartmap"
 export CELLBENDER_SIF="${PROJ}/env/cellbender.sif"
 
-# ---- subdirs (created by scaffold.sh) ----
+# ---- subdirs (each runner mkdir -p's the ones it needs) ----
 export RAW="${PROJ}/raw"
 export CONTROLLED="${PROJ}/controlled"
 export CB_OUT="${PROJ}/cellbender"

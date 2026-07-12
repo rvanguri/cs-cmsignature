@@ -142,8 +142,9 @@ You indicated you need access guidance, so the path on BigPurple is:
    directory (`$PROJ/controlled`) and confirm dbGaP/SRA-toolkit use is permitted on the data-mover
    nodes. Do not place controlled data in world/group-readable space.
 4. **Download mechanics (only after 1–3):** SRA Toolkit `prefetch`/`fasterq-dump` with the `.ngc` key
-   for dbGaP; **`pyega3`** for EGA. Run on **data-mover nodes**, not login nodes. (Reichart EGA raw
-   stays out of scope per v2.1 — BAM-only, 3.7 TB; we use the CELLxGENE matrix.)
+   for dbGaP; **`pyega3`** for EGA (install in a separate env — it pins an old `tqdm` that conflicts
+   with `scvi-tools`; see note in `environment.yml`). Run on **data-mover nodes**, not login nodes.
+   (Reichart EGA raw stays out of scope per v2.1 — BAM-only, 3.7 TB; we use the CELLxGENE matrix.)
 
 **Phase 0 decision recorded in `env/access_status.md`:** for each of {Simonson ICM, ARVC, Chaffin
 LV-HCM} mark `atlas-transfer` (default) or `raw-reprocess` (requires phs001539). The pipeline branches
@@ -226,6 +227,15 @@ Light CPU job or run inline at the head of Step 5.
   `$PROJ/integrated/`. (scvi-tools uses GPU automatically if visible; v2.1 said "CPU ok" — on
   BigPurple, GPU is faster and you have access, so default GPU with CPU fallback.)
 
+### Step 5b — Gene relabel (`05b_relabel.sbatch`)
+scANVI/DecontX/QC carry Ensembl gene IDs, but every downstream symbol-space stage
+(gates, pseudobulk DE, GSEA, Foong spatial, CM signature, and `liu_standalone`) matches on
+HGNC symbols. `relabel_genes.py` maps `var_names` Ensembl → symbol on
+`integrated/integrated_scanvi.h5ad` and `qc/liu_qc.h5ad`, stashing the old id in
+`var['ensembl']` and disambiguating the handful of duplicate symbols. It is idempotent
+(safe to re-run) and cheap (`cpu_short`, ~1 min). Skipping this step leaves the whole run in
+Ensembl space and produces empty/degenerate downstream tables.
+
 ### Step 6 — Validation + TWO gates (`06_validate_gates.sbatch`)
 - **6a** integration validation (UMAP, kBET/LISI). **6b** decontamination QC gate incl. **dual-count
   concordance** (CellBender/DecontX vs. CellRanger raw) + background heuristic <0.5. **6c**
@@ -243,7 +253,7 @@ panels. `cpu_medium`, `--mem=16G` (R + Python).
 ### Step 7b — Liu CS-vs-ICM standalone co-primary (`08_liu_standalone.sbatch`)
 5′ arm, **not co-embedded**, recomputed fresh through QC+DecontX+pseudobulk+apeglm. Small CPU job.
 
-### Step 8 — GSEA + figures (`10_gsea_figures.sbatch`)
+### Step 8 — GSEA + figures (`09_gsea_figures.sbatch`)
 Pre-ranked gseapy (Hallmark, GO BP, KEGG, Reactome) on procurement-matched primaries + high-confidence
 set. All v2.1 figures/tables incl. decontamination + procurement-robustness + HeartMap-positioning.
 `cpu_short`.
@@ -284,10 +294,13 @@ jid2=$(sbatch --parsable --dependency=afterok:$jid1 02_cellbender.sbatch)   # ar
 jid3=$(sbatch --parsable --dependency=afterok:$jid2 03_decontx.sbatch)
 jid4=$(sbatch --parsable --dependency=afterok:$jid3 04_qc.sbatch)
 jid5=$(sbatch --parsable --dependency=afterok:$jid4 05_scanvi.sbatch)
-jid6=$(sbatch --parsable --dependency=afterok:$jid5 06_validate_gates.sbatch)
+jid5b=$(sbatch --parsable --dependency=afterok:$jid5 05b_relabel.sbatch)
+jid6=$(sbatch --parsable --dependency=afterok:$jid5b 06_validate_gates.sbatch)
 jid7=$(sbatch --parsable --dependency=afterok:$jid6 07_pseudobulk_de.sbatch)
 jid8=$(sbatch --parsable --dependency=afterok:$jid6 08_liu_standalone.sbatch)   # parallel to 07
-sbatch --dependency=afterok:$jid7:$jid8 10_gsea_figures.sbatch
+jid9=$(sbatch --parsable --dependency=afterok:$jid7:$jid8 09_gsea_figures.sbatch)
+jid10=$(sbatch --parsable --dependency=afterok:$jid9 10_foong_spatial.sbatch)
+sbatch --dependency=afterok:$jid10 11_cm_signature.sbatch
 ```
 
 **Run open-data arms first.** If controlled raw isn't cleared, the chain runs fully on the open arms;

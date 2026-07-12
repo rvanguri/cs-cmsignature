@@ -18,7 +18,7 @@ dependencies:
   - scanpy>=1.9
   - anndata>=0.10
   - scvi-tools>=1.1          # provides scANVI; GPU-aware (uses CUDA if visible)
-  - scarches                 # reference projection onto HeartMap SCP3689
+  - tqdm>=4.66               # scvi-tools/lightning need tqdm.auto (absent in <4.27)
   - leidenalg
   - python-igraph
   - harmonypy
@@ -28,7 +28,6 @@ dependencies:
   - scib                     # kBET / LISI integration metrics
   # ---- DE / pseudobulk (Python side) ----
   - pydeseq2
-  - decoupler
   # ---- pathways ----
   - gseapy
   # ---- data access ----
@@ -38,6 +37,7 @@ dependencies:
   - r-base=4.3
   - r-optparse               # CLI parsing in the .R scripts (run_decontx.R, run_pseudobulk_de.R)
   - r-anndata                # read/write .h5ad from R (reticulate-backed)
+  - bioconductor-genomeinfodbdata # data pkg for GenomeInfoDb (SCE/DESeq2/celda dep; not always pulled automatically)
   - bioconductor-celda       # DecontX
   - bioconductor-dropletutils # read10xCounts in run_decontx.R
   - bioconductor-scdblfinder
@@ -56,5 +56,8 @@ dependencies:
   - scipy
   - matplotlib
   - seaborn
-  - pip:
-      - pyega3               # EGA downloads (if any controlled EGA arm is approved)
+  # NOTE: pyega3 (EGA controlled-access downloads) is intentionally NOT in this env —
+  # it hard-pins tqdm==4.19.6, which is incompatible with scvi-tools (needs tqdm.auto, >=4.27).
+  # The open reproduction uses Reichart via CELLxGENE (see download_reichart_cxg.py), so pyega3
+  # is not needed. If you pursue the controlled EGA arm, install it in a SEPARATE env:
+  #   mamba create -n ega -c bioconda pyega3

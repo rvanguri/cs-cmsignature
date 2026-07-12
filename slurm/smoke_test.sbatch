@@ -43,6 +43,7 @@ step "build_manifest" python "${SC}/build_manifest.py" --raw "${SMOKE}/raw" --ou
 if [[ "${SMOKE_DECONTX:-0}" == "1" ]]; then
   for ds in neyazi larson chin2022 chin2021 reichart; do
     step "decontx_${ds}" Rscript "${SC}/run_decontx.R" --dataset "${ds}" \
+      --manifest "${SMOKE}/raw/manifest.tsv" \
       --cellbender_dir "${SMOKE}/cellbender" --reichart_dir "${SMOKE}/raw/reichart" \
       --out "${SMOKE}/decontx/${ds}_decontx_counts.h5ad"
   done
@@ -79,10 +80,24 @@ step "gates" python "${SC}/run_gates.py" --integrated "${SMOKE}/integrated/integ
   --cellbender_dir "${SMOKE}/cellbender" --out "${SMOKE}/de/gates" --figdir "${SMOKE}/figures" \
   --celltype_col cell_type
 
-# 5) pseudobulk DE
-step "pseudobulk_de" Rscript "${SC}/run_pseudobulk_de.R" \
-  --integrated "${SMOKE}/integrated/integrated_scanvi.h5ad" --gates "${SMOKE}/de/gates" \
-  --out "${SMOKE}/de" --celltype_col cell_type
+# 5) pseudobulk DE — mirror the production 07 two-step (Python aggregate -> R limma-voom).
+#    Smoke runs only the CM lineage (the headline); T/B lineages are exercised by the real run.
+#    Uses ground-truth cell_type (scANVI's 2-epoch predicted_cell_type is unreliable at smoke scale).
+step "pseudobulk_cm" python "${SC}/pseudobulk_cm.py" \
+  --integrated "${SMOKE}/integrated/integrated_scanvi.h5ad" \
+  --out "${SMOKE}/de" --label cm --celltype_col cell_type --celltype_pattern ardiomyocyte --min_cells 10
+mkdir -p "${SMOKE}/de/de_cm"
+# Synthetic data has one study per disease, so the disease coefficients are aliased with study and the
+# design is rank-deficient by construction (real cohorts span multiple studies per disease). The DE
+# script refuses a confounded design unless ALLOW_RANK_DEFICIENT=1; set it here so the smoke exercises
+# the full DE->contrast->write path. The resulting contrasts are exploratory (not batch-clean) — which
+# is exactly what the guard labels them; the smoke only checks that the code path runs end to end.
+step "pseudobulk_de" env ALLOW_RANK_DEFICIENT=1 Rscript "${SC}/run_pseudobulk_de.R" \
+  --pb_counts "${SMOKE}/de/cm_pseudobulk_counts.tsv" \
+  --pb_meta   "${SMOKE}/de/cm_pseudobulk_meta.tsv" \
+  --out "${SMOKE}/de/de_cm"
+# Surface CM contrasts at the top level (GSEA/high-confidence steps read ${SMOKE}/de/DE_CS_vs_*.tsv).
+cp -f "${SMOKE}/de/de_cm/"DE_*.tsv "${SMOKE}/de/" 2>/dev/null || true
 
 # 6) Liu standalone co-primary
 step "liu_standalone" python "${SC}/run_liu_standalone.py" --raw "${SMOKE}/raw/liu" \
