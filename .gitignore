@@ -25,8 +25,12 @@ response_to_code_review.md
 code_review_package/
 codereview/
 allscripts.tar
+cs-cmsignature-code.tar.gz
 
 # raw data & large intermediate objects (regenerated from public accessions)
 *.h5ad
 *.h5
 raw/
+
+# local retest staging (side-by-side validation of committed results/, not committed)
+results_retest_2026-07-12/

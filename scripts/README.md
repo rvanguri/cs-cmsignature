@@ -19,7 +19,7 @@ files are syntax-balanced (run on the cluster where celda/limma are installed).
 | `run_gates.py` | 06 | integrated h5ad | gate TSVs + UMAPs | wire raw CellRanger counts for dual-count concordance |
 | `run_pseudobulk_de.R` | 07 | integrated h5ad | `DE_<contrast>.tsv` | confirm obs cols: individual/disease/anatomy/sex |
 | `run_liu_standalone.py` | 08 | `liu_qc.h5ad` | `DE_Liu_CS_vs_ICM.tsv` | run Liu through 03+04 first (dataset='liu') |
-| `run_gsea_figures.py` | 10 | DE + Liu TSVs | volcanoes, GSEA, high-confidence set | — |
+| `run_gsea_figures.py` | 09 | DE + Liu TSVs | volcanoes, GSEA, high-confidence set | — |
 
 ## Conventions
 - Every script uses `argparse`/`optparse`; the wrappers already pass the right flags.
@@ -32,7 +32,7 @@ files are syntax-balanced (run on the cluster where celda/limma are installed).
   expected_cells = col 8). Don't reorder without updating that script.
 
 ## What is genuinely stubbed (needs your input, not just compute)
-1. Dataset identifiers / URLs that aren't public-by-convention (Reichart CELLxGENE id; SCP3689 auth).
+1. Dataset identifiers / URLs that aren't public-by-convention (Reichart CELLxGENE id).
 2. Per-sample disease/procurement/region (`sample_meta.tsv`) — required by the DE model.
 3. Dual-count concordance raw-counts wiring in `run_gates.py` (Plan Step 6b).
 Everything else runs as-is given the conda env and staged data.
