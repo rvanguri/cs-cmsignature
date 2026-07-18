@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#SBATCH --job-name=hm_decontx
+#SBATCH --job-name=cs_decontx
 #SBATCH --partition=YOUR_PARTITION          # VERIFY. Reichart (880k nuclei) + Neyazi are memory-heavy.
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=256G                       # Reichart (880k nuclei) peaks here: DecontX itself is cheap, but
@@ -17,7 +17,7 @@ source "${HERE}/../env/modules.sh"
 
 mkdir -p "${DECONTX_OUT}" "${DECONTX_WORK}"
 
-# UNIFORM DecontX pass — identical params on the FILTERED matrix of every dataset:
+# UNIFORM DecontX pass: identical params on the FILTERED matrix of every dataset:
 #   - 4 GEO sets: DecontX on the CellBender-filtered matrix ($CB_OUT)
 #   - Reichart:   DecontX on the CELLxGENE filtered matrix
 # Output rounded to integers for pseudobulk. This makes the LAST decontamination op common to all.

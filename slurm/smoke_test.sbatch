@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#SBATCH --job-name=hm_smoke
+#SBATCH --job-name=cs_smoke
 #SBATCH --partition=YOUR_PARTITION            # VERIFY. No GPU needed for the default smoke chain.
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=16G
@@ -11,7 +11,7 @@
 # their file handoffs end-to-end. Writes everything under $SCRATCH/smoke (never touches real $PROJ).
 #
 # By default it exercises: synth-data -> build_manifest -> QC -> scANVI(2 epochs) -> gates -> DE ->
-# Liu -> GSEA  — all REAL script calls.
+# Liu -> GSEA : all REAL script calls.
 # The GPU CellBender leg and the R DecontX leg are validated separately (opt-in):
 #   SMOKE_DECONTX=1   sbatch slurm/smoke_test.sbatch     # also runs run_decontx.R on synthetic raw
 #   SMOKE_CELLBENDER=1 sbatch slurm/smoke_test.sbatch    # also runs the CellBender .sif on 1 sample (needs GPU)
@@ -36,7 +36,7 @@ step () {  # step "name" command...
 # 0) generate synthetic data
 step "make_synthetic_data" python "${SC}/make_synthetic_data.py" --out "${SMOKE}"
 
-# 1) build_manifest (real, over synthetic raw 10x mtx — exercises knee estimate)
+# 1) build_manifest (real, over synthetic raw 10x mtx: exercises knee estimate)
 step "build_manifest" python "${SC}/build_manifest.py" --raw "${SMOKE}/raw" --out "${SMOKE}/raw/manifest.tsv"
 
 # 1b) OPTIONAL: R DecontX leg on synthetic raw (validates celda wiring)
@@ -80,7 +80,7 @@ step "gates" python "${SC}/run_gates.py" --integrated "${SMOKE}/integrated/integ
   --cellbender_dir "${SMOKE}/cellbender" --out "${SMOKE}/de/gates" --figdir "${SMOKE}/figures" \
   --celltype_col cell_type
 
-# 5) pseudobulk DE — mirror the production 07 two-step (Python aggregate -> R limma-voom).
+# 5) pseudobulk DE: mirror the production 07 two-step (Python aggregate -> R limma-voom).
 #    Smoke runs only the CM lineage (the headline); T/B lineages are exercised by the real run.
 #    Uses ground-truth cell_type (scANVI's 2-epoch predicted_cell_type is unreliable at smoke scale).
 step "pseudobulk_cm" python "${SC}/pseudobulk_cm.py" \
@@ -90,7 +90,7 @@ mkdir -p "${SMOKE}/de/de_cm"
 # Synthetic data has one study per disease, so the disease coefficients are aliased with study and the
 # design is rank-deficient by construction (real cohorts span multiple studies per disease). The DE
 # script refuses a confounded design unless ALLOW_RANK_DEFICIENT=1; set it here so the smoke exercises
-# the full DE->contrast->write path. The resulting contrasts are exploratory (not batch-clean) — which
+# the full DE->contrast->write path. The resulting contrasts are exploratory (not batch-clean): which
 # is exactly what the guard labels them; the smoke only checks that the code path runs end to end.
 step "pseudobulk_de" env ALLOW_RANK_DEFICIENT=1 Rscript "${SC}/run_pseudobulk_de.R" \
   --pb_counts "${SMOKE}/de/cm_pseudobulk_counts.tsv" \

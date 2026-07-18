@@ -2,7 +2,7 @@
 """Pull the Reichart/Seidman 2022 DCM/ARVC/NF matrix from CELLxGENE and record provenance.
 
 Two ways to get it; this script tries the census API and falls back to a direct H5AD URL you supply.
-After download it writes reichart_provenance.md — the Plan REQUIRES verifying whether these counts are
+After download it writes reichart_provenance.md: the Plan REQUIRES verifying whether these counts are
 CellBender output or a differently-processed matrix (do NOT assume CellBender).
 
 Reichart et al. 2022, Science (DOI 10.1126/science.abo1984); EGA EGAS00001006374.
@@ -22,7 +22,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _common import log, ensure_dir  # noqa: E402
 
 LOG = log("download_reichart")
-# "DCM/ACM heart cell atlas: All cells" — 881,081 nuclei, ~6.4 GB
+# "DCM/ACM heart cell atlas: All cells": 881,081 nuclei, ~6.4 GB
 CXG_DATASET_ID = "65badd7a-9262-4fd1-9ce2-eb5dc0ca8039"
 CXG_ASSET_URL = "https://datasets.cellxgene.cziscience.com/6d0b8b8a-2b22-4578-b8ee-8ca4ab893594.h5ad"
 

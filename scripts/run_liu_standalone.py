@@ -63,7 +63,7 @@ def main() -> None:
             sc.tl.score_genes(tmp, g, score_name="_s")
             sc_cols[ct] = tmp.obs["_s"].values
         if not sc_cols:
-            sys.exit("Liu: no marker genes found in var — are var_names gene symbols? "
+            sys.exit("Liu: no marker genes found in var: are var_names gene symbols? "
                      "(run relabel_genes.py on liu_qc.h5ad first)")
         adata.obs[args.celltype_col] = pd.DataFrame(sc_cols, index=adata.obs_names).idxmax(axis=1).values
         LOG.info("Liu cell types: %s", dict(adata.obs[args.celltype_col].value_counts()))

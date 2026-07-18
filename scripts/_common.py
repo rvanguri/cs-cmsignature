@@ -1,4 +1,4 @@
-"""Shared helpers for the HeartMap-CS pipeline scripts.
+"""Shared helpers for the cs-cmsignature pipeline scripts.
 
 Keeps logging, gene panels, and small IO utilities in one place so the step scripts stay short.
 All step scripts import from here: `from _common import log, PANELS, ...`.
@@ -70,10 +70,10 @@ PANELS = {
     # ischemia/agonal IEG/HSP panel to flag/exclude (surgical handling artifact)
     "ieg_hsp": ["FOS", "FOSB", "JUN", "JUNB", "EGR1", "ATF3",
                 "HSPA1A", "HSPA1B", "DNAJB1", "NR4A1"],
-    # HeartMap cross-study DCM (generic-HF / failing-axis) signature
+    # Cross-study DCM (generic-HF / failing-axis) signature
     "generic_hf_up": ["NPPA", "NPPB", "C5AR1", "PLCE1", "UNC80"],
     "generic_hf_down": ["BMP7"],
-    # activated-fibroblast niche markers (HeartMap)
+    # activated-fibroblast niche markers
     "fib_niche": {"COL22A1_DCM": ["COL22A1"], "TNC_ICM": ["TNC"]},
 }
 

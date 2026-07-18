@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#SBATCH --job-name=hm_gates
+#SBATCH --job-name=cs_gates
 #SBATCH --partition=YOUR_PARTITION          # VERIFY
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=128G                       # ~1M-cell integrated object; 32G risks OOM on load + 6a

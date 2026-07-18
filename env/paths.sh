@@ -7,11 +7,11 @@ LAB="CHANGEME_lab"          # your /gpfs/data/<lab> group
 KID="${USER}"               # KerberosID (defaults to $USER)
 
 # ---- persistent (deliverables; survives scratch purge) ----
-export PROJ="/gpfs/data/${LAB}/heartmap-cs"
+export PROJ="/gpfs/data/${LAB}/cs-cmsignature"
 # ---- fast scratch (intermediates; PURGED periodically) ----
-export SCRATCH_ROOT="/gpfs/scratch/${KID}/heartmap-cs"
+export SCRATCH_ROOT="/gpfs/scratch/${KID}/cs-cmsignature"
 # ---- conda env + singularity images ----
-export CONDA_ENV="${PROJ}/env/conda/heartmap"
+export CONDA_ENV="${PROJ}/env/conda/cs-cmsignature"
 export CELLBENDER_SIF="${PROJ}/env/cellbender.sif"
 
 # ---- subdirs (each runner mkdir -p's the ones it needs) ----

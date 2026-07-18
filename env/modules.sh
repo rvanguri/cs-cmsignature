@@ -2,7 +2,7 @@
 # Lmod modules + conda activation, sourced by every sbatch script so the environment is identical
 # everywhere. env/paths.sh must be sourced BEFORE this file (it exports PROJ, CONDA_ENV).
 #
-# The system conda on BigPurple is ancient (4.13, no libmamba) and can't solve this env, so we install
+# The system conda on the cluster may be ancient (e.g. 4.13, no libmamba) and can't solve this env, so we install
 # a project-local Miniforge (see PLAN / setup steps) and source THAT here. Falls back to a system
 # conda module if Miniforge isn't present.
 

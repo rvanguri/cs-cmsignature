@@ -4,7 +4,7 @@
 6a integration validation: UMAP by study/disease/cell type; kBET/LISI (scib) if available.
 6b DECONTAMINATION QC gate: median log2FC of the non-CM lineage ambient panel inside CS-CMs, per
    contrast. PASS = markers ~0 in every contrast; CS-vs-DCM drops from pre-decontam +1.86 toward ~0.
-   Dual-count concordance hook: compare decontaminated vs raw (CellBender vs CellRanger) — emits a
+   Dual-count concordance hook: compare decontaminated vs raw (CellBender vs CellRanger): emits a
    per-gene concordance table (requires both count matrices; TODO wire raw counts path).
 6c PROCUREMENT-robustness gate: each candidate must hold across explant-matched mimics
    (DCM, ICM-Simonson, ARVC, Chaffin-LV), not just mismatched (HCM-myectomy, NF).

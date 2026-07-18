@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Panel-F candidates: for EACH Foong CS Visium sample, a 3-panel strip —
-   [ clean H&E | CM-intrinsic score | inferred granuloma (immune-dominant zone) ] —
+"""Panel-F candidates: for EACH Foong CS Visium sample, a 3-panel strip:
+   [ clean H&E | CM-intrinsic score | inferred granuloma (immune-dominant zone) ]
 so the best representative sample for the figure can be chosen by eye.
 
 Granuloma annotation is COMPUTATIONAL (immune/myeloid-dominant spots), not pathologist-drawn; labeled
@@ -115,7 +115,7 @@ def main() -> None:
         # Panel F: H&E | granuloma (immune) score | CM-intrinsic score.
         # Colormaps per spatial-transcriptomics convention: sequential 'magma' for the one-directional
         # granuloma score; DIVERGING 'coolwarm' (centered at 0) for the CM-intrinsic score, which is a
-        # score_genes value with a meaningful zero — easier to read than viridis, with alpha over H&E.
+        # score_genes value with a meaningful zero: easier to read than viridis, with alpha over H&E.
         fig, ax = plt.subplots(1, 3, figsize=(16, 5.2))
         if img is not None:
             ax[0].imshow(img)
@@ -133,7 +133,7 @@ def main() -> None:
 
         comp = pd.Series(zones).value_counts()
         frac = {z: round(100 * comp.get(z, 0) / len(zones), 1) for z in ZONE_ORDER}
-        fig.suptitle(f"{name}  —  zones: preserved {frac['preserved']}%, "
+        fig.suptitle(f"{name} :  zones: preserved {frac['preserved']}%, "
                      f"granulomatous {frac['granulomatous']}%, fibrotic {frac['fibrotic']}%  "
                      f"(n={len(zones)} spots)", fontsize=9, y=1.02)
         fig.tight_layout()

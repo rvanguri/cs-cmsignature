@@ -72,7 +72,7 @@ def main() -> None:
             plt.tight_layout(); plt.savefig(os.path.join(args.figdir, f"volcano_{c}.png"), dpi=150)
             plt.close()
 
-    # ---- high-confidence CS set: significant AND SAME-SIGN across Liu + every PRIMARY (Concern 7) ----
+    # ---- high-confidence CS set: significant AND SAME-SIGN across Liu + every PRIMARY ----
     def sig_up(df):                       # significant with |lfc|>thr (direction-agnostic membership)
         return set(df.index[(df["padj"] < args.fdr) & (df["lfc"].abs() > args.lfc)])
     def sig_signed(df):                   # gene -> sign(lfc) for significant genes only
@@ -106,7 +106,7 @@ def main() -> None:
         import gseapy as gp
     except Exception as e:  # noqa: BLE001
         gp = None
-        LOG.warning("gseapy import failed (%s) — skipping GSEA", e)
+        LOG.warning("gseapy import failed (%s): skipping GSEA", e)
     if gp is not None:
         summaries = []
         for c in PRIMARY:

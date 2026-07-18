@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#SBATCH --job-name=hm_setup
+#SBATCH --job-name=cs_setup
 #SBATCH --partition=YOUR_PARTITION          # VERIFY: sinfo -s
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=16G

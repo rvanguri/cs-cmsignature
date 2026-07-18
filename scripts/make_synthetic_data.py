@@ -10,7 +10,7 @@ Produces (~450 nuclei integrated + ~120 for Liu):
 
 Signal is wired so the chain finds something: CS cardiomyocytes get boosted TNNI3K/GJB7 (the corrected
 expected CS-CM up-genes), CM markers are high in CMs, lineage markers high in their cell types.
-NOT biology — just enough structure for every step to execute and produce non-empty outputs.
+NOT biology: just enough structure for every step to execute and produce non-empty outputs.
 """
 from __future__ import annotations
 import argparse
@@ -194,7 +194,7 @@ def main() -> None:
     rr.write_h5ad(os.path.join(reichart_dir, "reichart_cxg.h5ad"))
     LOG.info("reichart_cxg.h5ad: %d nuclei x %d genes", rr.n_obs, rr.n_vars)
 
-    # 3) Liu QC'd h5ad (standalone 5' arm) — give it predicted_cell_type for run_liu's CM filter
+    # 3) Liu QC'd h5ad (standalone 5' arm): give it predicted_cell_type for run_liu's CM filter
     liu = build_anndata(LIU_SAMPLES)
     liu.obs["predicted_cell_type"] = liu.obs["cell_type"]
     liu_out = os.path.join(raw, "liu", "liu_qc.h5ad")

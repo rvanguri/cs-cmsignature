@@ -2,8 +2,8 @@
 """Within-Foong regional analysis of the CS-CM signature (no cross-dataset batch confound).
 
 Entirely inside the CS Visium data (Foong GSE314910). Assigns each spot a histologic-like ZONE from
-expression — preserved (cardiomyocyte-dominant), granulomatous (immune/myeloid-dominant), or fibrotic
-(fibroblast/ECM-dominant) — then asks WHERE the two signatures live:
+expression: preserved (cardiomyocyte-dominant), granulomatous (immune/myeloid-dominant), or fibrotic
+(fibroblast/ECM-dominant): then asks WHERE the two signatures live:
 
   - CM_intrinsic (GJB7/TNNI3K/MLIP/PANK1) and inflammatory (NLRC4/IL1RAP/BACH2/IL7) score per zone
     (violin + Kruskal-Wallis + preserved-vs-lesional Mann-Whitney).
@@ -158,7 +158,7 @@ def main() -> None:
         })
     pd.DataFrame(stats).to_csv(os.path.join(args.out, "foong_zone_stats.tsv"), sep="\t", index=False)
 
-    # ---- distance-to-lesion: WITHIN-PATIENT mixed-effects model (Concern 5) ----
+    # ---- distance-to-lesion: WITHIN-PATIENT mixed-effects model ----
     # A pooled Spearman across spots is pseudoreplicated (thousands of correlated spots per patient)
     # and vulnerable to Simpson's paradox. The primary statistic is a linear mixed model with spots
     # nested in patients (random intercept); we also report the per-patient slope signs. Distance is
@@ -178,7 +178,7 @@ def main() -> None:
             row.update(mixedlm_beta_per_SD=beta, ci_low=float(ci[0]), ci_high=float(ci[1]),
                        mixedlm_p=float(m.pvalues["dist_z"]))
         except Exception as e:  # noqa: BLE001
-            LOG.warning("mixedlm failed (%s) — falling back to per-patient slopes only", e)
+            LOG.warning("mixedlm failed (%s): falling back to per-patient slopes only", e)
             row.update(mixedlm_beta_per_SD=np.nan, ci_low=np.nan, ci_high=np.nan, mixedlm_p=np.nan)
         # per-patient independent slopes (robustness: is the sign consistent?)
         slopes = [np.polyfit(g["dist_z"], g["CM_intrinsic"], 1)[0]
@@ -208,7 +208,7 @@ def main() -> None:
         _ptxt = "P<0.001" if (_p == _p and _p < 1e-3) else f"P={_p:.2g}"
         ax.set_title(f"shallow positive slope β={row.get('mixedlm_beta_per_SD', float('nan')):+.3f}/SD ({_ptxt})\n"
                      f"positive in {row['patients_positive_slope']}/{row['patients_tested']} patients "
-                     f"— direction, not magnitude")
+                     f": direction, not magnitude")
         ax.legend(fontsize=7, frameon=False)
         fig.tight_layout(); fig.savefig(os.path.join(args.out, "distance_to_lesion.png"), dpi=200,
                                         bbox_inches="tight"); plt.close(fig)

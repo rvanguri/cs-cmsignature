@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#SBATCH --job-name=hm_gsea_fig
+#SBATCH --job-name=cs_gsea_fig
 #SBATCH --partition=YOUR_PARTITION           # VERIFY
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=16G                       # 8G OOM'd rendering per-term GSEA plots; no_plot=True now
@@ -16,7 +16,7 @@ mkdir -p "${FIGURES}"
 # high-confidence set (NOT the pooled contrast as headline). Then all v2.1 figures + tables:
 # integration UMAPs, CM UMAP, volcanoes, DEG heatmap, GSEA dot plots, decontamination QC-gate fig,
 # procurement-robustness fig (TNNI3K/GJB7 highlighted; CM-dediff panel labeled non-specific control),
-# HeartMap positioning fig, Liu concordance heatmap, patient/region summary.
+# Cross-disease positioning fig, Liu concordance heatmap, patient/region summary.
 python "${HERE}/../scripts/run_gsea_figures.py" \
     --de "${DE_OUT}" \
     --liu "${DE_OUT}/liu_cs_vs_icm" \
@@ -32,11 +32,11 @@ if [[ -f "${FOONG}" && -d "${DE_OUT}/de_cm" ]]; then
     python "${HERE}/../scripts/annotate_foong_validation.py" \
         --de_dir "${DE_OUT}/de_cm" --foong "${FOONG}" \
         --out "${DE_OUT}/de_cm/CM_foong_validation.tsv"
-    # panel robustness sweep (Concern 4.3) reads the same de_cm tables + Foong csv
+    # panel robustness sweep reads the same de_cm tables + Foong csv
     python "${HERE}/../scripts/panel_robustness.py" \
         --de_dir "${DE_OUT}/de_cm" --foong "${FOONG}" \
         --out "${DE_OUT}/de_cm/panel_robustness.tsv" || true
 else
-    echo "Foong csv not found at ${FOONG} (or de_cm missing) — skipping external CM validation."
+    echo "Foong csv not found at ${FOONG} (or de_cm missing): skipping external CM validation."
     echo "Stage it:  mkdir -p ${PROJ}/external && cp <SIGDEG.csv> ${FOONG}"
 fi

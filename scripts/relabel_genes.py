@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Relabel a .h5ad's var_names from Ensembl IDs to HGNC symbols, IN PLACE.
 
-The pipeline's decontx step used Ensembl gene IDs as var_names, but the gene panels/markers (and the
-HeartMap atlas) use gene symbols — so panel/marker/gene-overlap operations silently matched nothing.
+The pipeline's decontx step used Ensembl gene IDs as var_names, but the gene panels/markers
+use gene symbols: so panel/marker/gene-overlap operations silently matched nothing.
 This maps Ensembl -> symbol using a 10x features.tsv.gz (col1=Ensembl, col2=Symbol) and renames, keeping
 the old id in var['ensembl']. Lets us fix already-computed outputs without re-running scANVI.
 

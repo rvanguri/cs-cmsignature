@@ -86,7 +86,7 @@ def main() -> None:
              adata.obs.loc[adata.obs["cell_type_harmonized"] != "Unknown",
                            "cell_type_harmonized"].nunique())
     if n_labeled == 0:
-        sys.exit("ERROR: no reference-labeled cells — scANVI needs >=1 labeled category. "
+        sys.exit("ERROR: no reference-labeled cells: scANVI needs >=1 labeled category. "
                  "Check that Reichart's decontx h5ad carries a 'cell_type' column and study=='%s'."
                  % args.reichart_labels)
 

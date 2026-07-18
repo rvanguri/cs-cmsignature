@@ -81,7 +81,7 @@ def main() -> None:
         samples = sorted(os.path.basename(p.rstrip("/"))
                          for p in glob.glob(os.path.join(args.raw, dataset, "*/")))
         if not samples:
-            LOG.warning("no sample folders under %s/%s — skipping", args.raw, dataset)
+            LOG.warning("no sample folders under %s/%s: skipping", args.raw, dataset)
             continue
         for sample in samples:
             disease, proc, region = infer(dataset, sample, cfg)
@@ -92,7 +92,7 @@ def main() -> None:
         LOG.info("%s: %d samples", dataset, len(samples))
 
     with open(args.out, "w") as f:
-        f.write("# auto-generated skeleton — FIX every 'TODO' and verify Neyazi region/procurement, sex.\n")
+        f.write("# auto-generated skeleton: FIX every 'TODO' and verify Neyazi region/procurement, sex.\n")
         f.write("# Reichart intentionally absent (metadata in its own obs).\n")
         f.write("\t".join(COLS) + "\n")
         for r in rows:

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Combined-evidence table across CS-vs-mimic contrasts for ANY compartment (no external validation).
 
-Same multi-contrast aggregation as the CM/Foong script, but Foong-free — for the T-cell and B-cell
+Same multi-contrast aggregation as the CM/Foong script, but Foong-free: for the T-cell and B-cell
 compartments (or any de_<lineage> dir). Ranks genes by how consistently they move across our contrasts,
 with an expression term so low-expression fold-change spikes don't dominate.
 

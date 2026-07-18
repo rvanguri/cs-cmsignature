@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#SBATCH --job-name=hm_relabel
+#SBATCH --job-name=cs_relabel
 #SBATCH --partition=YOUR_PARTITION          # VERIFY
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=160G

@@ -92,7 +92,7 @@ def main() -> None:
             ax.scatter(pcs.loc[p, "PC1"], pcs.loc[p, "PC2"], c=[c], marker=mk, s=55,
                        edgecolors="k", linewidths=0.3, alpha=0.85)
         ax.set_xlabel(f"PC1 ({ev[0]:.0f}%)"); ax.set_ylabel(f"PC2 ({ev[1]:.0f}%)")
-        ax.set_title(f"CM pseudobulk PCA ({tag}) — {title}")
+        ax.set_title(f"CM pseudobulk PCA ({tag}): {title}")
     # legends
     from matplotlib.lines import Line2D
     dl = [Line2D([0], [0], marker="o", color="w", markerfacecolor=DISEASE_COLORS.get(d, "#333"),

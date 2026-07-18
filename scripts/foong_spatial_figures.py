@@ -2,7 +2,7 @@
 """Spatial visualization of key CS marker programs in the Foong CS Visium data (GEO GSE314910).
 
 GSE314910 = 12 CS myocardial Visium samples (9 patients); CS-only, so there is no in-series CS-vs-HCM
-contrast — the value here is showing WHERE the validated CS programs sit in intact tissue, especially
+contrast: the value here is showing WHERE the validated CS programs sit in intact tissue, especially
 tertiary-lymphoid-structure (TLS)/B-cell niches. For each sample we render, per marker and per program
 signature score: spatial feature maps on the tissue, plus a cross-sample expression summary.
 

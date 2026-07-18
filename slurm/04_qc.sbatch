@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#SBATCH --job-name=hm_qc
+#SBATCH --job-name=cs_qc
 #SBATCH --partition=YOUR_PARTITION          # VERIFY. neyazi/reichart are big -> need headroom.
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=128G                       # was 32G -> OOM on neyazi/reichart during QC

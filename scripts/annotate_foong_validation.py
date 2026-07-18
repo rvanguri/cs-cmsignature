@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Cross-cohort CM validation: combine ALL our CS-vs-mimic contrasts with independent Foong replication.
 
-Foong et al. profiled cardiac sarcoidosis vs HCM in cardiomyocyte-dominant spatial (Visium) spots — an
+Foong et al. profiled cardiac sarcoidosis vs HCM in cardiomyocyte-dominant spatial (Visium) spots: an
 INDEPENDENT CS cohort on an INDEPENDENT platform. Our earlier version annotated only CS_vs_HCM, which
 (a) is our weakest contrast for the marquee genes and (b) mislabels genes like GJB7 as 'ns_ours' just
 because they miss significance in that one comparison. This version scores each gene on COMBINED
@@ -24,7 +24,7 @@ We reward EXPRESSION (expr_bonus), NOT raw |lfc|: a large pseudobulk logFC is us
 artifact of a near-absent gene. Genes significant+concordant across contrasts AND replicated in Foong
 float to the top; single-contrast, discordant, or low-expression genes sink.
 
-CAVEAT (Concern 1): the CS-vs-mimic contrasts feeding this table are cohort-confounded — CS is present
+CAVEAT: the CS-vs-mimic contrasts feeding this table are cohort-confounded: CS is present
 in only one study, so disease is aliased with study and these contrasts are HYPOTHESIS-GENERATING, not
 batch-clean. The genuinely independent column is the Foong spatial replication, not the contrasts; rank
 here is a candidate-prioritization aid, not specificity evidence. The Foong file is significant-only
@@ -106,7 +106,7 @@ def main() -> None:
              np.where(in_foong & ~same, "discordant", "unconfirmed_in_foong"))))
 
     # expression term: reward well-expressed genes, penalize low-expression fold-change spikes.
-    # (We deliberately do NOT reward raw |lfc| — a pseudobulk logFC of +8 is usually an on/off
+    # (We deliberately do NOT reward raw |lfc|: a pseudobulk logFC of +8 is usually an on/off
     # artifact of a near-absent gene, which is what surfaced CHRM5/GRIK1/ALK to the top before.)
     expr_bonus = np.clip((mean_aveexpr - args.expr_floor) / args.expr_scale, -1.0, 1.0).fillna(0)
 

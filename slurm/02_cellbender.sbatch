@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#SBATCH --job-name=hm_cellbender
+#SBATCH --job-name=cs_cellbender
 #SBATCH --partition=YOUR_PARTITION         # VERIFY name + MaxTime (sinfo -s). gpu8_* if you have it.
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=4

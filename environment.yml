@@ -1,13 +1,13 @@
-# Conda/mamba environment for the HeartMap-CS pipeline (analysis stack).
-# CellBender is NOT here — it runs in its own Singularity .sif (see cellbender.def / PLAN §2b)
+# Conda/mamba environment for the cs-cmsignature pipeline (analysis stack).
+# CellBender is NOT here: it runs in its own Singularity .sif (see cellbender.def / PLAN §2b)
 # to avoid CUDA/torch conflicts with scvi-tools.
 #
 # Create on persistent storage (NOT scratch):
 #   module load miniconda3
-#   mamba env create -f environment.yml -p $PROJ/env/conda/heartmap
-#   conda activate $PROJ/env/conda/heartmap
+#   mamba env create -f environment.yml -p $PROJ/env/conda/cs-cmsignature
+#   conda activate $PROJ/env/conda/cs-cmsignature
 #
-name: heartmap-cs
+name: cs-cmsignature
 channels:
   - conda-forge
   - bioconda
@@ -56,7 +56,7 @@ dependencies:
   - scipy
   - matplotlib
   - seaborn
-  # NOTE: pyega3 (EGA controlled-access downloads) is intentionally NOT in this env —
+  # NOTE: pyega3 (EGA controlled-access downloads) is intentionally NOT in this env:
   # it hard-pins tqdm==4.19.6, which is incompatible with scvi-tools (needs tqdm.auto, >=4.27).
   # The open reproduction uses Reichart via CELLxGENE (see download_reichart_cxg.py), so pyega3
   # is not needed. If you pursue the controlled EGA arm, install it in a SEPARATE env:

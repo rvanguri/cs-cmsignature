@@ -1,7 +1,8 @@
-# BigPurple setup runbook — environment + smoke test
+# Cluster setup runbook: environment + smoke test
 
-This is the **battle-tested** path: every step here reflects a real constraint we hit on BigPurple
-(login-node memory cap, GPFS quota, ancient system conda, the R↔Python bridge). Follow it top to bottom.
+This is the **battle-tested** path: every step here reflects a real constraint commonly hit on an
+HPC/SLURM cluster (login-node memory cap, shared-filesystem quota, an old system conda, the R↔Python
+bridge). Follow it top to bottom.
 
 Assumes the repo is deployed to `$PROJ` (clone or copy the bundle there) and you have edited
 `env/paths.sh` to set your `LAB` (and `KID` if it differs from `$USER`). Each pipeline runner
@@ -9,9 +10,9 @@ creates the output subdirs it needs via `mkdir -p`, so no separate scaffold step
 Replace `<conda-module>`, `<lab>`, `<kid>` where noted.
 
 > **TL;DR of the gotchas** (details inline below):
-> 1. System `conda` is 4.13 (can't solve this env) and a stray `mamba` on PATH is a test-runner — install a project **Miniforge**.
-> 2. Login nodes have a **~4 GB memory cap** → the env solve OOMs there → build inside a **32 GB `srun`**.
-> 3. `/gpfs/data` has a **space + inode quota** that a conda env (and the 80 GB atlas) blow → put the env + package cache on **scratch** for now; raise the lab quota for the long term.
+> 1. An old system `conda` may not solve this env and a stray `mamba` on PATH can be an unrelated test-runner: install a project **Miniforge**.
+> 2. Login nodes often have a **small memory cap** (e.g. ~4 GB) → the env solve OOMs there → build inside a **32 GB `srun`**.
+> 3. Persistent storage (`/gpfs/data`) often has a **space + inode quota** that a conda env can blow → put the env + package cache on **scratch** for now; raise the lab quota for the long term.
 > 4. The R `anndata` reader uses **reticulate** → must point it at the env's Python (handled by `modules.sh`).
 
 ---
@@ -19,23 +20,23 @@ Replace `<conda-module>`, `<lab>`, `<kid>` where noted.
 ## 0. Paths
 
 ```bash
-ssh <kid>@bigpurple.nyumc.org
-source /gpfs/data/<lab>/heartmap-cs/env/paths.sh
+ssh <kid>@<cluster-login-host>
+source /gpfs/data/<lab>/cs-cmsignature/env/paths.sh
 echo "$PROJ $SCRATCH_ROOT $CONDA_ENV"
 ```
 
 ## 1. tmux (so long builds survive disconnects)
 
 ```bash
-tmux new -s heartmap
+tmux new -s cs-cmsignature
 source $PROJ/env/paths.sh
 ```
-Detach: **Ctrl-b** then **d**. Reattach: `tmux attach -t heartmap`. List: `tmux ls`.
+Detach: **Ctrl-b** then **d**. Reattach: `tmux attach -t cs-cmsignature`. List: `tmux ls`.
 
 ## 2. Install project-local Miniforge
 
-The system `conda` (4.13) has no libmamba and hangs; the `mamba` already on PATH is an unrelated Python
-test runner. Install your own:
+If the system `conda` has no libmamba it may hang, and a `mamba` already on PATH can be an unrelated
+Python test runner. Install your own:
 
 ```bash
 cd $PROJ/env
@@ -47,19 +48,20 @@ which mamba          # must be $PROJ/env/miniforge/bin/mamba
 
 ## 3. Put the env + package cache on scratch (quota), and add both to paths.sh
 
-`/gpfs/data` quota (space **and** inodes) can't hold a conda env alongside the 80 GB atlas. Until the
-lab quota is raised, host the env on scratch. Edit `$PROJ/env/paths.sh` so these are the values:
+The persistent-storage quota (space **and** inodes) may not hold a conda env alongside large data.
+Until the lab quota is raised, host the env on scratch. Edit `$PROJ/env/paths.sh` so these are the
+values:
 
 ```bash
-export CONDA_ENV="$SCRATCH_ROOT/conda/heartmap"     # was $PROJ/env/conda/heartmap
+export CONDA_ENV="$SCRATCH_ROOT/conda/cs-cmsignature"     # was $PROJ/env/conda/cs-cmsignature
 export CONDA_PKGS_DIRS="$SCRATCH_ROOT/conda_pkgs"   # add this line (package cache off /gpfs/data)
 ```
 
 Then re-source: `source $PROJ/env/paths.sh`.
 
-> **Scratch is purged.** This is fine for getting running now. For the real runs, email
+> **Scratch is purged.** This is fine for getting running now. For the real runs, ask
 > your HPC support team to raise the lab `/gpfs/data` **inode** quota (a conda env is ~150k+ files),
-> then rebuild the env under `$PROJ` and point `CONDA_ENV` back. Also keep the 80 GB HeartMap atlas on
+> then rebuild the env under `$PROJ` and point `CONDA_ENV` back. Also keep any large reference data on
 > scratch or its own allocation, not eating the lab data quota.
 
 ## 4. Build the env inside a 32 GB interactive job (NOT on the login node)
@@ -80,7 +82,7 @@ mamba env create -f $PROJ/env/environment.yml -p $CONDA_ENV 2>&1 | tee $PROJ/env
 ```
 
 If you ever see truncated-write / "Failed to create dir" errors mid-extraction, that's a **quota**
-hit — clean the partial cache (`rm -rf $CONDA_PKGS_DIRS/* $CONDA_ENV`) and make sure step 3 pointed
+hit: clean the partial cache (`rm -rf $CONDA_PKGS_DIRS/* $CONDA_ENV`) and make sure step 3 pointed
 both at scratch, then rebuild.
 
 ## 5. Verify
@@ -100,7 +102,7 @@ Python `anndata` via the env's Python).
 condensed copy on the cluster earlier, re-sync the bundle's version:
 
 ```bash
-rsync -av ~/cowork-heartmap-cs/env/modules.sh <kid>@bigpurple.nyumc.org:$PROJ/env/
+rsync -av ./env/modules.sh <kid>@<cluster-login-host>:$PROJ/env/
 ```
 Verify the Singularity line matches reality: `module avail singularity`.
 
@@ -112,7 +114,7 @@ Always submit from `$PROJ/slurm`:
 cd $PROJ/slurm
 sbatch smoke_test.sbatch
 squeue -u $USER
-cat hm_smoke_*.out | tail -20      # newest job: want PASS=11  FAIL=0
+cat cs_smoke_*.out | tail -20      # newest job: want PASS=11  FAIL=0
 ```
 
 The smoke test points `gates`/`pseudobulk_de` at the synthetic ground-truth `cell_type` column (a
@@ -131,7 +133,7 @@ SMOKE_CELLBENDER=1 sbatch --partition=gpu4_short --gres=gpu:1 smoke_test.sbatch
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| Job FAILs at `00:00:00`, ~6 MB RSS | `BASH_SOURCE` points at Slurm spool dir; `paths.sh` not sourced | scripts now anchor on `SLURM_SUBMIT_DIR` — submit from `$PROJ/slurm` |
+| Job FAILs at `00:00:00`, ~6 MB RSS | `BASH_SOURCE` points at Slurm spool dir; `paths.sh` not sourced | scripts now anchor on `SLURM_SUBMIT_DIR`: submit from `$PROJ/slurm` |
 | `mamba: unrecognized arguments: -p` | stray `mamba` test-runner on PATH | use `$PROJ/env/miniforge/bin/mamba` |
 | Solve hangs at "Collecting package metadata" | system conda 4.13, classic solver | use Miniforge mamba |
 | `mamba` exits 137, `oom-kill ... task=mamba` | login-node ~4 GB cap | build in a 32 GB `srun` |
@@ -139,12 +141,12 @@ SMOKE_CELLBENDER=1 sbatch --partition=gpu4_short --gres=gpu:1 smoke_test.sbatch
 | `ModuleNotFoundError: No module named 'anndata'` (from R) | reticulate using wrong Python | `RETICULATE_PYTHON=$CONDA_PREFIX/bin/python` (in `modules.sh`) |
 | `there is no package called 'optparse'` | R deps missing | `r-optparse`, `r-anndata`, `bioconductor-dropletutils` now in `environment.yml` |
 | `CM nuclei: 0` / `'counts' must contain at least one value` | 2-epoch scANVI predicts no CMs on toy data | smoke uses `--celltype_col cell_type` |
-| `scib metrics skipped` | scanpy/scib version drift | harmless; optional kBET/LISI only — pin scib if you want them |
+| `scib metrics skipped` | scanpy/scib version drift | harmless; optional kBET/LISI only: pin scib if you want them |
 
-## Once FAIL=0 — moving to real data
+## Once FAIL=0: moving to real data
 
-1. Raise the lab `/gpfs/data` inode quota (hpc_admins), rebuild env under `$PROJ`, repoint `CONDA_ENV`.
-2. Stage real data per `README.md` (GEO + Reichart CELLxGENE + HeartMap atlas) and fill
+1. Raise the lab `/gpfs/data` inode quota (your HPC support team), rebuild env under `$PROJ`, repoint `CONDA_ENV`.
+2. Stage real data per `README.md` (GEO + Reichart CELLxGENE) and fill
    `raw/sample_meta.tsv`.
 3. `build_manifest.py`, set `02_cellbender.sbatch --array=1-N%4`, then `bash submit_all.sh`.
 4. Review the two gates (`$PROJ/de/gates/`) before trusting any DEG.

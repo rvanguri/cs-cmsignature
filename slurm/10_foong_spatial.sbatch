@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#SBATCH --job-name=hm_foong
+#SBATCH --job-name=cs_foong
 #SBATCH --partition=YOUR_PARTITION           # VERIFY (download needs internet egress; data_mover if needed)
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=32G

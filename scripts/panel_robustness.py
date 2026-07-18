@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Robustness of the four-gene CS-CM panel to scoring/threshold choices (Concern 4.3).
+"""Robustness of the four-gene CS-CM panel to scoring/threshold choices.
 
 The evidence ranking uses hand-set thresholds (fdr, lfc, expression floor). This checks that the
 canonical panel (GJB7, TNNI3K, MLIP, PANK1) is stable across a grid of reasonable settings, and gives

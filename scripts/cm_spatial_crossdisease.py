@@ -36,7 +36,7 @@ LINEAGES = {
 #    as a contrast/positive-control axis to test whether CM_intrinsic co-localizes with inflammation.
 #    It mixes inflammasome (NLRC4, IL1RAP) and lymphoid/TLS (BACH2, IL7) markers of the granuloma
 #    compartment; it is NOT a cardiomyocyte-intrinsic program. The 4th gene is IL7 (a prior variant in
-#    foong_spatial_figures.py used CASP4 — deprecated; IL7 is the version scored in Panel D).
+#    foong_spatial_figures.py used CASP4: deprecated; IL7 is the version scored in Panel D).
 CS_CM_SIGS = {
     "CM_intrinsic":  ["GJB7", "TNNI3K", "MLIP", "PANK1"],
     "inflammatory":  ["NLRC4", "IL1RAP", "BACH2", "IL7"],   # granuloma-inflammation reference (curated)
@@ -136,7 +136,7 @@ def main() -> None:
                     LOG.warning("spatial plot %s/%s failed (%s)", cond, name, e)
 
     if not rows:
-        sys.exit("no CM-dominant spots scored — check manifest paths / marker presence")
+        sys.exit("no CM-dominant spots scored: check manifest paths / marker presence")
     df = pd.DataFrame(rows)
     df.to_csv(os.path.join(args.out, "cm_dominant_scores.tsv"), sep="\t", index=False)
     genedf = pd.DataFrame(gene_rows)

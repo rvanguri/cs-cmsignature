@@ -1,4 +1,4 @@
-# sample_meta.TEMPLATE.tsv — copy to  $PROJ/raw/sample_meta.tsv  and fill one row per sample.
+# sample_meta.TEMPLATE.tsv: copy to  $PROJ/raw/sample_meta.tsv  and fill one row per sample.
 #
 # TAB-separated. Lines starting with '#' are ignored by build_manifest.py.
 # Columns: sample_id  dataset  accession  chemistry  procurement  region  disease  sex  individual
@@ -8,21 +8,21 @@
 #   - procurement: explant | VAD | autopsy | myectomy | donor   (drives the procurement-robustness gate)
 #   - region    : LV | RV | IVS | SP | apex   (goes into the DE model as 'anatomy')
 #   - disease   : CS | DCM | ICM | ARVC | HCM | NF
-#   - sex       : M | F | NA   (NA if unknown; fill where you can — it's a DE covariate)
+#   - sex       : M | F | NA   (NA if unknown; fill where you can: it's a DE covariate)
 #   - individual: donor id; default = sample_id if one sample per donor. Set the SAME value across a
 #                 donor's multiple samples so the DE model groups them (enables duplicateCorrelation).
 #
 # WHICH DATASETS NEED ROWS HERE:
 #   These go through CellBender (per-sample raw matrices) and have NO embedded metadata, so they REQUIRE
 #   rows: Neyazi, Larson, Chin2022, Chin2021, and Liu (5' standalone).
-#   Reichart is a single CELLxGENE h5ad whose obs already carries disease/region/sex — it does NOT need
-#   rows here (it isn't in the CellBender array). Same for the HeartMap atlas arms (atlas-transfer).
+#   Reichart is a single CELLxGENE h5ad whose obs already carries disease/region/sex: it does NOT need
+#   rows here (it isn't in the CellBender array).
 #
 # The rows below are EXAMPLES with the constant columns pre-filled per the plan. Replace the placeholder
 # sample_ids with your real ones and expand to the full sample counts (e.g. Neyazi has 41 CS samples).
 #
 sample_id	dataset	accession	chemistry	procurement	region	disease	sex	individual
-# ---- Neyazi CS (GSE319770, 3' v3, explant/VAD/autopsy, LV/RV/SP). 41 samples — expand this block. ----
+# ---- Neyazi CS (GSE319770, 3' v3, explant/VAD/autopsy, LV/RV/SP). 41 samples: expand this block. ----
 NEYAZI_CS01	neyazi	GSE319770	3p	explant	LV	CS	NA	NEYAZI_CS01
 NEYAZI_CS02	neyazi	GSE319770	3p	explant	RV	CS	NA	NEYAZI_CS02
 NEYAZI_CS03	neyazi	GSE319770	3p	VAD	LV	CS	NA	NEYAZI_CS03

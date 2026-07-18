@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Download the Foong cardiac-sarcoidosis spatial (Visium) series from GEO into $FOONG_DIR.
 # Accession is provided via $FOONG_GSE (e.g. GSE######). We do NOT hard-code it because the
-# exact series could not be verified programmatically — set it from the paper's Data Availability.
+# exact series could not be verified programmatically: set it from the paper's Data Availability.
 #
 # GEO FTP layout: https://ftp.ncbi.nlm.nih.gov/geo/series/<STUB>/<GSE>/suppl/
 #   where <STUB> = GSE + (accession-number with the last 3 digits replaced by 'nnn')
@@ -21,7 +21,7 @@ mkdir -p "${FOONG_DIR}"
 echo "[foong] downloading ${url} -> ${FOONG_DIR}"
 # -r recursive, -np no parent, -nd flatten, -e robots=off, retry, continue partial
 wget -r -np -nd -e robots=off --tries=3 --continue -P "${FOONG_DIR}" "${url}" \
-  || { echo "[foong] wget failed — check FOONG_GSE=${acc} / network egress on this node"; exit 1; }
+  || { echo "[foong] wget failed: check FOONG_GSE=${acc} / network egress on this node"; exit 1; }
 
 echo "[foong] extracting archives (RAW.tar, then any nested per-sample archives)"
 shopt -s nullglob

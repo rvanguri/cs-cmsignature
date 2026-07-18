@@ -1,37 +1,36 @@
 # Cardiac Sarcoidosis Cardiomyocyte Signature
 
-Integrative single-nucleus and spatial transcriptomic analysis defining a **cell-autonomous
-cardiomyocyte transcriptional signature of cardiac sarcoidosis (CS)**. Candidate genes are
-nominated from cohort-confounded cross-cardiomyopathy single-nucleus contrasts (treated as
-hypothesis-generating), then validated on two independent, batch-clean tiers: a within-study
-CS-versus-ICM single-nucleus comparison (Liu et al., GSE205734) and spatial (Visium)
-transcriptomics of intact CS myocardium (Foong et al., GSE314910). A within-patient
-mixed-effects distance-to-lesion analysis establishes cell-autonomy. The pipeline runs on an
-HPC cluster (SLURM; developed on NYU BigPurple) via conda + Singularity.
+Integrative single-nucleus and spatial transcriptomic datasets were used to suggest a
+**cardiomyocyte transcriptional signature associated with cardiac sarcoidosis (CS)**. Candidate
+genes are nominated by comparing CS to multiple cardiomyopathies and non-failing hearts with
+publicly available snRNA-seq. The genes were then validated on two independent datasets: a
+CS-versus-ICM single-nucleus comparison (Liu et al., Circulation Research, GSE205734) and spatial
+(Visium) transcriptomics of intact CS myocardium (Foong et al., Journal of Cardiac Failure:
+Intersections, GSE314910). A within-patient mixed-effects distance-to-lesion analysis establishes
+the cell-autonomous nature of our gene signature. The pipeline runs on an HPC cluster with SLURM
+job management system via conda and singularity.
 
-This repository accompanies the Research Letter *"Integrative Dissociated Molecular and Spatial
-Transcriptomics Identify a Unique Cardiomyocyte Signature in Cardiac Sarcoidosis"* (target:
-*Circulation: Genomic and Precision Medicine*). The manuscript itself is not part of this
-repository; only analysis code and derived result tables are included.
+This repository of analysis code accompanies the Research Letter *"Toward a Molecular Diagnosis of
+Cardiac Sarcoidosis with a Cardiomyocyte-Intrinsic Transcriptional Signature"*. The manuscript
+itself is not part of this repository; only analysis code and derived result tables are included.
 
 ## Key result
 
-The analysis defines a four-gene cell-autonomous cardiomyocyte signature of cardiac sarcoidosis:
+The analysis suggests a four-gene cell-autonomous cardiomyocyte signature of cardiac sarcoidosis:
 
 > **GJB7, TNNI3K, MLIP, PANK1**
 
-The validation design is deliberately tiered and confound-aware:
+The validation design is tiered and aware of confounds:
 
 - The **cross-cardiomyopathy discovery contrasts** (CS versus DCM / ARVC / HCM / non-failing,
-  assembled across cohorts) are **cohort-confounded** — cardiac sarcoidosis is contributed by a
-  single cohort, so disease is aliased with batch and the pseudobulk design matrix is
-  rank-deficient. These contrasts are **hypothesis-generating only** and do not, on their own,
-  support the signature claim.
-- The claim is carried by two **independent, batch-clean tiers**:
-  1. **Within-study Liu CS-vs-ICM** (GSE205734) — CS and ICM are compared inside a single cohort,
+  assembled across cohorts) are **cohort-confounded** as cardiac sarcoidosis is contributed by a
+  single cohort in the discovery phase. These contrasts are **hypothesis-generating** and do not
+  on their own support the signature claim.
+- Instead, the claim is carried by two **independent tiers**:
+  1. **Within-study Liu CS-vs-ICM** (GSE205734): CS and ICM are compared inside a single cohort,
      removing the cross-cohort batch confound.
-  2. **Foong spatial (Visium)** (GSE314910) — the signature is validated in intact CS myocardium,
-     including a within-patient distance-to-lesion mixed-effects model that establishes
+  2. **Foong spatial (Visium)** (GSE314910): the signature is further validated in intact CS
+     myocardium, including a within-patient distance-to-lesion mixed-effects model that establishes
      cell-autonomy (the signal tracks cardiomyocytes rather than infiltrating immune/granuloma
      content).
 
@@ -41,7 +40,6 @@ The validation design is deliberately tiered and confound-aware:
 /
 ├── README.md                # this file
 ├── LICENSE                  # MIT
-├── CITATION.cff
 ├── .gitignore
 ├── .gitattributes           # Git LFS patterns for large result tables
 ├── environment.yml          # conda environment (also in env/)
@@ -54,7 +52,7 @@ The validation design is deliberately tiered and confound-aware:
 ├── slurm/                   # SLURM runners, steps 00–11 + smoke_test + submit_all.sh
 ├── docs/
 │   ├── pipeline.md          # pipeline overview
-│   ├── setup_bigpurple.md   # cluster setup notes
+│   ├── setup_cluster.md     # cluster setup notes
 │   ├── next_steps.md
 │   └── data_availability.md # accession table
 ├── metadata/
@@ -72,15 +70,15 @@ The validation design is deliberately tiered and confound-aware:
 All datasets are publicly available and de-identified. No raw data is redistributed in this
 repository; only analysis code and derived result tables are included.
 
-| Cohort (label in code) | Modality | Disease(s) | Accession |
-|---|---|---|---|
-| Neyazi | single-nucleus RNA-seq + spatial | Cardiac sarcoidosis | GSE319770 / GSE319771 |
-| Reichart | single-nucleus RNA-seq | Dilated & arrhythmogenic cardiomyopathy; non-failing control | EGAS00001006374 |
-| Larson | single-nucleus RNA-seq | Hypertrophic cardiomyopathy | GSE174691 |
-| Chin (2022) | single-nucleus RNA-seq | Hypertrophic cardiomyopathy (+ non-failing) | GSE181764 |
-| Chin (2021) | single-nucleus RNA-seq | Non-failing control | GSE161921 |
-| Liu | single-nucleus RNA-seq | Cardiac sarcoidosis; ischemic cardiomyopathy (4 CS + 3 ICM) | GSE205734 |
-| Foong | spatial transcriptomics (Visium) | Cardiac sarcoidosis | GSE314910 |
+| Cohort (label in code) | Modality | Disease(s) | Accession | Source publication |
+|---|---|---|---|---|
+| Neyazi | single-nucleus RNA-seq + spatial | Cardiac sarcoidosis | GSE319770 / GSE319771 | Neyazi et al. (in press) |
+| Reichart | single-nucleus RNA-seq | Dilated & arrhythmogenic cardiomyopathy; non-failing control | EGAS00001006374 | Reichart et al., *Science* 2022, [10.1126/science.abo1984](https://doi.org/10.1126/science.abo1984) |
+| Larson | single-nucleus RNA-seq | Hypertrophic cardiomyopathy | GSE174691 | Larson et al., *Sci Rep* 2022, [10.1038/s41598-022-08561-x](https://doi.org/10.1038/s41598-022-08561-x) |
+| Chin (2022) | single-nucleus RNA-seq | Hypertrophic cardiomyopathy (+ non-failing) | GSE181764 | Codden et al., *Int J Mol Sci* 2022, [10.3390/ijms23020946](https://doi.org/10.3390/ijms23020946) |
+| Chin (2021) | single-nucleus RNA-seq | Non-failing control | GSE161921 | Larson et al., *BMC Med Genomics* 2021, [10.1186/s12920-021-01011-z](https://doi.org/10.1186/s12920-021-01011-z) |
+| Liu | single-nucleus RNA-seq | Cardiac sarcoidosis; ischemic cardiomyopathy (4 CS + 3 ICM) | GSE205734 | Liu et al., *Circ Res* 2022, [10.1161/CIRCRESAHA.121.320449](https://doi.org/10.1161/CIRCRESAHA.121.320449) |
+| Foong | spatial transcriptomics (Visium) | Cardiac sarcoidosis | GSE314910 | Foong et al., *J Card Fail Intersect* 2026, [10.1016/j.yjcafi.2025.12.009](https://doi.org/10.1016/j.yjcafi.2025.12.009) |
 
 ## Pipeline / reproducibility
 
@@ -125,29 +123,29 @@ The analysis environment is a conda environment defined in `environment.yml`:
 
 ```bash
 conda env create -f environment.yml
-conda activate heartmap
+conda activate cs-cmsignature
 ```
 
 CellBender runs from a Singularity image built from `env/cellbender.def` (or pulled directly, as in
-step 00). The pipeline targets a SLURM cluster and was developed on NYU BigPurple.
+step 00). The pipeline targets a SLURM cluster.
 
 `env/paths.sh` centralizes all paths and cluster identity; **edit the `LAB` variable** (your
 `/gpfs/data/<lab>` group) before running. `env/modules.sh` handles Lmod module loading and conda
 activation. Both are sourced by every `sbatch` runner. The `#SBATCH --account` / `--partition`
-lines and any cluster-specific paths are placeholders (`YOUR_ACCOUNT`, `YOUR_PARTITION`) — set them
+lines and any cluster-specific paths are placeholders (`YOUR_ACCOUNT`, `YOUR_PARTITION`): set them
 for your site (verify partitions with `sinfo -s`).
 
 ## How to reproduce from public data
 
-1. **Download** (step 01) — fetch the public datasets in the accession table and build the manifest.
-2. **Decontaminate** (steps 02–03) — CellBender + DecontX ambient-RNA correction.
-3. **QC & integrate** (steps 04–05) — per-dataset QC, then scANVI integration.
-4. **Gates** (step 06) — cell-type gate validation.
-5. **Pseudobulk DE** (step 07) — cross-cardiomyopathy contrasts (hypothesis-generating).
-6. **Liu within-study** (step 08) — batch-clean CS-vs-ICM validation tier.
-7. **GSEA / validation / robustness** (step 09) — enrichment, Foong annotation, panel robustness.
-8. **Spatial** (step 10) — Foong Visium figures.
-9. **CM signature** (step 11) — within-patient distance-to-lesion, cross-disease spatial, CM-content
+1. **Download** (step 01): fetch the public datasets in the accession table and build the manifest.
+2. **Decontaminate** (steps 02–03): CellBender + DecontX ambient-RNA correction.
+3. **QC & integrate** (steps 04–05): per-dataset QC, then scANVI integration.
+4. **Gates** (step 06): cell-type gate validation.
+5. **Pseudobulk DE** (step 07): cross-cardiomyopathy contrasts (hypothesis-generating).
+6. **Liu within-study** (step 08): batch-clean CS-vs-ICM validation tier.
+7. **GSEA / validation / robustness** (step 09): enrichment, Foong annotation, panel robustness.
+8. **Spatial** (step 10): Foong Visium figures.
+9. **CM signature** (step 11): within-patient distance-to-lesion, cross-disease spatial, CM-content
    normalization, regional analysis. Assemble Figure 1 with `composite_figure.py`.
 
 ## Known limitations
@@ -165,11 +163,9 @@ These are inherent to the design and data, and are documented here for anyone re
 
 ## Citation
 
-If you use this software or its results, please cite the associated article. See
-[`CITATION.cff`](CITATION.cff). The manuscript DOI will be added on publication.
-
-**Contact:** Rami Vanguri (corresponding author) — r.vanguri@pitt.edu
+If you use this software or its results, please cite the associated article. The manuscript DOI
+will be added on publication.
 
 ## License
 
-MIT — see [`LICENSE`](LICENSE).
+MIT: see [`LICENSE`](LICENSE).

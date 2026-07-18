@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-#SBATCH --job-name=hm_scanvi
+#SBATCH --job-name=cs_scanvi
 #SBATCH --partition=YOUR_PARTITION           # VERIFY name/limits (sinfo -s). Needs a long GPU queue + big RAM.
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=192G                       # >1M nuclei (Reichart 880k dominates); 64G OOM'd on concat.
                                          # If the GPU partition can't give 192G, drop --gres and use a
-                                         # high-mem CPU node (fn_*, --mem=256G) — slower but works.
+                                         # high-mem CPU node (fn_*, --mem=256G): slower but works.
 #SBATCH --time=12:00:00
 #SBATCH --output=%x_%j.out
 #SBATCH --error=%x_%j.err

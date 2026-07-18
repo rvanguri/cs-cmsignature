@@ -1,4 +1,4 @@
-# Singularity definition for CellBender (GPU) on BigPurple.
+# Singularity definition for CellBender (GPU) on an HPC/SLURM cluster.
 #
 # EASIEST PATH (recommended): skip building, just pull the Broad image into a .sif:
 #   module load singularity/3.x
@@ -29,5 +29,5 @@ From: nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04
     exec cellbender "$@"
 
 %labels
-    Pipeline heartmap-cs
+    Pipeline cs-cmsignature
     Component CellBender-GPU

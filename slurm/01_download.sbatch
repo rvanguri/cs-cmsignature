@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#SBATCH --job-name=hm_download
+#SBATCH --job-name=cs_download
 #SBATCH --partition=YOUR_PARTITION           # data_mover if available for large pulls; VERIFY
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=8G

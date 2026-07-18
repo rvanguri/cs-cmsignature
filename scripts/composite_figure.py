@@ -121,7 +121,7 @@ else:
     axE.plot(xs, b[0]*xs+b[1], "r-", lw=1.5, label="spot-level linear fit")
     axE.legend(fontsize=5.5, frameon=False, loc="upper left")
 axE.set_xlabel("distance to nearest lesion (within-sample z)"); axE.set_ylabel("CM-intrinsic score")
-axE.set_title("shallow positive slope β=+0.044/SD (P<0.001),\npositive in 8/8 patients — direction, not magnitude", fontsize=7.5)
+axE.set_title("shallow positive slope β=+0.044/SD (P<0.001),\npositive in 8/8 patients: direction, not magnitude", fontsize=7.5)
 panel_label(axE, "E")
 
 # ---- F: representative spatial H&E-paired map ----

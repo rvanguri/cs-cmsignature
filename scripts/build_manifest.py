@@ -85,7 +85,7 @@ def load_meta(raw_root: str) -> dict[str, list[str]]:
                 # sample_id, dataset, accession, chemistry, procurement, region
                 meta[p[0]] = (p + ["NA"] * 6)[1:6]
     else:
-        LOG.warning("no sample_meta.tsv in %s — dataset/procurement/region will be NA", raw_root)
+        LOG.warning("no sample_meta.tsv in %s: dataset/procurement/region will be NA", raw_root)
     return meta
 
 

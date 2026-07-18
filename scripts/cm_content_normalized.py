@@ -6,7 +6,7 @@ in CS cardiomyocyte-dominant spots could just mean those spots are more CM-pure.
 each signature gene is elevated in CS BEYOND what the spot's cardiomyocyte content predicts.
 
 For each dataset we take CM-dominant spots, compute per-spot CM_content = mean expression of canonical
-CM structural markers (TNNT2/MYH7/TTN/ACTN2/MYL2/MYBPC3/TNNI3 — disjoint from the signature), then per
+CM structural markers (TNNT2/MYH7/TTN/ACTN2/MYL2/MYBPC3/TNNI3: disjoint from the signature), then per
 signature gene report:
   - raw median (CS vs control)
   - ratio median: expr / CM_content (CS vs control) + Mann-Whitney

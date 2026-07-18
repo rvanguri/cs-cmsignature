@@ -28,7 +28,7 @@ def main() -> None:
     ap.add_argument("--max_mt", type=float, default=5.0)
     ap.add_argument("--sample_meta", default="",
                     help="sample_meta.tsv to merge disease/procurement/region/sex/individual onto obs "
-                         "(keyed by sample_id; non-destructive — won't overwrite columns already present)")
+                         "(keyed by sample_id; non-destructive: won't overwrite columns already present)")
     args = ap.parse_args()
     require(args.counts, "decontaminated counts")
     ensure_dir(os.path.dirname(args.out) or ".")
@@ -66,7 +66,7 @@ def main() -> None:
             adata.obs["individual"] = (adata.obs["individual"].astype(object)
                                        .fillna(adata.obs["sample_id"].astype(object)).astype(str))
     elif "sample_id" not in adata.obs:
-        LOG.warning("no 'sample_id' in obs — skipping sample_meta merge (Reichart/atlas carry own obs)")
+        LOG.warning("no 'sample_id' in obs: skipping sample_meta merge (Reichart/atlas carry own obs)")
 
     # --- harmonize disease labels to one vocab (CELLxGENE ontology strings -> DCM/ARVC/NF/...) ---
     if "disease" in adata.obs.columns:
@@ -96,7 +96,7 @@ def main() -> None:
 
     # doublets on decontaminated counts. Scrublet simulates doublets by DOUBLING the matrix, so its peak
     # memory scales with the largest object it processes. Run it PER SAMPLE (batch_key="sample_id") so the
-    # peak is bounded by the largest single sample, not the whole cohort — a multi-sample dataset like
+    # peak is bounded by the largest single sample, not the whole cohort: a multi-sample dataset like
     # neyazi (41 samples, ~283k nuclei total but only ~7-15k per sample) then gets doublet-filtered exactly
     # as intended without OOM. A pre-curated single mega-object with no per-sample structure (e.g. Reichart,
     # one ~880k-nucleus CELLxGENE object, no sample_id) has no batching to bound the peak, so it is skipped
@@ -118,7 +118,7 @@ def main() -> None:
                          args.dataset, n_before - adata.n_obs, batch_key,
                          adata.obs[batch_key].nunique() if batch_key else 1)
         except Exception as e:  # noqa: BLE001
-            LOG.warning("scrublet skipped (%s) — run scDblFinder in R as fallback", e)
+            LOG.warning("scrublet skipped (%s): run scDblFinder in R as fallback", e)
 
     adata.write_h5ad(args.out)
     LOG.info("%s QC: %d -> %d nuclei -> %s", args.dataset, n0, adata.n_obs, args.out)

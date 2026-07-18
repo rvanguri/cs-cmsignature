@@ -82,7 +82,7 @@ def main() -> None:
                  int((~keep).sum()), len(cats), args.min_cells)
     pb, cats, ncell = pb[keep], cats[keep], ncell[keep]
     if len(cats) < 4:
-        sys.exit("[%s] only %d patients survive the >=%d-cell filter — too few for DE"
+        sys.exit("[%s] only %d patients survive the >=%d-cell filter: too few for DE"
                  % (args.label, len(cats), args.min_cells))
 
     genes = sub.var_names.astype(str)

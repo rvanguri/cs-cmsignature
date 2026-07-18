@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# CM pseudobulk DE, HeartMap model (Plan Step 7). The heavy CM aggregation over ~1M cells is done in
+# CM pseudobulk DE model (Plan Step 7). The heavy CM aggregation over ~1M cells is done in
 # Python (pseudobulk_cm.py, backed read) which writes a small genes x patients table; this script just
 # runs limma-voom (design ~ 0 + disease + study + anatomy + sex, duplicateCorrelation on individual) on
 # that small table -> no big in-memory object here.
@@ -37,14 +37,14 @@ keep <- filterByExpr(dge, group = pmeta[[opt$disease_col]])
 dge  <- dge[keep, , keep.lib.sizes = FALSE]
 dge  <- calcNormFactors(dge)
 
-# ---- metadata completeness guard (Concern 8) ----
+# ---- metadata completeness guard ----
 # Missing/NA disease or study silently corrupts the design (mis-assigned contrasts / hidden batch).
 # Hard-fail on those; loudly warn on anatomy/sex (missing covariates become an explicit level, which
 # is modeled, not silently dropped).
 .na_like <- function(v) is.na(v) | trimws(as.character(v)) %in% c("", "NA", "nan", "None", "NaN")
 for (mc in c(opt$disease_col, opt$study_col)) {
   bad <- .na_like(pmeta[[mc]])
-  if (any(bad)) stop(sprintf("[DE] %d/%d patients have missing/NA '%s' — refusing to build a corrupted "
+  if (any(bad)) stop(sprintf("[DE] %d/%d patients have missing/NA '%s': refusing to build a corrupted "
                              , sum(bad), nrow(pmeta), mc),
                      "design. Complete cm_pseudobulk_meta.tsv (upstream: sample_meta.tsv) before DE.")
 }
@@ -71,7 +71,7 @@ if (length(dropped))
                   paste(dropped, collapse = ", ")))
 design  <- model.matrix(as.formula(paste("~", paste(c("0", "disease", kept), collapse = " + "))))
 
-# ---- rank / estimability guard (Concern 1) ----
+# ---- rank / estimability guard ----
 # If a disease is present in only one study, its disease coefficient is perfectly aliased with that
 # study coefficient (e.g. CS == neyazi). limma would silently NA-drop an aliased coefficient and
 # emit normal-looking topTables, so the resulting disease contrasts are batch-confounded, NOT
@@ -128,7 +128,7 @@ for (nm in names(contrasts)) {
   cm_fit <- contrasts.fit(fit, contrasts[[nm]])
   cm_fit <- eBayes(cm_fit)
   tt <- topTable(cm_fit, number = Inf, sort.by = "P")
-  # Provenance stamp IN THE FILE (Concern 1): anyone reading the topTable months later must see the
+  # Provenance stamp IN THE FILE: anyone reading the topTable months later must see the
   # design status without consulting stderr. If a CS contrast is confounded, mark it per-row.
   contrast_confounded <- design_status != "full_rank" &&
     any(sapply(single_study, function(d) grepl(d, nm, ignore.case = TRUE)))
