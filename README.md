@@ -1,18 +1,17 @@
 # Cardiac Sarcoidosis Cardiomyocyte Signature
 
-Integrative single-nucleus and spatial transcriptomic datasets were used to suggest a
+Integrative single-nucleus and spatial transcriptomic datasets were analyzed to suggest a
 **cardiomyocyte transcriptional signature associated with cardiac sarcoidosis (CS)**. Candidate
-genes are nominated by comparing CS to multiple cardiomyopathies and non-failing hearts with
-publicly available snRNA-seq. The genes were then validated on two independent datasets: a
+genes were nominated by comparing CS to multiple cardiomyopathies and non-failing hearts with
+publicly available snRNA-seq. The genes were validated in two independent datasets: a
 CS-versus-ICM single-nucleus comparison (Liu et al., Circulation Research, GSE205734) and spatial
 (Visium) transcriptomics of intact CS myocardium (Foong et al., Journal of Cardiac Failure:
-Intersections, GSE314910). A within-patient mixed-effects distance-to-lesion analysis establishes
-the cell-autonomous nature of our gene signature. The pipeline runs on an HPC cluster with SLURM
+Intersections, GSE314910). A within-patient mixed-effects distance-to-lesion analysis established
+the cell-autonomous nature of the gene signature. The pipeline runs on an HPC cluster with SLURM
 job management system via conda and singularity.
 
 This repository of analysis code accompanies the Research Letter *"Toward a Molecular Diagnosis of
-Cardiac Sarcoidosis with a Cardiomyocyte-Intrinsic Transcriptional Signature"*. The manuscript
-itself is not part of this repository; only analysis code and derived result tables are included.
+Cardiac Sarcoidosis with a Cardiomyocyte-Intrinsic Transcriptional Signature"*. Analysis code and derived result tables are included.
 
 ## Key result
 
@@ -26,7 +25,7 @@ The validation design is tiered and aware of confounds:
   assembled across cohorts) are **cohort-confounded** as cardiac sarcoidosis is contributed by a
   single cohort in the discovery phase. These contrasts are **hypothesis-generating** and do not
   on their own support the signature claim.
-- Instead, the claim is carried by two **independent tiers**:
+- Instead, the claim is validated by two **independent tiers**:
   1. **Within-study Liu CS-vs-ICM** (GSE205734): CS and ICM are compared inside a single cohort,
      removing the cross-cohort batch confound.
   2. **Foong spatial (Visium)** (GSE314910): the signature is further validated in intact CS
