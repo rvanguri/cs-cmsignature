@@ -71,7 +71,7 @@ repository; only analysis code and derived result tables are included.
 
 | Cohort (label in code) | Modality | Disease(s) | Accession | Source publication |
 |---|---|---|---|---|
-| Neyazi | single-nucleus RNA-seq + spatial | Cardiac sarcoidosis | GSE319770 / GSE319771 | Neyazi et al. (in press) |
+| Neyazi | single-nucleus RNA-seq + spatial | Cardiac sarcoidosis | GSE319770 / GSE319771 | Neyazi et al., *Circulation* 2026, [10.1161/CIRCULATIONAHA.126.079304](https://doi.org/10.1161/CIRCULATIONAHA.126.079304) |
 | Reichart | single-nucleus RNA-seq | Dilated & arrhythmogenic cardiomyopathy; non-failing control | EGAS00001006374 | Reichart et al., *Science* 2022, [10.1126/science.abo1984](https://doi.org/10.1126/science.abo1984) |
 | Larson | single-nucleus RNA-seq | Hypertrophic cardiomyopathy | GSE174691 | Larson et al., *Sci Rep* 2022, [10.1038/s41598-022-08561-x](https://doi.org/10.1038/s41598-022-08561-x) |
 | Chin (2022) | single-nucleus RNA-seq | Hypertrophic cardiomyopathy (+ non-failing) | GSE181764 | Codden et al., *Int J Mol Sci* 2022, [10.3390/ijms23020946](https://doi.org/10.3390/ijms23020946) |
@@ -103,8 +103,7 @@ derived directly from the `slurm/*.sbatch` files.
 
 **Smoke test.** `slurm/smoke_test.sbatch` runs the whole chain (make_synthetic_data →
 build_manifest → decontx → cellbender → qc → scanvi → relabel → gates → pseudobulk_de → liu_standalone →
-gsea_figures) on small synthetic data to verify wiring before committing
-cluster resources.
+gsea_figures) on small synthetic data to verify wiring.
 
 **Full submission.** `slurm/submit_all.sh` launches steps 01–11 as an `afterok` dependency chain
 (07/08 fan out in parallel after the gates step, 09 joins them, then 10 spatial and 11 CM-signature
@@ -146,19 +145,6 @@ for your site (verify partitions with `sinfo -s`).
 8. **Spatial** (step 10): Foong Visium figures.
 9. **CM signature** (step 11): within-patient distance-to-lesion, cross-disease spatial, CM-content
    normalization, regional analysis. Assemble Figure 1 with `composite_figure.py`.
-
-## Known limitations
-
-These are inherent to the design and data, and are documented here for anyone reusing the code:
-
-- The **cross-cardiomyopathy discovery contrasts are cohort-confounded** (cardiac sarcoidosis from a
-  single cohort → disease aliased with batch → rank-deficient pseudobulk design). They are
-  hypothesis-generating; the independent Liu within-study and Foong spatial tiers carry the claim.
-- **Ambient correction is non-uniform across cohorts** (different chemistries and available raw
-  matrices lead to CellBender vs DecontX handling per dataset).
-- `make_sample_meta.py` infers disease by **substring matching**, which has a `nicm` ⊃ `icm`
-  edge case. It is safe for the datasets used here, but should be checked before reuse on other
-  cohorts.
 
 ## Citation
 
