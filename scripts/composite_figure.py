@@ -12,11 +12,12 @@ import os, numpy as np, pandas as pd
 import matplotlib; matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
-from matplotlib.gridspec import GridSpec
+from matplotlib.gridspec import GridSpec, GridSpecFromSubplotSpec
 from sklearn.decomposition import PCA
 
 BASE = os.environ.get("PROJECT_ROOT", os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-OUT = os.path.join(BASE, "Figure1_CS_cardiomyocyte.png")
+OUT = os.path.join(BASE, "figures", "Figure1_CS_cardiomyocyte.png")
+os.makedirs(os.path.dirname(OUT), exist_ok=True)
 GENES = ["GJB7", "TNNI3K", "MLIP", "PANK1"]
 DCOL = {"CS":"#d62728","DCM":"#1f77b4","ARVC":"#2ca02c","HCM":"#9467bd","NF":"#7f7f7f","ICM":"#ff7f0e","NCC":"#8c564b"}
 plt.rcParams.update({"font.size":8,"font.family":"DejaVu Sans","axes.titlesize":9})
@@ -24,8 +25,9 @@ plt.rcParams.update({"font.size":8,"font.family":"DejaVu Sans","axes.titlesize":
 def panel_label(ax, L):
     ax.text(-0.12, 1.06, L, transform=ax.transAxes, fontsize=13, fontweight="bold", va="top", ha="right")
 
-fig = plt.figure(figsize=(11, 7.2))
-gs = GridSpec(2, 3, figure=fig, hspace=0.42, wspace=0.38)
+fig = plt.figure(figsize=(11, 9.4))
+# 3 rows: [A B C] / [D E] / [F full-width banner] so the F in-situ strip gets the whole width
+gs = GridSpec(3, 3, figure=fig, height_ratios=[1.0, 1.0, 0.95], hspace=0.5, wspace=0.38)
 
 # ---- A: PCA ----
 axA = fig.add_subplot(gs[0,0])
@@ -50,7 +52,7 @@ axB = fig.add_subplot(gs[0,1])
 val = pd.read_csv(f"{BASE}/results/de/de_cm/CM_foong_validation.tsv", sep="\t", index_col=0)
 cols = ["lfc_DCM","lfc_ARVC","lfc_HCM","lfc_NF","foong_log2FC"]
 H = val.loc[GENES, cols].astype(float)
-H.columns = ["vs DCM","vs ARVC","vs HCM","vs NF","Foong\n(vs HCM)"]
+H.columns = ["vs DCM","vs ARVC","vs HCM","vs NF","Visium\n(vs HCM)"]
 vmax = np.nanpercentile(np.abs(H.values), 98)
 im = axB.imshow(H.values, cmap="RdBu_r", vmin=-vmax, vmax=vmax, aspect="auto")
 axB.set_xticks(range(len(H.columns))); axB.set_xticklabels(H.columns, rotation=45, ha="right", fontsize=7)
@@ -71,17 +73,23 @@ mean = mean.reindex(GENES)
 x = np.arange(len(GENES)); w = 0.38
 axC.bar(x-w/2, mean["CS"], w, color="#d62728", label="CS")
 axC.bar(x+w/2, mean["control"], w, color="#9aa0a6", label="normal")
+ymax = float(mean[["CS","control"]].max().max())
+axC.set_ylim(top=ymax*1.12)                       # headroom so fold labels clear the top frame
 for i,g in enumerate(GENES):
     cs, ct = mean.loc[g,"CS"], mean.loc[g,"control"]
     fold = "n.d." if ct<=1e-6 else f"{cs/ct:.1f}×"
-    axC.text(i, cs*1.02, fold, ha="center", va="bottom", fontsize=6.5)
+    axC.text(i, cs + ymax*0.015, fold, ha="center", va="bottom", fontsize=6.5)
 axC.set_xticks(x); axC.set_xticklabels(GENES, style="italic", rotation=30, ha="right")
-axC.set_ylabel("mean expr (CM-dominant spots)"); axC.set_title("In-situ recovery vs normal")
+axC.set_ylabel("mean expr (CM-dominant spots)"); axC.set_title("Visium CS vs normal")
 axC.legend(fontsize=6, frameon=False)
 panel_label(axC, "C")
 
 # ---- D: zones ----
-axD = fig.add_subplot(gs[1,0])
+# Center D and E across the full middle row (margin columns on each side) so they
+# don't sit left-justified with an empty third cell.
+gsDE = GridSpecFromSubplotSpec(1, 4, subplot_spec=gs[1, :],
+                               width_ratios=[0.5, 1.0, 1.0, 0.5], wspace=0.42)
+axD = fig.add_subplot(gsDE[0, 1])
 pz = pd.read_csv(f"{BASE}/results/figures/foong_regional/foong_regional_perspot.tsv.gz", sep="\t")
 zorder = [z for z in ["preserved","granulomatous","fibrotic"] if z in pz.zone.unique()]
 mI = [pz.loc[pz.zone==z,"CM_intrinsic"].mean() for z in zorder]
@@ -92,12 +100,12 @@ x = np.arange(len(zorder)); w=0.38
 axD.bar(x-w/2, mI, w, yerr=sI, capsize=2, color="#1b9e77", label="CM-intrinsic")
 axD.bar(x+w/2, mF, w, yerr=sF, capsize=2, color="#d95f02", label="granuloma inflammation")
 axD.axhline(0, color="k", lw=0.5)
-axD.set_xticks(x); axD.set_xticklabels([z[:5] for z in zorder]); axD.set_ylabel("signature score")
-axD.set_title("Signature by CS tissue zone"); axD.legend(fontsize=6, frameon=False)
+axD.set_xticks(x); axD.set_xticklabels(zorder, rotation=30, ha="right"); axD.set_ylabel("signature score")
+axD.set_title("Visium signature by CS tissue zone"); axD.legend(fontsize=6, frameon=False)
 panel_label(axD, "D")
 
 # ---- E: distance to lesion ----
-axE = fig.add_subplot(gs[1,1])
+axE = fig.add_subplot(gsDE[0, 2])
 _dpath = f"{BASE}/results/figures/foong_regional/foong_distance_to_lesion.tsv.gz"
 dd = None
 try:
@@ -121,20 +129,31 @@ else:
     axE.plot(xs, b[0]*xs+b[1], "r-", lw=1.5, label="spot-level linear fit")
     axE.legend(fontsize=5.5, frameon=False, loc="upper left")
 axE.set_xlabel("distance to nearest lesion (within-sample z)"); axE.set_ylabel("CM-intrinsic score")
-axE.set_title("shallow positive slope β=+0.044/SD (P<0.001),\npositive in 8/8 patients: direction, not magnitude", fontsize=7.5)
+axE.set_title("positive slope β=+0.044/SD (P<0.001),\npositive in 8/8 patients", fontsize=7.5)
 panel_label(axE, "E")
 
-# ---- F: representative spatial H&E-paired map ----
-axF = fig.add_subplot(gs[1,2]); axF.axis("off")
-# 3-panel strip: H&E | granuloma (immune) score | CM-intrinsic score (diverging), for CS_104
+# ---- F: representative spatial H&E-paired map (full-width bottom banner) ----
+axF = fig.add_subplot(gs[2, :]); axF.axis("off")
+# 3-panel strip: H&E | granuloma (immune) score | CM-intrinsic score, for the representative CS sample.
 fpath = f"{BASE}/results/figures/panelF_candidates/panelF_CS_104.png"
 if os.path.exists(fpath):
-    axF.imshow(mpimg.imread(fpath))
-    axF.set_title("CS_104 in situ: H&E | immune-cell density (granuloma) | CM-intrinsic score", fontsize=6.5)
+    raw = mpimg.imread(fpath)
+    # Crop off the baked-in per-subpanel sample titles (top band) and white margins so the three
+    # in-situ maps fill the banner. Trim a fixed top title band, then tight-crop to non-white content.
+    h, w = raw.shape[:2]
+    band = int(round(h * 0.146))               # top title band (~"CS_104 ..." captions)
+    body = raw[band:, :, :]
+    nonwhite = (body[:, :, :3].min(axis=2) < 0.96)
+    rows = np.where(nonwhite.mean(axis=1) > 0.01)[0]
+    cols = np.where(nonwhite.mean(axis=0) > 0.01)[0]
+    if rows.size and cols.size:
+        body = body[rows.min():rows.max()+1, cols.min():cols.max()+1, :]
+    axF.imshow(body, interpolation="lanczos")
+    axF.set_title("Visium: H&E | immune-cell density (granuloma) | CM-intrinsic score", fontsize=8)
 else:
     axF.text(0.5,0.5,"[run foong_panelF_candidates.py]",ha="center",va="center")
 panel_label(axF, "F")
 
-fig.savefig(OUT, dpi=300, bbox_inches="tight")
+fig.savefig(OUT, dpi=600, bbox_inches="tight")
 fig.savefig(OUT.replace(".png",".pdf"), bbox_inches="tight")
 print("wrote", OUT)
