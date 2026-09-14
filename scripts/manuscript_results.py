@@ -111,9 +111,9 @@ def main():
           all_retain_direction(sec_files + dis_files))
     claim("hits retaining significance in every leave-one-section-out refit",
           141, len(keep_sec), len(keep_sec) == 141)
-    claim("leave-one-disease-out refits: hits retaining significance",
-          "not stated", len(intersect_sig(dis_files)), True,
-          "reported here for completeness; the text's 141 is the section-drop value")
+    keep_dis = intersect_sig(dis_files)
+    claim("hits retaining significance in every leave-one-disease-out refit",
+          117, len(keep_dis), len(keep_dis) == 117)
 
     nomt = pd.read_csv(f"{RES}/q1_noMT_comparison.tsv", sep="\t").set_index("gene")
     nh = nomt.reindex([g for g in sig if g in nomt.index])
@@ -136,6 +136,23 @@ def main():
     for dis_, n_exp in (("CS", 21), ("DCM", 52), ("ARVC", 8)):
         n_obs = int((cohort.disease == dis_).sum())
         claim(f"snRNA-seq patients, {dis_}", n_exp, n_obs, n_obs == n_exp)
+    # CS vs HCM is excluded from the pooled comparator: its effect sizes track gene
+    # length and most genes are called differential.
+    gl = pd.read_csv(f"{RES}/snrna_gene_length_regression.tsv", sep="\t").set_index("contrast")
+    hcm, pooled = gl.loc["CS_vs_HCM"], gl.loc[["CS_vs_DCM", "CS_vs_ARVC"]]
+    claim("snRNA-seq CS vs HCM effect size scales with gene length",
+          "scales with gene length",
+          f"slope={hcm.slope_logFC_per_log10span:.2f} log2FC per log10 kb, "
+          f"r={hcm.r:.2f} (pooled comparators |r|<={pooled.r.abs().max():.2f})",
+          hcm.slope_logFC_per_log10span > 0 and hcm.p_slope < 1e-10
+          and hcm.r > 2 * pooled.r.abs().max(),
+          "basis for excluding CS vs HCM from the pooled snRNA-seq comparator")
+    pct_hcm = 100 * hcm.n_sig / hcm.n_genes
+    pct_pooled = 100 * (pooled.n_sig / pooled.n_genes)
+    claim("most genes called differential in snRNA-seq CS vs HCM", "most",
+          f"{hcm.n_sig:.0f}/{hcm.n_genes:.0f} ({pct_hcm:.0f}%) at FDR<5%; "
+          f"pooled comparators {pct_pooled.min():.0f}-{pct_pooled.max():.0f}%",
+          pct_hcm > 50 and pct_hcm > pct_pooled.max())
     claim("core genes testable in both platforms", 134, len(pergene),
           len(pergene) == 134)
     rep_dn = int(conc.loc["stable down (115)", "rep_fdr5"])
@@ -152,21 +169,20 @@ def main():
     # ---- published comparison with non-failing myocardium ----------------------
     claim("lower-in-CS genes carried into the published comparison", 139,
           int(pubsum.n_cs_lower.iloc[0]), int(pubsum.n_cs_lower.iloc[0]) == 139)
-    for tag, n_test, n_low, base, pval in (("DCM", 29, 19, 0.47, 0.038),
-                                           ("HCM", 28, 17, 0.56, 0.061)):
+    for tag, n_test, n_low, base, pval in (("DCM", 36, 25, 0.48, 0.009),
+                                           ("HCM", 35, 22, 0.45, 0.023)):
         r = pubsum.loc[f"{tag} vs non-failing"]
         claim(f"{tag}: CS-lower genes testable in the published table", n_test,
               int(r.n_testable), int(r.n_testable) == n_test,
-              "published table lists only genes called differential; see docs/DISCREPANCIES.md")
+              "published table lists only genes called differential")
         claim(f"{tag}: testable genes lower in disease than non-failing",
               f"{n_low}/{n_test}", f"{int(r.n_lower_in_disease)}/{int(r.n_testable)}",
-              int(r.n_lower_in_disease) == n_low and int(r.n_testable) == n_test,
-              "see docs/DISCREPANCIES.md")
+              int(r.n_lower_in_disease) == n_low and int(r.n_testable) == n_test)
+        # the text rounds the reference rate to whole percent
         claim(f"{tag}: reference rate among published differential genes", f"{base:.0%}",
-              f"{r.base_frac_lower:.1%}", abs(r.base_frac_lower - base) < 0.01,
-              "see docs/DISCREPANCIES.md")
+              f"{r.base_frac_lower:.1%}", round(r.base_frac_lower, 2) == base)
         claim(f"{tag}: binomial p", pval, round(float(r.binom_p), 3),
-              abs(float(r.binom_p) - pval) < 0.005, "see docs/DISCREPANCIES.md")
+              abs(float(r.binom_p) - pval) < 0.0005)
 
     idh2_ok = (q1.loc["IDH2", "logFC"] < 0
                and all(s.loc["IDH2", "logFC"] < 0 for s in sn.values() if "IDH2" in s.index)

@@ -76,6 +76,31 @@ def pool_snrna():
     return P
 
 
+def gene_length_scan():
+    """Per-contrast regression of snRNA-seq log2FC on log10 gene span.
+
+    Documents why CS vs HCM is excluded from the pooled comparator: its effect sizes
+    track gene length and most genes are called differential.
+    """
+    span = pd.read_csv(f"{DATA}/gene_span.tsv", sep="\t", index_col=0)["span_kb"]
+    rows = []
+    for tag in ("HCM", "DCM", "ARVC", "NF"):
+        t = pd.read_csv(f"{SNRNA}/snrna_CS_vs_{tag}.tsv", sep="\t").set_index("gene")
+        t = t.join(span, how="inner").dropna(subset=["span_kb"])
+        t = t[t.span_kb > 0]
+        lr = stats.linregress(np.log10(t.span_kb), t.logFC)
+        sig = t["adj.P.Val"] < FDR
+        rows.append(dict(
+            contrast=f"CS_vs_{tag}", n_genes=len(t),
+            slope_logFC_per_log10span=round(lr.slope, 3), p_slope=lr.pvalue,
+            r=round(lr.rvalue, 3), mean_logFC=round(t.logFC.mean(), 3),
+            pct_positive=round(100 * (t.logFC > 0).mean(), 1), n_sig=int(sig.sum()),
+            median_span_kb_sig=round(t.span_kb[sig].median(), 1),
+            median_span_kb_all=round(t.span_kb.median(), 1)))
+    pd.DataFrame(rows).to_csv(f"{RES}/snrna_gene_length_regression.tsv",
+                              sep="\t", index=False)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--q1", default=f"{RES}/q1_raw_T2000_d25.tsv")
@@ -209,6 +234,10 @@ def main():
     T = T.sort_values(["direction", "spatial_logFC"], ascending=[True, True])
     T.to_csv(f"{RES}/q1_core_snrna_pergene.tsv", sep="\t", index=False)
     print(f"[cross-platform] {len(T)} of {len(core)} core genes testable in both arms")
+
+    gene_length_scan()
+    print("[cross-platform] wrote snrna_gene_length_regression.tsv "
+          "(gene-length trend per snRNA-seq contrast)")
 
 
 if __name__ == "__main__":

@@ -1,63 +1,28 @@
-# Conda/mamba environment for the cs-cmsignature pipeline (analysis stack).
-# CellBender is NOT here: it runs in its own Singularity .sif (see cellbender.def / PLAN §2b)
-# to avoid CUDA/torch conflicts with scvi-tools.
+# Python environment for the manuscript pipeline (stages 03-06, the figure, and the
+# verification harness). The R stages (01, 01b, 02) use environment-R.yml.
 #
-# Create on persistent storage (NOT scratch):
-#   module load miniconda3
-#   mamba env create -f environment.yml -p $PROJ/env/conda/cs-cmsignature
-#   conda activate $PROJ/env/conda/cs-cmsignature
+#   mamba env create -f environment.yml
+#   mamba env create -f environment-R.yml
+#   PYTHON=$(conda run -n cs-cmsig-py which python) \
+#   RSCRIPT=$(conda run -n cs-cmsig-r which Rscript) \
+#     bash scripts/spatial_first/run_all.sh
 #
-name: cs-cmsignature
+name: cs-cmsig-py
 channels:
   - conda-forge
-  - bioconda
 dependencies:
-  - python=3.10
-  - pip
-  # ---- single-cell core ----
-  - scanpy>=1.9
-  - anndata>=0.10
-  - scvi-tools>=1.1          # provides scANVI; GPU-aware (uses CUDA if visible)
-  - tqdm>=4.66               # scvi-tools/lightning need tqdm.auto (absent in <4.27)
-  - leidenalg
-  - python-igraph
-  - harmonypy
-  - scikit-misc              # highly_variable_genes (seurat_v3 flavor)
-  # ---- QC / doublets / integration metrics ----
-  - scrublet
-  - scib                     # kBET / LISI integration metrics
-  # ---- DE / pseudobulk (Python side) ----
-  - pydeseq2
-  # ---- pathways ----
-  - gseapy
-  # ---- data access ----
-  - cellxgene-census         # Reichart CELLxGENE pull
-  - sra-tools                # dbGaP prefetch/fasterq-dump (controlled arms)
-  # ---- R side: DecontX, limma-voom, DESeq2, scDblFinder ----
-  - r-base=4.3
-  - r-optparse               # CLI parsing in the .R scripts (run_decontx.R, run_pseudobulk_de.R)
-  - r-anndata                # read/write .h5ad from R (reticulate-backed)
-  - bioconductor-genomeinfodbdata # data pkg for GenomeInfoDb (SCE/DESeq2/celda dep; not always pulled automatically)
-  - bioconductor-celda       # DecontX
-  - bioconductor-dropletutils # read10xCounts in run_decontx.R
-  - bioconductor-scdblfinder
-  - bioconductor-limma
-  - bioconductor-edger
-  - bioconductor-deseq2
-  - bioconductor-apeglm
-  - bioconductor-singlecellexperiment
-  - r-matrix
-  - r-data.table
-  - anndata2ri               # pass AnnData <-> SingleCellExperiment
-  - rpy2
-  # ---- utilities ----
+  - python=3.11
   - pandas
   - numpy
   - scipy
+  - statsmodels          # BH correction in the concordance / control stages
   - matplotlib
-  - seaborn
-  # NOTE: pyega3 (EGA controlled-access downloads) is intentionally NOT in this env:
-  # it hard-pins tqdm==4.19.6, which is incompatible with scvi-tools (needs tqdm.auto, >=4.27).
-  # The open reproduction uses Reichart via CELLxGENE (see download_reichart_cxg.py), so pyega3
-  # is not needed. If you pursue the controlled EGA arm, install it in a SEPARATE env:
-  #   mamba create -n ega -c bioconda pyega3
+  - pip
+  - pip:
+      - adjustText       # label placement in Figure 1A
+  # Optional, not needed to reproduce anything committed here:
+  #   openpyxl  - only to re-derive data/published/chaffin2022_*.tsv from the
+  #               publication's Excel supplement (06_published_reference.py --src-dir)
+  #   scanpy, anndata - only for stage 00, which exports
+  #               data/spatial_first/pseudobulk_T2000.tsv.gz from the raw Visium
+  #               objects (not redistributed; see docs/data_availability.md)

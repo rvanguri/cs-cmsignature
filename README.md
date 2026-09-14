@@ -16,15 +16,17 @@ metabolism program — **SLC2A4, ACADVL, IDH2, ACADM, IDH3B, SDHB, HSD17B4**, wi
 ion handling (SLC4A3) and adhesion (ITGA7) genes — is **lower in CS than in comparator
 cardiomyopathies**. Of 985 genes tested, 192 differ at FDR 5% (139 lower, 53 higher in CS);
 direction is preserved in every leave-one-section-out and leave-one-disease-out refit, and
-141 hits remain significant in every leave-one-section-out refit. Direction replicates in
+141 of the hits remain significant across all section refits (117 across disease refits). Direction replicates in
 independent single-nucleus data while effect magnitude does not (Spearman rho = 0.03 across
 134 genes testable in both), so the claim is about direction, not effect size.
 
 ## Reproducing the manuscript numbers
 
 ```bash
-# R stages need limma + edgeR; Python stages need pandas, scipy, matplotlib, adjustText, openpyxl
-RSCRIPT=/path/to/r-env/bin/Rscript PYTHON=/path/to/py-env/bin/python \
+mamba env create -f environment.yml      # Python stages, figure, verification
+mamba env create -f environment-R.yml    # limma-voom stages
+RSCRIPT=$(conda run -n cs-cmsig-r which Rscript) \
+PYTHON=$(conda run -n cs-cmsig-py which python) \
   bash scripts/spatial_first/run_all.sh
 ```
 
@@ -36,12 +38,12 @@ here — see `docs/data_availability.md`.
 
 `python scripts/manuscript_results.py` can also be run on its own. It prints each claim as
 *manuscript value | recomputed value | status*, writes `results/manuscript_results.tsv`,
-and **exits non-zero if any reproducible claim fails**. As of this commit: **30 claims
-reproduce, 8 mismatch, 2 are not addressable from committed data.** All 8 mismatches are in
-the published-non-failing-comparison paragraph and follow from one unresolved question;
-`docs/DISCREPANCIES.md` records each one, what the pipeline computes instead, and what was
-ruled out. The direction of that finding is unchanged and the recomputed evidence is
-stronger than the text claims.
+and **exits non-zero if any reproducible claim fails**. As of this commit: **40 claims
+reproduce, none mismatch, and 2 are not addressable from committed data** — the IDH2
+genotype-strata clause, which needs per-patient genotype metadata that is not in this
+repository, and the intermediate count of 11 CS sections with non-lesional myocardium
+present. `docs/DISCREPANCIES.md` records both, and the earlier published-comparison
+mismatch that the current text has absorbed.
 
 ## Pipeline
 
@@ -51,7 +53,7 @@ stronger than the text claims.
 | `01_limma_q1q2.R` | per-section pseudobulk limma-voom; CS vs comparators (Q1) and diseased vs normal (Q2) | `q1_raw_T2000_d25.tsv`, `q2_raw_T2000_d25.tsv` |
 | `02_leave_one_out.R` | refits dropping one comparator section, then one comparator disease | `loo/q1_raw_drop*.tsv` |
 | `03_locus_qc.py` | flags segmental duplications, length-model deviation, missing annotation | `q2_locus_qc.tsv` |
-| `04_snrna_pool.py` | precision-weighted DCM+ARVC pooling, sign concordance, permutation null | `q1_core_snrna_pergene.tsv`, `q1_core_snrna_concordance.tsv` |
+| `04_snrna_pool.py` | precision-weighted DCM+ARVC pooling, sign concordance, permutation null, gene-length scan | `q1_core_snrna_pergene.tsv`, `q1_core_snrna_concordance.tsv`, `snrna_gene_length_regression.tsv` |
 | `05_controls.py` | probe-panel version, panel-matched comparators, cardiomyocyte-content adjustment, mitochondrial-gene removal | `q1_control_comparison.tsv`, `q1_noMT_*.tsv` |
 | `06_published_reference.py` | CS-lower genes against published DCM/HCM vs non-failing cardiomyocyte tables | `q1_published_nf_*.tsv` |
 | `scripts/figure1_build.py` | the two-panel manuscript figure from committed panel-value tables | `figures/Figure1.{png,pdf}` |
@@ -79,11 +81,20 @@ and the legend text as `results/tables/figure1_legend.md`.
 - `results/spatial_first/` — every table the manuscript's numbers come from
 - `results/tables/` — figure panel values and legend
 - `docs/DISCREPANCIES.md` — where text and code disagree, and why
-- `docs/data_availability.md` — accessions and what is not redistributed here
+- `docs/data_availability.md` — accessions, provenance of the committed inputs, constraints on use
 
-## Earlier arm
+Nothing else is tracked: this tree holds only what the manuscript needs. Every file is either
+an input the pipeline reads, a script it runs, or an output it regenerates.
+
+## History
 
 An earlier single-nucleus arm of this project nominated a four-gene cardiomyocyte panel
 (GJB7, TNNI3K, MLIP, PANK1). That framing is **superseded** by the spatial-first analysis
-above and is not what the current manuscript reports; `docs/STATUS.md` records its state and
-its limitations, and `results/DE_CS_vs_*.tsv` predate the requantification used here.
+above and is not what the manuscript reports, so its scripts, cluster job files, result
+tables and exploratory figures are no longer in the working tree. They remain in git history
+at tag `pre-slim-2026-09-14`:
+
+```bash
+git show pre-slim-2026-09-14 --stat            # what was there
+git checkout pre-slim-2026-09-14 -- <path>     # bring one file back
+```

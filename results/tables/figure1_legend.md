@@ -27,13 +27,16 @@ outliers (2 genes); asterisks mark genes without complete annotation (4 genes).
 |---|---|
 | panel a points, x | `res/q1_raw_T2000_d25.tsv` (`logFC`), region T = 2000 UMI, detection 0.25 |
 | panel a points, y | `res/q1_core_snrna_pergene.tsv` (`lfc_pool`, inverse-variance pooled) |
-| QC flags / open symbols | `res/q1_hits_annotated.tsv`, `res/q2_locus_qc.tsv` |
+| QC flags / open symbols | `res/q2_locus_qc.tsv`; as plotted, the `flag_*` columns of `figure1_panelA_values.tsv` |
 | panel b columns 1-2 | as above |
 | panel b columns 3-4 | `2021-02-03277C-ST6.DCMvsNF.xlsx`, `...ST7.HCMvsNF.xlsx`, cardiomyocyte rows |
 | section counts | `res/meta_T2000.tsv` (`evaluable`) |
 | exact plotted values | `res/figure1_panelA_values.tsv`, `res/figure1_panelB_values.tsv` |
 
 ## Departures from the handoff, and why
+
+(The handoff document this refers to is not in the working tree; see git tag
+`pre-slim-2026-09-14`.)
 
 1. **Spearman rho.** The handoff instructs annotating **+0.06** as the full-set value. Over all
    134 genes the value is **+0.027** (p = 0.76); **+0.062** (p = 0.53) is the down-in-CS

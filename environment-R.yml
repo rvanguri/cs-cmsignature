@@ -1,0 +1,13 @@
+# R environment for the limma-voom stages of the manuscript pipeline
+# (01_limma_q1q2.R, 01b_limma_twogroup.R, 02_leave_one_out.R).
+#
+#   mamba env create -f environment-R.yml
+#
+name: cs-cmsig-r
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - r-base=4.3
+  - bioconductor-limma
+  - bioconductor-edger

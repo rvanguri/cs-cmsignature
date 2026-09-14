@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Regenerate every manuscript number and the figure from committed inputs, then verify.
 #
-# Run from the repo root. Requires an R with limma and edgeR (the `cmde` conda
-# environment) and a Python with pandas/scipy/matplotlib/adjustText/openpyxl.
+# Run from the repo root. Requires the two environments in environment-R.yml (limma, edgeR)
+# and environment.yml (pandas, scipy, statsmodels, matplotlib, adjustText).
 #
 # Stage 00 is NOT run here: it exports the per-section pseudobulk matrix from the raw
 # spatial objects, which are not in this repository. Its output is committed as
@@ -10,7 +10,8 @@
 #
 # The R and Python stages usually live in different conda environments. Point the
 # interpreters at them explicitly if `Rscript` and `python` on PATH are not both right:
-#   RSCRIPT=/path/to/cmde/bin/Rscript PYTHON=/path/to/py/bin/python bash scripts/spatial_first/run_all.sh
+#   RSCRIPT=$(conda run -n cs-cmsig-r which Rscript) \
+#   PYTHON=$(conda run -n cs-cmsig-py which python) bash scripts/spatial_first/run_all.sh
 set -euo pipefail
 
 RSCRIPT=${RSCRIPT:-Rscript}

@@ -1,59 +1,35 @@
-# Where the committed analysis and the manuscript text disagree
+# Verification: what reproduces, and what it cannot
 
 `python scripts/manuscript_results.py` checks every quantitative claim in the brief
-report against the committed tables. As of this commit, 30 claims reproduce, 8 do not,
-and 2 cannot be addressed from committed data. The 8 mismatches are all in one
-paragraph and all follow from one unresolved question. This document records them so
-the text can be reconciled rather than the code adjusted to match it.
+report against the committed tables. As of this commit, **40 claims reproduce, none
+mismatch, and 2 cannot be addressed from committed data.** This document records those
+two, and the one reconciliation the text has already absorbed.
 
-## 1. The published non-failing comparison (8 mismatched values)
+## 1. Resolved: the published non-failing comparison
 
-**Manuscript text.** "Of the 139 genes lower in CS by ST, 29 were testable in DCM and
-28 in HCM. Among testable genes, most were lower in disease than non-failing myocardium
-(19/29 in DCM versus 47% of differential genes in the published comparison, p=0.038;
-17/28 in HCM versus 56%, p=0.061)."
+An earlier draft of the paragraph on published non-failing comparisons reported 29 and 28 of
+the 139 CS-lower genes as testable in the Chaffin DCM-vs-NF and HCM-vs-NF cardiomyocyte
+tables, with 19/29 and 17/28 lower in disease against reference rates of 47% and 56%
+(p=0.038, p=0.061). `scripts/spatial_first/06_published_reference.py` computes 36 and 35
+testable, 25/36 and 22/35 lower in disease, reference rates 48.3% and 44.7% (p=0.009,
+p=0.023). The direction of the finding is unchanged and the recomputed version is stronger:
+the HCM comparison moves from marginal to conventionally significant.
 
-**What `scripts/spatial_first/06_published_reference.py` computes**, from Chaffin et al.
-supplementary tables ST6 and ST7, cardiomyocyte rows, CellBender-corrected effect sizes,
-background-contamination-flagged rows excluded:
-
-| | manuscript | recomputed |
-|---|---|---|
-| testable in DCM | 29 | 36 |
-| lower in disease, DCM | 19/29 | 25/36 |
-| reference rate, DCM | 47% | 48.3% |
-| binomial p, DCM | 0.038 | 0.009 |
-| testable in HCM | 28 | 35 |
-| lower in disease, HCM | 17/28 | 22/35 |
-| reference rate, HCM | 56% | 44.7% |
-| binomial p, HCM | 0.061 | 0.023 |
-
-**The direction of the finding is unchanged and the recomputed version is stronger**:
-CS-lower genes are enriched for genes lower in DCM and in HCM relative to non-failing
-donors, at p = 0.009 and p = 0.023 rather than p = 0.038 and p = 0.061. The HCM
-comparison moves from marginal to conventionally significant.
-
-**What was ruled out.** The testable counts were checked against every plausible
-alternative definition: gene universe (all 139 lower genes; the 115 section-stable
+The provenance of the earlier counts was never established. They were checked against every
+plausible alternative definition — gene universe (all 139 lower genes; the 115 section-stable
 lower core; the QC-passing subsets; the 108 lower genes testable in both platforms;
-single-flag exclusions), cell type (cardiomyocyte rows versus the pseudo-bulk rows),
-effect-size column family (CellBender-corrected versus CellRanger), and the
-background-contamination filter on or off. No combination yields 29 and 28 testable, and
-none yields 19 and 17 lower. The discrepancy is therefore not a filter choice.
+single-flag exclusions), cell type (cardiomyocyte versus pseudo-bulk rows), effect-size column
+family (CellBender-corrected versus CellRanger), and the background-contamination filter on or
+off. No combination yields 29 and 28 testable, and none yields 19 and 17 lower, so the
+difference is not a filter choice. One value does have a likely reading: the earlier HCM
+reference rate of 56% is the complement of the recomputed 44.7% lower in disease, i.e. the
+fraction *not* lower, whereas the DCM rate was taken as the fraction lower.
 
-**One value does resolve.** The recomputed HCM reference rate is 44.7% lower in disease,
-whose complement is 55.3% — the 56% in the text. The DCM rate in the text (47%) is
-close to the recomputed 48.3%. The most likely reading is that the HCM reference rate
-was taken as the fraction *not* lower in disease while the DCM rate was taken as the
-fraction lower, i.e. a sign inconsistency between the two comparisons. That accounts for
-the reference rates but not for the testable counts.
-
-**Recommended resolution.** Replace the paragraph's six counts, two reference rates and
-two p-values with the values in `results/spatial_first/q1_published_nf_summary.tsv`, and
-state the testability caveat the script's docstring sets out: the published tables list
-only genes called differential, so a CS-lower gene absent from a published table may be
-unchanged in that disease or may simply not have been reported, and the binomial
-reference rate is the base rate of the published differential set rather than 0.5.
+**The current text states the recomputed values**, together with the testability caveat the
+script's docstring sets out: the published tables list only genes called differential, so a
+CS-lower gene absent from one of them may be unchanged in that disease or may simply not have
+been reported, and the binomial reference rate is the base rate of the published differential
+set rather than 0.5. These eight numbers now agree, and the harness holds the text to them.
 
 ## 2. Claims the committed data cannot address (2, not counted as mismatches)
 
@@ -71,19 +47,15 @@ count of 11 — sections with any cardiomyocyte-enriched non-lesional region bef
 50-spot threshold — is not a column in that table. It is consistent with the table but
 not recomputed from it.
 
-## 3. Loose wording that is numerically correct
+## 3. Superseded material
 
-**"Refitting the analysis by leaving out individual sections and diseases resulted in
-all 192 genes retaining direction with 141 retaining significance."** All 192 retain
-direction in all ten refits, so that half of the sentence covers both families. The 141
-is the leave-one-*section*-out intersection (115 lower + 26 higher); the
-leave-one-disease-out intersection is 117. The harness reports both. Attributing 141 to
-both families overstates it slightly; splitting the sentence would be accurate.
+The earlier single-nucleus arm's tables, scripts and figures are no longer in the working
+tree; they are in git history at tag `pre-slim-2026-09-14`. In particular the old
+`results/DE_CS_vs_*.tsv` predate the requantification the manuscript's cross-platform arm
+uses and disagree with it substantially across shared genes. The tables the manuscript
+relies on are `data/snrna/snrna_CS_vs_*.tsv`.
 
-## 4. Superseded material in the repository
-
-The single-nucleus tables `results/DE_CS_vs_*.tsv` predate the requantification the
-manuscript's cross-platform arm uses and disagree with it substantially across shared
-genes. The tables the manuscript relies on are `data/snrna/snrna_CS_vs_*.tsv`. The older
-directory is retained for provenance and is not on any path that produces a manuscript
-number; `scripts/manuscript_results.py` does not read it.
+Two wordings that earlier drafts left ambiguous are now explicit in the text and checked by
+the harness: the leave-one-section-out and leave-one-disease-out intersections are reported
+separately (141 and 117 of the 192 hits), and the testability limit of the published tables
+is stated where the 36 and 35 counts appear.
