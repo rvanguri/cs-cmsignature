@@ -1,10 +1,8 @@
 # Metabolic gene expression differs in non-lesional myocardium between cardiac sarcoidosis and other cardiomyopathies
 
-Analysis code and derived tables for the brief report of the same title.
-
 Spatial transcriptomics (Visium) of cardiac sarcoidosis (CS) and comparator cardiomyopathies
 is restricted to **cardiomyocyte-enriched spots at least 0.5 mm from any immune-enriched
-spot** — non-lesional myocardium, with granulomas and diffuse immune infiltration excluded.
+spot** - non-lesional myocardium, with granulomas and diffuse immune infiltration excluded.
 Differential expression between CS and the comparators in that compartment is then compared
 with published single-nucleus data and with published cardiomyocyte comparisons against
 non-failing donor myocardium.
@@ -17,8 +15,7 @@ ion handling (SLC4A3) and adhesion (ITGA7) genes — is **lower in CS than in co
 cardiomyopathies**. Of 985 genes tested, 192 differ at FDR 5% (139 lower, 53 higher in CS);
 direction is preserved in every leave-one-section-out and leave-one-disease-out refit, and
 141 of the hits remain significant across all section refits (117 across disease refits). Direction replicates in
-independent single-nucleus data while effect magnitude does not (Spearman rho = 0.03 across
-134 genes testable in both), so the claim is about direction, not effect size.
+independent single-nucleus data.
 
 ## Reproducing the manuscript numbers
 
@@ -30,20 +27,8 @@ PYTHON=$(conda run -n cs-cmsig-py which python) \
   bash scripts/spatial_first/run_all.sh
 ```
 
-This runs the six analysis stages, rebuilds the figure, and finishes by verifying every
-quantitative claim in the manuscript against the regenerated tables. It starts from
-**committed inputs** (`data/spatial_first/pseudobulk_T2000.tsv.gz` and friends), because
-stage `00_export_from_raw.py` needs the raw spatial objects, which are not redistributed
-here — see `docs/data_availability.md`.
-
-`python scripts/manuscript_results.py` can also be run on its own. It prints each claim as
-*manuscript value | recomputed value | status*, writes `results/manuscript_results.tsv`,
-and **exits non-zero if any reproducible claim fails**. As of this commit: **40 claims
-reproduce, none mismatch, and 2 are not addressable from committed data** — the IDH2
-genotype-strata clause, which needs per-patient genotype metadata that is not in this
-repository, and the intermediate count of 11 CS sections with non-lesional myocardium
-present. `docs/DISCREPANCIES.md` records both, and the earlier published-comparison
-mismatch that the current text has absorbed.
+This runs the six analysis stages and rebuilds the figure. It starts from
+**committed inputs** (`data/spatial_first/pseudobulk_T2000.tsv.gz` and friends).
 
 ## Pipeline
 
@@ -80,21 +65,5 @@ and the legend text as `results/tables/figure1_legend.md`.
 - `data/published/` — cardiomyocyte rows distilled from the published supplementary tables
 - `results/spatial_first/` — every table the manuscript's numbers come from
 - `results/tables/` — figure panel values and legend
-- `docs/DISCREPANCIES.md` — where text and code disagree, and why
 - `docs/data_availability.md` — accessions, provenance of the committed inputs, constraints on use
 
-Nothing else is tracked: this tree holds only what the manuscript needs. Every file is either
-an input the pipeline reads, a script it runs, or an output it regenerates.
-
-## History
-
-An earlier single-nucleus arm of this project nominated a four-gene cardiomyocyte panel
-(GJB7, TNNI3K, MLIP, PANK1). That framing is **superseded** by the spatial-first analysis
-above and is not what the manuscript reports, so its scripts, cluster job files, result
-tables and exploratory figures are no longer in the working tree. They remain in git history
-at tag `pre-slim-2026-09-14`:
-
-```bash
-git show pre-slim-2026-09-14 --stat            # what was there
-git checkout pre-slim-2026-09-14 -- <path>     # bring one file back
-```
