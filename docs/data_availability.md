@@ -8,7 +8,7 @@ repository; it carries analysis code, the derived inputs the pipeline starts fro
 
 | Cohort (label in code) | Modality | Disease(s) | Repository | Accession | Source publication |
 |---|---|---|---|---|---|
-| This study (comparators) | spatial transcriptomics (Visium, probe-based) | ARVC, LMNA dilated, hypertrophic and Chagas cardiomyopathy | — | pending deposition | this manuscript |
+| This study (comparators) | spatial transcriptomics (Visium, probe-based) | ARVC, LMNA dilated, hypertrophic and Chagas cardiomyopathy | — | pending GEO deposition | this manuscript |
 | Foong | spatial transcriptomics (Visium, probe-based) | Cardiac sarcoidosis | GEO | GSE314910 | Foong et al., *J Card Fail Intersect* 2026;2:278-283 |
 | Neyazi | single-nucleus RNA-seq | Cardiac sarcoidosis | GEO | GSE319770 / GSE319771 | Neyazi et al., *Circulation* 2026;153:2011-2028 |
 | Reichart | single-nucleus RNA-seq | Dilated & arrhythmogenic cardiomyopathy; non-failing control | EGA (open distribution via CELLxGENE) | EGAS00001006374 | Reichart et al., *Science* 2022;377:eabo1984 |
