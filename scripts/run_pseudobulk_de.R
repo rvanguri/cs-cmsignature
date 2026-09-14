@@ -96,15 +96,23 @@ if (!limma::is.fullrank(design) || !is.null(ne)) {
 }
 
 v <- voom(dge, design)
-# duplicateCorrelation only makes sense when some individual has >1 sample. With one pseudobulk
-# sample per patient every block is unique -> dupCor returns NaN and breaks lmFit; fall back to
-# plain lmFit in that case (also covers real cohorts where each donor contributes a single sample).
-block <- colnames(pb)
+# duplicateCorrelation blocks on PATIENT so multiple region/replicate pseudobulk columns from one
+# donor are modeled as repeated measures, not independent observations. The pseudobulk column names
+# encode patient identity per study: neyazi is GSM<acc>_<patient>_<region>_<rep> (patient = 2nd
+# underscore token); every other study contributes exactly one column per donor, so the column name
+# IS the patient. When no patient recurs (single-sample cohorts), dupCor is undefined -> plain lmFit.
+raw_id  <- colnames(pb)
+study_c <- as.character(pmeta[[opt$study_col]])
+block   <- raw_id
+is_ney  <- study_c == "neyazi"
+block[is_ney] <- vapply(strsplit(raw_id[is_ney], "_"), function(x) x[2], character(1))
+message(sprintf("[DE] patient-level block: %d samples -> %d distinct patients (%d repeated columns)",
+                length(block), length(unique(block)), sum(duplicated(block))))
 if (any(duplicated(block))) {
   corfit <- duplicateCorrelation(v, design, block = block)
   fit <- lmFit(v, design, block = block, correlation = corfit$consensus)
 } else {
-  message("[DE] no repeated individuals -> plain lmFit (duplicateCorrelation skipped)")
+  message("[DE] no repeated patients -> plain lmFit (duplicateCorrelation skipped)")
   fit <- lmFit(v, design)
 }
 

@@ -1,0 +1,80 @@
+{
+ "prespecified": true,
+ "T_grid": [
+  1500,
+  2000,
+  3000
+ ],
+ "T_headline": 2000,
+ "detect_grid": [
+  0.1,
+  0.25,
+  0.4
+ ],
+ "detect_headline": 0.25,
+ "granuloma_exclusion_mm": 0.5,
+ "spot_pitch_um": 100.0,
+ "lineages": {
+  "Cardiomyocyte": [
+   "TNNT2",
+   "MYH7",
+   "TTN",
+   "ACTN2",
+   "RYR2",
+   "MYL2",
+   "TNNI3",
+   "MYBPC3"
+  ],
+  "Fibroblast": [
+   "DCN",
+   "PDGFRA",
+   "GSN",
+   "COL1A1",
+   "LUM"
+  ],
+  "Endothelial": [
+   "PECAM1",
+   "VWF",
+   "CDH5"
+  ],
+  "Myeloid": [
+   "CD163",
+   "LYZ",
+   "C1QA",
+   "C1QB"
+  ],
+  "Lymphoid": [
+   "CD3E",
+   "MS4A1",
+   "CD79A",
+   "IL7R"
+  ]
+ },
+ "granuloma_lineages": [
+  "Myeloid",
+  "Lymphoid"
+ ],
+ "lineage_scoring": "single pooled z-transform fitted once across all spots at depth T; never refitted per cohort; sc.tl.score_genes NOT used",
+ "region_definition": "compositional (cardiomyocyte-argmax), NOT histologic; comparator sections carry NO lesion exclusion",
+ "estimator": "section-level pseudobulk + limma-voom; unit of inference = section",
+ "fdr": 0.05,
+ "random_state": 0,
+ "q2_contrast": "17 diseased (11 CS + 6 comparators) vs 4 normal donors; hit must be up in BOTH disease sources independently",
+ "q1_contrast": "11 CS vs 6 comparator sections; comparators NEVER pooled with normal donors",
+ "cs_dropout": [
+  "CS_109"
+ ],
+ "sections": {
+  "CS": 11,
+  "COMPARATOR": 6,
+  "NORMAL": 4
+ },
+ "comparator_map": {
+  "ARVC_1": "ARVC",
+  "ARVC_2": "ARVC",
+  "Chagas": "Chagas",
+  "DC LMNA": "LMNA_DCM",
+  "LMNA": "LMNA_DCM",
+  "HCM": "HCM"
+ }
+}

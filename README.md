@@ -1,156 +1,89 @@
-# Cardiac Sarcoidosis Cardiomyocyte Signature
+# Metabolic gene expression differs in non-lesional myocardium between cardiac sarcoidosis and other cardiomyopathies
 
-Integrative single-nucleus and spatial transcriptomic datasets were analyzed to suggest a
-**cardiomyocyte transcriptional signature associated with cardiac sarcoidosis (CS)**. Candidate
-genes were nominated by comparing CS to multiple cardiomyopathies and non-failing hearts with
-publicly available snRNA-seq. The genes were validated in two independent datasets: a
-CS-versus-ICM single-nucleus comparison (Liu et al., Circulation Research, GSE205734) and spatial
-(Visium) transcriptomics of intact CS myocardium (Foong et al., Journal of Cardiac Failure:
-Intersections, GSE314910). A within-patient mixed-effects distance-to-lesion analysis established
-the cell-autonomous nature of the gene signature. The pipeline runs on an HPC cluster with SLURM
-job management system via conda and singularity.
+Analysis code and derived tables for the brief report of the same title.
 
-This repository of analysis code accompanies the Research Letter *"Toward a Molecular Diagnosis of
-Cardiac Sarcoidosis with a Cardiomyocyte-Intrinsic Transcriptional Signature"*. Analysis code and derived result tables are included.
+Spatial transcriptomics (Visium) of cardiac sarcoidosis (CS) and comparator cardiomyopathies
+is restricted to **cardiomyocyte-enriched spots at least 0.5 mm from any immune-enriched
+spot** — non-lesional myocardium, with granulomas and diffuse immune infiltration excluded.
+Differential expression between CS and the comparators in that compartment is then compared
+with published single-nucleus data and with published cardiomyocyte comparisons against
+non-failing donor myocardium.
 
 ## Key result
 
-The analysis suggests a four-gene cell-autonomous cardiomyocyte signature of cardiac sarcoidosis:
+In cardiomyocyte-enriched non-lesional myocardium, a substrate-handling and mitochondrial
+metabolism program — **SLC2A4, ACADVL, IDH2, ACADM, IDH3B, SDHB, HSD17B4**, with additional
+ion handling (SLC4A3) and adhesion (ITGA7) genes — is **lower in CS than in comparator
+cardiomyopathies**. Of 985 genes tested, 192 differ at FDR 5% (139 lower, 53 higher in CS);
+direction is preserved in every leave-one-section-out and leave-one-disease-out refit, and
+141 hits remain significant in every leave-one-section-out refit. Direction replicates in
+independent single-nucleus data while effect magnitude does not (Spearman rho = 0.03 across
+134 genes testable in both), so the claim is about direction, not effect size.
 
-> **GJB7, TNNI3K, MLIP, PANK1**
-
-The validation design is tiered and aware of confounds:
-
-- The **cross-cardiomyopathy discovery contrasts** (CS versus DCM / ARVC / HCM / non-failing,
-  assembled across cohorts) are **cohort-confounded** as cardiac sarcoidosis is contributed by a
-  single cohort in the discovery phase. These contrasts are **hypothesis-generating** and do not
-  on their own support the signature claim.
-- Instead, the claim is validated by two **independent tiers**:
-  1. **Within-study Liu CS-vs-ICM** (GSE205734): CS and ICM are compared inside a single cohort,
-     removing the cross-cohort batch confound.
-  2. **Foong spatial (Visium)** (GSE314910): the signature is further validated in intact CS
-     myocardium, including a within-patient distance-to-lesion mixed-effects model that establishes
-     cell-autonomy (the signal tracks cardiomyocytes rather than infiltrating immune/granuloma
-     content).
-
-## Repository structure
-
-```
-/
-├── README.md                # this file
-├── LICENSE                  # MIT
-├── .gitignore
-├── .gitattributes           # Git LFS patterns for large result tables
-├── environment.yml          # conda environment (also in env/)
-├── env/
-│   ├── environment.yml
-│   ├── cellbender.def       # Singularity definition for CellBender
-│   ├── paths.sh             # central path/identity config sourced by every sbatch (edit LAB)
-│   └── modules.sh           # Lmod modules + conda activation sourced by every sbatch
-├── scripts/                 # all analysis scripts (Python + R) + scripts/README.md
-├── slurm/                   # SLURM runners, steps 00–11 + smoke_test + submit_all.sh
-├── docs/
-│   ├── pipeline.md          # pipeline overview
-│   ├── setup_cluster.md     # cluster setup notes
-│   ├── next_steps.md
-│   └── data_availability.md # accession table
-├── metadata/
-│   ├── neyazi_cs_zones_by_patient.tsv
-│   ├── neyazi_cs_zones_by_section.tsv
-│   └── sample_meta.TEMPLATE.tsv
-├── figures/
-│   ├── Figure1_CS_cardiomyocyte.png
-│   └── Figure1_CS_cardiomyocyte.pdf
-└── results/                 # derived result DATA TABLES (large files via Git LFS)
-```
-
-## Data availability
-
-All datasets are publicly available and de-identified. No raw data is redistributed in this
-repository; only analysis code and derived result tables are included.
-
-| Cohort (label in code) | Modality | Disease(s) | Accession | Source publication |
-|---|---|---|---|---|
-| Neyazi | single-nucleus RNA-seq + spatial | Cardiac sarcoidosis | GSE319770 / GSE319771 | Neyazi et al., *Circulation* 2026, [10.1161/CIRCULATIONAHA.126.079304](https://doi.org/10.1161/CIRCULATIONAHA.126.079304) |
-| Reichart | single-nucleus RNA-seq | Dilated & arrhythmogenic cardiomyopathy; non-failing control | EGAS00001006374 | Reichart et al., *Science* 2022, [10.1126/science.abo1984](https://doi.org/10.1126/science.abo1984) |
-| Larson | single-nucleus RNA-seq | Hypertrophic cardiomyopathy | GSE174691 | Larson et al., *Sci Rep* 2022, [10.1038/s41598-022-08561-x](https://doi.org/10.1038/s41598-022-08561-x) |
-| Chin (2022) | single-nucleus RNA-seq | Hypertrophic cardiomyopathy (+ non-failing) | GSE181764 | Codden et al., *Int J Mol Sci* 2022, [10.3390/ijms23020946](https://doi.org/10.3390/ijms23020946) |
-| Chin (2021) | single-nucleus RNA-seq | Non-failing control | GSE161921 | Larson et al., *BMC Med Genomics* 2021, [10.1186/s12920-021-01011-z](https://doi.org/10.1186/s12920-021-01011-z) |
-| Liu | single-nucleus RNA-seq | Cardiac sarcoidosis; ischemic cardiomyopathy (4 CS + 3 ICM) | GSE205734 | Liu et al., *Circ Res* 2022, [10.1161/CIRCRESAHA.121.320449](https://doi.org/10.1161/CIRCRESAHA.121.320449) |
-| Foong | spatial transcriptomics (Visium) | Cardiac sarcoidosis | GSE314910 | Foong et al., *J Card Fail Intersect* 2026, [10.1016/j.yjcafi.2025.12.009](https://doi.org/10.1016/j.yjcafi.2025.12.009) |
-
-## Pipeline / reproducibility
-
-The pipeline is a SLURM dependency chain, run in order 00 → 11. Each step is an
-`sbatch` runner in `slurm/` that calls one or more scripts in `scripts/`. The table below is
-derived directly from the `slurm/*.sbatch` files.
-
-| Step | Runner | Script(s) invoked | Purpose |
-|---|---|---|---|
-| 00 | `00_setup_env.sbatch` | (conda env create; `singularity pull`) | Provision the conda env and pull the CellBender Singularity image |
-| 01 | `01_download.sbatch` | `download_geo.py`, `download_reichart_cxg.py`, `build_manifest.py` | Download public GEO / CELLxGENE datasets and build the sample manifest |
-| 02 | `02_cellbender.sbatch` | CellBender `remove-background` (via Singularity; job array) | Ambient-RNA removal on raw count matrices |
-| 03 | `03_decontx.sbatch` | `run_decontx.R` | DecontX ambient-contamination correction |
-| 04 | `04_qc.sbatch` | `run_qc.py` | Per-dataset QC filtering; merge sample metadata onto obs |
-| 05 | `05_scanvi.sbatch` | `run_scanvi.py` | scANVI integration across cohorts (batch correction) |
-| 05b | `05b_relabel.sbatch` | `relabel_genes.py` | Relabel integrated + liu_qc var_names from Ensembl IDs to HGNC symbols (required by all symbol-space downstream stages) |
-| 06 | `06_validate_gates.sbatch` | `run_gates.py` | Cell-type gate validation and QC UMAPs |
-| 07 | `07_pseudobulk_de.sbatch` | `subtype_tnk.py`, `pseudobulk_cm.py`, `run_pseudobulk_de.R` | Pseudobulk aggregation and cross-cardiomyopathy differential expression (limma-voom / pyDESeq2) |
-| 08 | `08_liu_standalone.sbatch` | `run_liu_standalone.py` | Within-study Liu CS-vs-ICM differential expression |
-| 09 | `09_gsea_figures.sbatch` | `run_gsea_figures.py`, `annotate_foong_validation.py`, `panel_robustness.py` | GSEA, volcano/enrichment figures, Foong validation annotation, panel robustness |
-| 10 | `10_foong_spatial.sbatch` | `download_foong_spatial.sh`, `foong_spatial_figures.py` | Download Foong Visium data and generate spatial figures |
-| 11 | `11_cm_signature.sbatch` | `cm_disease_distance.py`, `cm_spatial_crossdisease.py`, `cm_content_normalized.py`, `foong_regional.py` | Cardiomyocyte signature: within-patient distance-to-lesion, cross-disease spatial, CM-content normalization, regional analysis |
-
-**Smoke test.** `slurm/smoke_test.sbatch` runs the whole chain (make_synthetic_data →
-build_manifest → decontx → cellbender → qc → scanvi → relabel → gates → pseudobulk_de → liu_standalone →
-gsea_figures) on small synthetic data to verify wiring.
-
-**Full submission.** `slurm/submit_all.sh` launches steps 01–11 as an `afterok` dependency chain
-(07/08 fan out in parallel after the gates step, 09 joins them, then 10 spatial and 11 CM-signature
-run in sequence). Edit the `02_cellbender.sbatch` `--array` range to match your manifest sample count
-before launching.
-
-Helper scripts not wired into a numbered step are run manually: `composite_figure.py` (assembles
-the final Figure 1), `combine_contrasts.py`, `diagnose_neyazi_liu.py`, `foong_panelF_candidates.py`,
-`relabel_genes.py`, `make_sample_meta.py`. `_common.py` is a shared import
-(logging, gene panels). See `scripts/README.md` for the full per-script contract.
-
-## Environment setup
-
-The analysis environment is a conda environment defined in `environment.yml`:
+## Reproducing the manuscript numbers
 
 ```bash
-conda env create -f environment.yml
-conda activate cs-cmsignature
+# R stages need limma + edgeR; Python stages need pandas, scipy, matplotlib, adjustText, openpyxl
+RSCRIPT=/path/to/r-env/bin/Rscript PYTHON=/path/to/py-env/bin/python \
+  bash scripts/spatial_first/run_all.sh
 ```
 
-CellBender runs from a Singularity image built from `env/cellbender.def` (or pulled directly, as in
-step 00). The pipeline targets a SLURM cluster.
+This runs the six analysis stages, rebuilds the figure, and finishes by verifying every
+quantitative claim in the manuscript against the regenerated tables. It starts from
+**committed inputs** (`data/spatial_first/pseudobulk_T2000.tsv.gz` and friends), because
+stage `00_export_from_raw.py` needs the raw spatial objects, which are not redistributed
+here — see `docs/data_availability.md`.
 
-`env/paths.sh` centralizes all paths and cluster identity; **edit the `LAB` variable** (your
-`/gpfs/data/<lab>` group) before running. `env/modules.sh` handles Lmod module loading and conda
-activation. Both are sourced by every `sbatch` runner. The `#SBATCH --account` / `--partition`
-lines and any cluster-specific paths are placeholders (`YOUR_ACCOUNT`, `YOUR_PARTITION`): set them
-for your site (verify partitions with `sinfo -s`).
+`python scripts/manuscript_results.py` can also be run on its own. It prints each claim as
+*manuscript value | recomputed value | status*, writes `results/manuscript_results.tsv`,
+and **exits non-zero if any reproducible claim fails**. As of this commit: **30 claims
+reproduce, 8 mismatch, 2 are not addressable from committed data.** All 8 mismatches are in
+the published-non-failing-comparison paragraph and follow from one unresolved question;
+`docs/DISCREPANCIES.md` records each one, what the pipeline computes instead, and what was
+ruled out. The direction of that finding is unchanged and the recomputed evidence is
+stronger than the text claims.
 
-## How to reproduce from public data
+## Pipeline
 
-1. **Download** (step 01): fetch the public datasets in the accession table and build the manifest.
-2. **Decontaminate** (steps 02–03): CellBender + DecontX ambient-RNA correction.
-3. **QC & integrate** (steps 04–05): per-dataset QC, then scANVI integration.
-4. **Gates** (step 06): cell-type gate validation.
-5. **Pseudobulk DE** (step 07): cross-cardiomyopathy contrasts (hypothesis-generating).
-6. **Liu within-study** (step 08): batch-clean CS-vs-ICM validation tier.
-7. **GSEA / validation / robustness** (step 09): enrichment, Foong annotation, panel robustness.
-8. **Spatial** (step 10): Foong Visium figures.
-9. **CM signature** (step 11): within-patient distance-to-lesion, cross-disease spatial, CM-content
-   normalization, regional analysis. Assemble Figure 1 with `composite_figure.py`.
+| Stage | What it does | Main outputs |
+|---|---|---|
+| `scripts/spatial_first/00_export_from_raw.py` | spot lineage scoring, lesion-distance exclusion, depth downsampling, per-section pseudobulk | `data/spatial_first/*` (committed) |
+| `01_limma_q1q2.R` | per-section pseudobulk limma-voom; CS vs comparators (Q1) and diseased vs normal (Q2) | `q1_raw_T2000_d25.tsv`, `q2_raw_T2000_d25.tsv` |
+| `02_leave_one_out.R` | refits dropping one comparator section, then one comparator disease | `loo/q1_raw_drop*.tsv` |
+| `03_locus_qc.py` | flags segmental duplications, length-model deviation, missing annotation | `q2_locus_qc.tsv` |
+| `04_snrna_pool.py` | precision-weighted DCM+ARVC pooling, sign concordance, permutation null | `q1_core_snrna_pergene.tsv`, `q1_core_snrna_concordance.tsv` |
+| `05_controls.py` | probe-panel version, panel-matched comparators, cardiomyocyte-content adjustment, mitochondrial-gene removal | `q1_control_comparison.tsv`, `q1_noMT_*.tsv` |
+| `06_published_reference.py` | CS-lower genes against published DCM/HCM vs non-failing cardiomyocyte tables | `q1_published_nf_*.tsv` |
+| `scripts/figure1_build.py` | the two-panel manuscript figure from committed panel-value tables | `figures/Figure1.{png,pdf}` |
+| `scripts/manuscript_results.py` | verifies every manuscript claim; gates the commit | `results/manuscript_results.tsv` |
 
-## Citation
+## Figure
 
-If you use this software or its results, please cite the associated article. The manuscript DOI
-will be added on publication.
+`figures/Figure1.png` / `.pdf`. Panel **a**: spatial vs pooled single-nucleus log2 fold
+change for the 134 core genes testable in both platforms, open markers failing locus QC,
+shaded quadrants concordant — no line is fitted because the two axes are not calibrated to
+each other. Panel **b**: the 18 genes concordant and significant in both arms, with the
+published DCM-vs-non-failing and HCM-vs-non-failing effect sizes alongside; open squares are
+genes the published table does not report. Both panels use a symmetric-log colour and
+magnitude scale so the small single-nucleus effects and the large spatial effects are
+readable on one key. Panel values are committed as `results/tables/figure1_panel{A,B}_values.tsv`
+and the legend text as `results/tables/figure1_legend.md`.
 
-## License
+## Repository layout
 
-MIT: see [`LICENSE`](LICENSE).
+- `data/spatial_first/` — committed pseudobulk, detection fractions, section metadata, region
+  selection, gene spans, segmental-duplication track, Ensembl annotation
+- `data/snrna/` — single-nucleus comparator contrasts and the patient cohort table used by the
+  cross-platform arm
+- `data/published/` — cardiomyocyte rows distilled from the published supplementary tables
+- `results/spatial_first/` — every table the manuscript's numbers come from
+- `results/tables/` — figure panel values and legend
+- `docs/DISCREPANCIES.md` — where text and code disagree, and why
+- `docs/data_availability.md` — accessions and what is not redistributed here
+
+## Earlier arm
+
+An earlier single-nucleus arm of this project nominated a four-gene cardiomyocyte panel
+(GJB7, TNNI3K, MLIP, PANK1). That framing is **superseded** by the spatial-first analysis
+above and is not what the current manuscript reports; `docs/STATUS.md` records its state and
+its limitations, and `results/DE_CS_vs_*.tsv` predate the requantification used here.
