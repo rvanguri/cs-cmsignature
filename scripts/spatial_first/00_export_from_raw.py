@@ -12,7 +12,7 @@ import scanpy as sc, anndata as ad
 from scipy.spatial import cKDTree
 
 CFG = json.load(open("spatial_first_config.json"))
-RAW = "/gpfs/data/vangurilab/heartmap-cs/raw"
+RAW = ""
 COMP_DIR = "comparators"
 OUT = "out"; os.makedirs(OUT, exist_ok=True)
 T_GRID = CFG["T_grid"]; PITCH = CFG["spot_pitch_um"]; EXCL_MM = CFG["granuloma_exclusion_mm"]
