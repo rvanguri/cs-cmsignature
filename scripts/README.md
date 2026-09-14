@@ -31,8 +31,3 @@ annotation instead of using the committed copy.
 derived: spot-level cardiomyocyte/immune classification, the 0.5 mm exclusion radius around
 immune-enriched spots, the section-evaluability rule, and the per-section pseudobulk sum.
 
-## Earlier arm
-
-Scripts for the superseded single-nucleus arm (CellBender/DecontX/scANVI, the SLURM
-wrappers, the GSEA figures) are not in this tree. They are in git history at tag
-`pre-slim-2026-09-14`.
