@@ -236,7 +236,10 @@ def scatter_C(ax, qq, labels, extra_label=None, fs=5.3, s_mult=1.0):
     txt = [ax.text(qq.loc[g, "logFC"], qq.loc[g, "y"], g, fontsize=fs, style="italic") for g in labels]
     if extra_label is not None:
         txt.append(ax.text(qq.loc[extra_label, "logFC"], qq.loc[extra_label, "y"], extra_label, fontsize=fs + 0.7, style="italic"))
-    adjust_text(txt, x=qq.logFC.values, y=qq.y.values, ax=ax, arrowprops=dict(arrowstyle="-", color="0.4", lw=0.4))
+    # Fixed iteration count: adjustText's default is a 1-s wall-clock limit, which made label
+    # positions depend on machine load. iter_lim alone gives the same layout on every run.
+    adjust_text(txt, x=qq.logFC.values, y=qq.y.values, ax=ax, iter_lim=500,
+                arrowprops=dict(arrowstyle="-", color="0.4", lw=0.4))
 
 
 # ------------------------------------------------------------------ figure (2 x 2)
