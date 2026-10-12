@@ -1,12 +1,15 @@
-# Python environment for the manuscript pipeline (stages 03-06, the figure, and the
-# verification harness). The R stages (01, 01b, 02) use environment-R.yml.
+# Python environment for the ESC HF short-report pipeline: every Python stage of
+# scripts/eschf/run_pipeline.sh, the figure, and the verification harness.
+# The R stages use environment-R.yml.
 #
 #   mamba env create -f environment.yml
 #   mamba env create -f environment-R.yml
 #   PYTHON=$(conda run -n cs-cmsig-py which python) \
 #   RSCRIPT=$(conda run -n cs-cmsig-r which Rscript) \
-#     bash scripts/spatial_first/run_all.sh
+#     bash scripts/eschf/run_pipeline.sh all
 #
+# Verified (865 claims reproduce) with python 3.11.15, pandas 2.3.3, numpy 2.4.6,
+# scipy 1.17.1, statsmodels 0.14.6, matplotlib 3.11.0, adjustText 1.4.0.
 name: cs-cmsig-py
 channels:
   - conda-forge
@@ -15,14 +18,17 @@ dependencies:
   - pandas
   - numpy
   - scipy
-  - statsmodels          # BH correction in the concordance / control stages
+  - statsmodels          # BH correction, binomial tests
   - matplotlib
+  - pillow               # histology crops in Figure 1A
   - pip
   - pip:
-      - adjustText       # label placement in Figure 1A
+      - adjustText       # gene-label placement in Figure 1C (placement is not deterministic)
   # Optional, not needed to reproduce anything committed here:
+  #   requests  - only if 03_locus_qc.py meets a gene absent from all committed annotation
+  #               caches, or with --refresh (Ensembl REST / UCSC)
   #   openpyxl  - only to re-derive data/published/chaffin2022_*.tsv from the
   #               publication's Excel supplement (06_published_reference.py --src-dir)
-  #   scanpy, anndata - only for stage 00, which exports
-  #               data/spatial_first/pseudobulk_T2000.tsv.gz from the raw Visium
+  #   scanpy, anndata - only for the cluster export stages (00_export_from_raw.py,
+  #               a0_primary_export.py, a2a6_spot_export.py), which read the raw Visium
   #               objects (not redistributed; see docs/data_availability.md)

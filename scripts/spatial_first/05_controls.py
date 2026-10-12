@@ -6,7 +6,6 @@ way the two cohorts were generated rather than a difference between the tissues.
 
   panelB          CS vs only the comparator sections run on probe panel B
   panelmatched    CS vs only the comparator sections run on the same panel as CS
-  purityadj       CS vs all comparators, adjusting for per-section cardiomyocyte purity
   panel_contrast  panel B vs panel A among comparators only, i.e. the size of the
                   panel effect measured directly, with disease held out of the contrast
   noMT            mitochondrially encoded genes removed and TMM normalisation recomputed
@@ -16,7 +15,7 @@ All four reuse the committed pseudobulk matrix and the detectability table; the 
 four call 01b_limma_twogroup.R, noMT calls 01_limma_q1q2.R on an MT-stripped matrix.
 
 Outputs (results/spatial_first/)
-  q1_panelB.tsv, q1_panelmatched.tsv, q1_purityadj.tsv, ctrl_panelB_vs_panelA.tsv
+  q1_panelB.tsv, q1_panelmatched.tsv, ctrl_panelB_vs_panelA.tsv
   q1_raw_T2000_d25_noMT.tsv, q1_raw_T2000_d25_noMTrenorm.tsv
   q1_noMT_summary.tsv       tested / significant / direction with and without MT genes
   q1_noMT_comparison.tsv    per-gene logFC and FDR, original vs MT-free
@@ -42,7 +41,6 @@ THRESH = "0.25"
 TWOGROUP = {
     "q1_panelB":             ("meta_q1_panelB.tsv", "CS", "COMPB", "CS,COMPARATOR", None),
     "q1_panelmatched":       ("meta_q1_panelmatched.tsv", "CS", "COMPA", "CS,COMPARATOR", None),
-    "q1_purityadj":          ("meta_q1_purity.tsv", "CS", "COMPARATOR", "CS,COMPARATOR", "cm_purity"),
     # comparators only, so detectability is assessed in the comparator arm alone
     "ctrl_panelB_vs_panelA": ("meta_panel.tsv", "panelB", "panelA", "COMPARATOR", None),
 }
@@ -104,8 +102,7 @@ def main():
     panel_testable = set(pd.read_csv(f"{RES}/ctrl_panelB_vs_panelA.tsv", sep="\t").gene)
     sig = [g for g in q1.index[q1["adj.P.Val"] < 0.05] if g in panel_testable]
     C = pd.DataFrame({"logFC": q1.loc[sig, "logFC"]})
-    for name, tag in [("ctrl_panelB_vs_panelA", "pnl"), ("q1_panelmatched", "pm"),
-                      ("q1_purityadj", "pu")]:
+    for name, tag in [("ctrl_panelB_vs_panelA", "pnl"), ("q1_panelmatched", "pm")]:
         t = pd.read_csv(f"{RES}/{name}.tsv", sep="\t").set_index("gene")
         C[f"logFC_{tag}"] = t.logFC.reindex(C.index)
         C[f"fdr_{tag}"] = t["adj.P.Val"].reindex(C.index)
@@ -113,7 +110,7 @@ def main():
     C.to_csv(f"{RES}/q1_control_comparison.tsv", sep="\t")
 
     print(pd.read_csv(f"{RES}/q1_noMT_summary.tsv", sep="\t").to_string(index=False))
-    for tag, label in [("pm", "panel-matched"), ("pu", "purity-adjusted")]:
+    for tag, label in [("pm", "panel-matched")]:
         same = int((np.sign(C.logFC) == np.sign(C[f"logFC_{tag}"])).sum())
         print(f"[control {label:<15}] {len(C)} main hits testable | "
               f"same direction {same} | still FDR<0.05 {int((C[f'fdr_{tag}'] < 0.05).sum())}")

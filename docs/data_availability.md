@@ -19,20 +19,40 @@ repository; it carries analysis code, the derived inputs the pipeline starts fro
 
 ## What is committed, and where it came from
 
-- **Spatial arm.** `data/spatial_first/pseudobulk_T2000.tsv.gz` and its companion detection and
-  metadata tables are per-section, cardiomyocyte-enriched pseudobulk exported from the raw Visium
-  objects (CS from GSE314910, comparators from this study) by
-  `scripts/spatial_first/00_export_from_raw.py`. That stage needs the raw objects and is therefore
-  **not** part of `run_all.sh`; the pipeline starts from the committed export.
-- **Single-nucleus arm.** `data/snrna/snrna_CS_vs_*.tsv` are per-gene contrast summaries computed
-  from the snRNA-seq cohorts above (cardiomyocyte nuclei, patient-level pseudobulk);
-  `data/snrna/snrna_patient_cohort.tsv` lists the contributing patients by study and disease.
-- **Published reference.** `data/published/chaffin2022_cardiomyocyte_*.tsv` are the cardiomyocyte
-  DCM-vs-NF and HCM-vs-NF tables transcribed from the Chaffin supplement.
-  `scripts/spatial_first/06_published_reference.py --src-dir <dir>` re-derives them from the
-  original Excel files if needed.
-- Fetch and preprocessing code for the raw single-nucleus matrices is not in this tree; it is in
-  git history at tag `pre-slim-2026-09-14`.
+- **Spatial exports.** Exported on the cluster from the raw Visium objects (CS from GSE314910, comparators from this
+  study) by the three export stages. These stages need the raw objects and are not part of
+  `run_pipeline.sh all`, which starts from the committed exports.
+  - `scripts/spatial_first/00_export_from_raw.py` writes `data/spatial_first/`: per-sample cardiomyocyte pseudobulk
+    beyond 0.5 mm of immune-dominant spots, detection fractions, section metadata, region selection.
+  - `scripts/eschf/a0_primary_export.py` writes `data/eschf/primary_v2/`: the same over all cardiomyocyte-dominant
+    spots, with spot counts. `a0_export_log.txt` is that run's log.
+  - `scripts/eschf/a2a6_spot_export.py` writes `data/eschf/primary_v2/eschf_perspot_T2000.tsv.gz`: per-spot lineage,
+    program scores and distance to the nearest immune-dominant spot.
+  No normal-donor sections are included.
+- **H&E images.** `data/eschf/img/*.jpg` are the Visium high-resolution tissue images, downscaled by 0.6 (JPEG
+  quality 90). Their scale factors are in `image_meta.json`. The CS images come from GSE314910. `ARVC_1.jpg` is the
+  comparator section shown in Figure 1A, from this study's data.
+- **Annotation.** `data/spatial_first/ensembl_annotation_tested.tsv`, `gene_span.tsv` and `segdups_hg38.tsv.gz`
+  are cached Ensembl and UCSC lookups. `results/spatial_first/q2_locus_qc_ensembl_fetched.tsv` and
+  `q2_locus_qc_ensembl_unresolved.txt` cover the remaining tested genes, so locus QC runs offline.
+- **Single-nucleus contrasts.** `data/snrna/snrna_CS_vs_*.tsv` are per-gene contrast summaries computed from the
+  snRNA-seq cohorts above (cardiomyocyte nuclei, patient-level pseudobulk). `snrna_cm_patient_counts.tsv.gz`
+  holds the patient pseudobulk counts the procurement and per-study analyses refit, and
+  `snrna_patient_cohort.tsv` lists the contributing patients by study and disease.
+- **Publisher supplements (not redistributed; download before running).** `run_pipeline.sh` checks for these files and stops
+  with this list if any is missing:
+  - `data/external/neyazi_table_s1.xlsx` and `neyazi_table_s2.xlsx`: Supplemental Tables S1 and S2 of Neyazi et al.,
+    *Circulation* 2026, doi:10.1161/CIRCULATIONAHA.126.079304, saved under these names. S1 must keep its `Sarcoid` sheet.
+    They are read by `00_inputs.py` (which writes `neyazi_clinical.tsv`), `a11_*` and the harness.
+  - `data/external/44161_2026_880_MOESM4_ESM.xlsx`, `MOESM5`, `MOESM7`: supplementary files of Hamed et al.,
+    *Nat Cardiovasc Res* 2026, doi:10.1038/s44161-026-00880-w, under the publisher's download names. They are read
+    by `a5_hamed.py`. No number in the short report depends on them.
+  `data/external/neyazi_geo_snrna_sample_listing.txt` (the GEO sample listing for the Neyazi snRNA series) is committed.
+- **Published reference.** `data/published/chaffin2022_cardiomyocyte_*.tsv` are the cardiomyocyte DCM-vs-NF and
+  HCM-vs-NF tables transcribed from the Chaffin supplement. `scripts/spatial_first/06_published_reference.py
+  --src-dir <dir>` re-derives them from the original Excel files.
+- Fetch and preprocessing code for the raw single-nucleus matrices is not in this tree. It is in git history at tag
+  `pre-slim-2026-09-14`.
 
 ## Constraints on use
 

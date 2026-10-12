@@ -1,69 +1,84 @@
-# Metabolic gene expression differs in non-lesional myocardium between cardiac sarcoidosis and other cardiomyopathies
+# Cardiomyocyte transcription in cardiac sarcoidosis
 
-Spatial transcriptomics (Visium) of cardiac sarcoidosis (CS) and comparator cardiomyopathies
-is restricted to **cardiomyocyte-enriched spots at least 0.5 mm from any immune-enriched
-spot** - non-lesional myocardium, with granulomas and diffuse immune infiltration excluded.
-Differential expression between CS and the comparators in that compartment is then compared
-with published single-nucleus data and with published cardiomyocyte comparisons against
-non-failing donor myocardium.
+Analysis code, derived inputs and result tables for the ESC Heart Failure short report of the same
+title. Every number in the manuscript text and figure legend is regenerated from the committed inputs and
+checked by `scripts/manuscript_results.py`.
 
-## Key result
+## Data and design
 
-In cardiomyocyte-enriched non-lesional myocardium, a substrate-handling and mitochondrial
-metabolism program — **SLC2A4, ACADVL, IDH2, ACADM, IDH3B, SDHB, HSD17B4**, with additional
-ion handling (SLC4A3) and adhesion (ITGA7) genes — is **lower in CS than in comparator
-cardiomyopathies**. Of 985 genes tested, 192 differ at FDR 5% (139 lower, 53 higher in CS);
-direction is preserved in every leave-one-section-out and leave-one-disease-out refit, and
-141 of the hits remain significant across all section refits (117 across disease refits). Direction replicates in
-independent single-nucleus data.
+- **Spatial transcriptomics (Visium, probe-based).** 12 cardiac sarcoidosis (CS) samples from 9 patients
+  (GSE314910) and 6 comparator samples from 6 patients: 2 arrhythmogenic (ARVC), 2 lamin A/C-associated dilated
+  (LMNA DCM), 1 hypertrophic (HCM) and 1 Chagas cardiomyopathy. Each spot is thinned to 2,000 UMIs and assigned to
+  its dominant lineage (argmax over five lineage gene-set scores). Samples with at least 50
+  cardiomyocyte-dominant spots are analysed (11 CS samples, 8 patients).
+- **Differential expression.** limma-voom on per-sample pseudobulk of cardiomyocyte-dominant spots, CS vs
+  comparators, 985 genes passing the 25% detection rule. Refits: patient pseudobulk, patient blocking,
+  exclusion of spots within 0.5 mm of an immune-dominant spot, and leave-one-sample-out and leave-one-disease-out.
+  Locus-level quantification QC on every tested gene.
+- **Distance to inflammation.** Per-patient slopes of the score of the genes lower in CS, and of single genes,
+  against distance to the nearest immune-dominant spot.
+- **Single-nucleus RNA-seq.** CS (Neyazi) against pooled DCM and ARVC (Reichart) and against non-failing
+  myocardium, with a pre-stated ±3 log2 screen on the pooled snRNA effect, random-gene-set expectations, and an
+  explant-only subset.
+- **Published reference.** Chaffin et al. 2022 cardiomyocyte DCM vs non-failing and HCM vs non-failing tables.
+
+Accessions, the provenance of each committed input, and constraints on use are in `docs/data_availability.md`.
+Two sets of publisher supplements (Neyazi Tables S1 and S2; Hamed supplementary files) are not redistributed. Download them into
+`data/external/` as listed there before running the pipeline.
 
 ## Reproducing the manuscript numbers
 
 ```bash
 mamba env create -f environment.yml      # Python stages, figure, verification
-mamba env create -f environment-R.yml    # limma-voom stages
-RSCRIPT=$(conda run -n cs-cmsig-r which Rscript) \
+mamba env create -f environment-R.yml    # limma-voom and mixed-model stages
 PYTHON=$(conda run -n cs-cmsig-py which python) \
-  bash scripts/spatial_first/run_all.sh
+RSCRIPT=$(conda run -n cs-cmsig-r which Rscript) \
+  bash scripts/eschf/run_pipeline.sh all
 ```
 
-This runs the six analysis stages and rebuilds the figure. It starts from
-**committed inputs** (`data/spatial_first/pseudobulk_T2000.tsv.gz` and friends).
+This runs every analysis stage from the committed exports, rebuilds Figure 1 and the graphical abstract, writes
+`results/eschf/SUMMARY.md`, and finishes by checking every manuscript number against the regenerated tables. It takes
+about two minutes on a laptop and, once the supplements are downloaded, needs no network access. Logs go to `$LOGDIR` (default `logs/`).
 
-## Pipeline
+The three export stages that read the raw Visium objects (`00_export_from_raw.py`, `a0_primary_export.py`,
+`a2a6_spot_export.py`) ran on the cluster next to the raw data, and their outputs are committed under `data/`. The
+raw objects are not redistributed. `run_pipeline.sh cluster1|cluster2|cluster3` documents those runs.
 
-| Stage | What it does | Main outputs |
-|---|---|---|
-| `scripts/spatial_first/00_export_from_raw.py` | spot lineage scoring, lesion-distance exclusion, depth downsampling, per-section pseudobulk | `data/spatial_first/*` (committed) |
-| `01_limma_q1q2.R` | per-section pseudobulk limma-voom; CS vs comparators (Q1) and diseased vs normal (Q2) | `q1_raw_T2000_d25.tsv`, `q2_raw_T2000_d25.tsv` |
-| `02_leave_one_out.R` | refits dropping one comparator section, then one comparator disease | `loo/q1_raw_drop*.tsv` |
-| `03_locus_qc.py` | flags segmental duplications, length-model deviation, missing annotation | `q2_locus_qc.tsv` |
-| `04_snrna_pool.py` | precision-weighted DCM+ARVC pooling, sign concordance, permutation null, gene-length scan | `q1_core_snrna_pergene.tsv`, `q1_core_snrna_concordance.tsv`, `snrna_gene_length_regression.tsv` |
-| `05_controls.py` | probe-panel version, panel-matched comparators, cardiomyocyte-content adjustment, mitochondrial-gene removal | `q1_control_comparison.tsv`, `q1_noMT_*.tsv` |
-| `06_published_reference.py` | CS-lower genes against published DCM/HCM vs non-failing cardiomyocyte tables | `q1_published_nf_*.tsv` |
-| `scripts/figure1_build.py` | the two-panel manuscript figure from committed panel-value tables | `figures/Figure1.{png,pdf}` |
-| `scripts/manuscript_results.py` | verifies every manuscript claim; gates the commit | `results/manuscript_results.tsv` |
+## Verification
 
-## Figure
+`python scripts/manuscript_results.py` prints each claim as *manuscript value | recomputed value | status*, writes
+`results/manuscript_results.tsv`, and **exits non-zero on any mismatch**. As of this commit **865 claims reproduce,
+none mismatch, and 2 are NOT_RUN**: the patient-blocked refits of the ≥0.5 mm exclusion fit, where the
+within-patient correlation is not estimable. The `ShortReport` block (62 claims) encodes each number as printed in
+the manuscript and compares it at printed precision. The `ESCHF[...]` blocks (805 claims, including the 2 NOT_RUN) recompute the underlying
+tables independently. `docs/DISCREPANCIES.md` describes both blocks, the two NOT_RUN claims and the revision history.
 
-`figures/Figure1.png` / `.pdf`. Panel **a**: spatial vs pooled single-nucleus log2 fold
-change for the 134 core genes testable in both platforms, open markers failing locus QC,
-shaded quadrants concordant — no line is fitted because the two axes are not calibrated to
-each other. Panel **b**: the 18 genes concordant and significant in both arms, with the
-published DCM-vs-non-failing and HCM-vs-non-failing effect sizes alongside; open squares are
-genes the published table does not report. Both panels use a symmetric-log colour and
-magnitude scale so the small single-nucleus effects and the large spatial effects are
-readable on one key. Panel values are committed as `results/tables/figure1_panel{A,B}_values.tsv`
-and the legend text as `results/tables/figure1_legend.md`.
+## Layout
 
-## Repository layout
+| Path | Contents |
+|---|---|
+| `scripts/eschf/` | short-report stages, the driver `run_pipeline.sh`, `derived_inputs.py` |
+| `scripts/spatial_first/` | the limma-fit stages both fits share (limma fits, leave-one-out, locus QC, snRNA pooling, controls, published reference) |
+| `scripts/manuscript_results.py` | the verification harness |
+| `data/eschf/` | primary-fit exports (`primary_v2/`), per-spot scores, H&E JPEGs for Figure 1A (`img/`) |
+| `data/spatial_first/` | ≥0.5 mm-fit pseudobulk, detection, section metadata, gene spans, segmental duplications, Ensembl annotation |
+| `data/snrna/`, `data/published/`, `data/external/` | snRNA contrasts and patient cohort; Chaffin tables; GEO sample listing (publisher supplements downloaded here) |
+| `results/eschf/` | every short-report table, `SUMMARY.md`, `a7_panel_values.tsv` (every plotted value) |
+| `results/spatial_first/` | ≥0.5 mm-fit tables, locus QC and its annotation caches |
+| `figures/` | `eschf_figure1.{png,pdf}`, `eschf_figure1_legend.md`, `eschf_graphical_abstract.png` |
+| `docs/` | `DISCREPANCIES.md`, `data_availability.md` |
 
-- `data/spatial_first/` — committed pseudobulk, detection fractions, section metadata, region
-  selection, gene spans, segmental-duplication track, Ensembl annotation
-- `data/snrna/` — single-nucleus comparator contrasts and the patient cohort table used by the
-  cross-platform arm
-- `data/published/` — cardiomyocyte rows distilled from the published supplementary tables
-- `results/spatial_first/` — every table the manuscript's numbers come from
-- `results/tables/` — figure panel values and legend
-- `docs/data_availability.md` — accessions, provenance of the committed inputs, constraints on use
+Gene-label placement in Figure 1C is not deterministic, so a rerun can move a few labels. Plotted values do not
+change.
 
+## Earlier versions
+
+- Tag `brief-report-spatial-first`: the spatial-first brief report (*Metabolic gene expression differs in
+  non-lesional myocardium between cardiac sarcoidosis and other cardiomyopathies*), with its driver, figure and
+  claim block.
+- Tag `pre-slim-2026-09-14`: the superseded single-nucleus arm (four-gene panel GJB7, TNNI3K, MLIP, PANK1).
+
+```bash
+git show brief-report-spatial-first --stat
+git checkout brief-report-spatial-first -- <path>
+```

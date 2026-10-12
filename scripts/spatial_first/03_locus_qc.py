@@ -26,7 +26,7 @@ Inputs (all committed under data/spatial_first/)
   segdups_hg38.tsv.gz                cached UCSC genomicSuperDups track
   reference_gene_symbols.txt         10x reference symbol space (readthrough detection)
 Input from the DE step
-  results/spatial_first/q2_raw_T2000_d25.tsv   defines the tested-gene universe
+  --universe <fit tables>                      their tested genes (union) define the universe
 
 Pass --refresh to re-fetch the Ensembl and UCSC tables from the network instead of
 using the committed caches; the caches exist so this step runs offline.
@@ -35,6 +35,7 @@ Output: results/spatial_first/q2_locus_qc.tsv
 """
 import argparse
 import json
+import os
 import time
 
 import numpy as np
@@ -44,7 +45,7 @@ DATA = "data/spatial_first"
 RES = "results/spatial_first"
 FLAGS = ["flag_source_specific_absence", "flag_length_deviation", "flag_segdup",
          "flag_missing_annotation", "flag_readthrough"]
-SOURCES = ["foong", "new_visium", "kuppe"]
+SOURCES = ["foong", "new_visium"]
 
 
 def fetch_ensembl(genes):
@@ -61,7 +62,8 @@ def fetch_ensembl(genes):
     ann = pd.DataFrame([{"gene": g, "ens_id": v.get("id"), "chrom": v.get("seq_region_name"),
                          "start": v.get("start"), "end": v.get("end"), "strand": v.get("strand"),
                          "biotype": v.get("biotype"), "description": v.get("description") or ""}
-                        for g, v in info.items() if isinstance(v, dict)])
+                        for g, v in info.items() if isinstance(v, dict)],
+                       columns=["gene", "ens_id", "chrom", "start", "end", "strand", "biotype", "description"])
     ann["span_kb"] = (ann.end - ann.start) / 1000
     return ann
 
@@ -104,13 +106,15 @@ def main():
     ap.add_argument("--refresh", action="store_true",
                     help="re-fetch Ensembl/UCSC instead of using the committed caches")
     ap.add_argument("--out", default=f"{RES}/q2_locus_qc.tsv")
+    ap.add_argument("--universe", nargs="+", required=True,
+                    help="fit tables whose tested genes (union) form the QC universe")
     args = ap.parse_args()
 
     pb = pd.read_csv(f"{DATA}/pseudobulk_T2000.tsv.gz", sep="\t", index_col=0)
     meta = pd.read_csv(f"{DATA}/meta_T2000.tsv", sep="\t", index_col=0)
     dbs = pd.read_csv(f"{DATA}/detection_by_section_T2000.tsv.gz", sep="\t", index_col=0)
     refsym = [x.strip() for x in open(f"{DATA}/reference_gene_symbols.txt") if x.strip()]
-    genes = pd.read_csv(f"{RES}/q2_raw_T2000_d25.tsv", sep="\t").gene.tolist()
+    genes = sorted(set().union(*[set(pd.read_csv(f, sep="\t").gene) for f in args.universe]))
 
     ev = meta[meta.evaluable.astype(str).isin(["True", "TRUE"])]
 
@@ -119,6 +123,26 @@ def main():
         segdup = fetch_segdups()
     else:
         ann = pd.read_csv(f"{DATA}/ensembl_annotation_tested.tsv", sep="\t")
+        # cached annotation reused. Genes absent from it were looked up once; the resolved ones are
+        # committed in <out>_ensembl_fetched.tsv and the unresolvable ones in
+        # <out>_ensembl_unresolved.txt, so a rerun needs no network. Only genes in neither are fetched.
+        f_fetched = args.out.replace(".tsv", "_ensembl_fetched.tsv")
+        f_unres = args.out.replace(".tsv", "_ensembl_unresolved.txt")
+        prev = pd.read_csv(f_fetched, sep="\t") if os.path.exists(f_fetched) else ann.iloc[:0]
+        unres = set(x.strip() for x in open(f_unres) if x.strip()) if os.path.exists(f_unres) else set()
+        not_main = [g for g in genes if g not in set(ann.gene)]
+        miss = [g for g in not_main if g not in set(prev.gene) and g not in unres]
+        new = fetch_ensembl(miss) if miss else ann.iloc[:0]
+        if miss:
+            prev = pd.concat([prev, new], ignore_index=True).drop_duplicates("gene").sort_values("gene")
+            prev.to_csv(f_fetched, sep="\t", index=False)
+            unres |= set(miss) - set(new.gene)
+            open(f_unres, "w").write("".join(f"{g}\n" for g in sorted(unres)))
+        ann = pd.concat([ann, prev[prev.gene.isin(not_main)]], ignore_index=True)
+        print(f"[locus qc] universe {len(genes)} | not in annotation cache {len(not_main)} | "
+              f"in committed fetch {int(prev.gene.isin(not_main).sum())} | unresolvable {len(set(not_main) & unres)} | "
+              f"fetched now {len(new)}")
+        ann = ann[ann.gene.isin(genes)]
         segdup = pd.read_csv(f"{DATA}/segdups_hg38.tsv.gz", sep="\t")
 
     # ---- source-specific absence -------------------------------------------------

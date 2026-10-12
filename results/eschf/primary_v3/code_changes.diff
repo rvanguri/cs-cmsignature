@@ -1,0 +1,982 @@
+--- a/scripts/eschf/00_inputs.py
++++ b/scripts/eschf/00_inputs.py
+@@ -23,6 +23,7 @@
+ 3. data/external/neyazi_clinical.tsv: per-patient CS clinical table (Tissue Source, LVEF)
+    from the Neyazi supplement Table S1 ("Sarcoid" sheet).
+ """
++_V3 = __import__("os").environ.get("ESCHF_V3") == "1"  # Kuppe-free v3 run: outcome counts not asserted
+ import argparse
+ import os
+ 
+@@ -40,7 +41,7 @@
+             "flag_missing_annotation", "flag_readthrough", "flag_source_specific_absence",
+             "max_abs_length_dev_log2", "span_kb", "biotype"]
+     h = q1[q1["adj.P.Val"] < FDR].merge(qc[cols], on="gene", how="left")
+-    assert len(h) == 192, len(h)
++    assert _V3 or len(h) == 192, len(h)
+     h["in_qc_universe"] = h.qc_pass.notna()
+     h["qc_pass"] = h.qc_pass.astype("boolean").fillna(False).astype(bool)
+     h["direction"] = (h.logFC > 0).map({True: "up", False: "down"})
+--- a/scripts/eschf/a0_compare.py
++++ b/scripts/eschf/a0_compare.py
+@@ -10,6 +10,7 @@
+   results/eschf/primary_v2/geneset_primary_program_qcpass_down.txt
+                                           new program score genes: QC-passing lower-in-CS hits
+ """
++_V3 = __import__("os").environ.get("ESCHF_V3") == "1"  # Kuppe-free v3 run: outcome counts not asserted
+ import pandas as pd
+ 
+ OUT, V2, RES, FDR = "results/eschf", "results/eschf/primary_v2", "results/spatial_first", 0.05
+@@ -18,7 +19,7 @@
+ qc = pd.read_csv(f"{RES}/q2_locus_qc.tsv", sep="\t")
+ dn = pd.read_csv("data/eschf/primary_v2/detection_fraction_allcm_T2000.tsv.gz", sep="\t", index_col=0)
+ do = pd.read_csv("data/spatial_first/detection_fraction_T2000.tsv.gz", sep="\t", index_col=0)
+-assert len(new) == 982 and len(old) == 985
++assert _V3 or (len(new) == 982 and len(old) == 985)
+ 
+ # ---- universe
+ U = pd.DataFrame(index=sorted(set(new.index) | set(old.index)))
+--- a/scripts/eschf/a0_primary_export.py
++++ b/scripts/eschf/a0_primary_export.py
+@@ -158,7 +158,7 @@
+     return [l.strip().upper() for l in open(f"{GS_DIR}/{fn}") if l.strip() and not l.startswith("#")]
+ 
+ 
+-S = load_cs() + load_comparators() + load_normal()
++S = load_cs() + load_comparators() + ([] if os.environ.get("ESCHF_V3") == "1" else load_normal())  # v3: no Kuppe normals
+ inner = set.intersection(*[set(s["sym"]) for s in S])
+ inner = sorted(inner)
+ for s in S:
+@@ -259,7 +259,7 @@
+ pb2.to_csv(f"{OUT}/pseudobulk_allcm_T{T}.tsv.gz", sep="\t")
+ pd.DataFrame(det, index=inner).T.to_csv(f"{OUT}/detection_by_section_allcm_T{T}.tsv.gz", sep="\t")
+ grp = {}
+-for coh in ["CS", "COMPARATOR", "NORMAL"]:
++for coh in ["CS", "COMPARATOR"] + ([] if os.environ.get("ESCHF_V3") == "1" else ["NORMAL"]):  # v3: no normals
+     m = (md.cohort.values == coh) & sel2
+     grp[coh] = np.asarray((sp.csr_matrix(Xall[np.where(m)[0]]) > 0).sum(0)).ravel() / m.sum()
+ m = sel2 & np.isin(md.cohort.values, ["CS", "COMPARATOR"])
+--- a/scripts/eschf/a0_primary_refit.R
++++ b/scripts/eschf/a0_primary_refit.R
+@@ -18,7 +18,7 @@
+ q1 <- read.delim(file.path(V2DIR, "q1_raw_allcm.tsv"))
+ qc <- read.delim("results/spatial_first/q2_locus_qc.tsv")
+ genes <- q1$gene
+-stopifnot(length(genes) == 982)
++if (Sys.getenv("ESCHF_V3") != "1") stopifnot(length(genes) == 982)  # v3: outcome count not asserted
+ 
+ # ---------------------------------------------------------------- section -> patient map
+ # CS: Foong sections named CS_<patient>[-<section>] (GSE314910: 12 sections, 9 patients).
+--- a/scripts/eschf/a10_pathway_levels.py
++++ b/scripts/eschf/a10_pathway_levels.py
+@@ -14,6 +14,7 @@
+   over set genes; CS - comparator difference with Welch 95% CI (8 vs 6 patients).
+ Panel B is not changed by this analysis.
+ """
++_V3 = __import__("os").environ.get("ESCHF_V3") == "1"  # Kuppe-free v3 run: outcome counts not asserted
+ import numpy as np, pandas as pd, scipy.sparse as sp
+ from scipy import stats
+ 
+@@ -23,7 +24,7 @@
+ spots = pd.read_csv(f"{D}/spotcounts_allcm_T{T}_spots.tsv.gz", sep="\t")
+ genes = read_set(f"{D}/spotcounts_allcm_T{T}_genes.txt"); gidx = {g: i for i, g in enumerate(genes)}
+ lc = X.multiply(CP10K / T).tocsr(); lc.data = np.log1p(lc.data)
+-univ = set(read_set(f"{D}/universe_allcm.txt")); assert len(univ) == 982
++univ = set(read_set(f"{D}/universe_allcm.txt")); assert _V3 or len(univ) == 982
+ H = pd.read_csv(f"{V2}/q1_hits_annotated.tsv", sep="\t").set_index("gene"); H = H[H["adj.P.Val"] < 0.05]
+ SETS = {"fatty_acid_degradation_hsa00071": "metadata/geneset_kegg_fatty_acid_degradation_hsa00071.txt",
+         "tca_cycle_hsa00020": "metadata/geneset_kegg_tca_hsa00020.txt",
+--- a/scripts/eschf/a13_gpnmb_remote.py
++++ b/scripts/eschf/a13_gpnmb_remote.py
+@@ -149,7 +149,7 @@
+     return [l.strip().upper() for l in open(f"{GS_DIR}/{fn}") if l.strip() and not l.startswith("#")]
+ 
+ 
+-S = load_cs() + load_comparators() + load_normal()
++S = load_cs() + load_comparators() + ([] if os.environ.get("ESCHF_V3") == "1" else load_normal())  # v3: no Kuppe normals
+ inner = set.intersection(*[set(s["sym"]) for s in S])
+ inner = sorted(inner)
+ for s in S:
+--- a/scripts/eschf/a14_pathway_hits_removed.py
++++ b/scripts/eschf/a14_pathway_hits_removed.py
+@@ -32,6 +32,7 @@
+   a14_pathway_null_draws.tsv.gz (every draw's genes, for the harness).
+ The figure is not changed.
+ """
++_V3 = __import__("os").environ.get("ESCHF_V3") == "1"  # Kuppe-free v3 run: outcome counts not asserted
+ import numpy as np, pandas as pd, scipy.sparse as sp
+ from scipy import stats
+ 
+@@ -40,7 +41,7 @@
+ SETS = {"tca_cycle_hsa00020": "metadata/geneset_kegg_tca_hsa00020.txt",
+         "fatty_acid_degradation_hsa00071": "metadata/geneset_kegg_fatty_acid_degradation_hsa00071.txt",
+         "oxphos_hsa00190": "metadata/geneset_kegg_oxphos_hsa00190.txt"}
+-univ = read_set(f"{D}/universe_allcm.txt"); assert len(univ) == 982; U = set(univ)
++univ = read_set(f"{D}/universe_allcm.txt"); assert _V3 or len(univ) == 982; U = set(univ)
+ HP = pd.read_csv(f"{V2}/q1_hits_annotated.tsv", sep="\t"); assert (HP["adj.P.Val"] < 0.05).all()
+ HS = pd.read_csv(f"{OUT}/q1_hits_annotated.tsv", sep="\t"); assert (HS["adj.P.Val"] < 0.05).all()
+ P, S = set(HP.gene), set(HS.gene)
+@@ -49,7 +50,7 @@
+ assert set(L.index) == U
+ mp = pd.read_csv(f"{V2}/section_patient_map.tsv", sep="\t"); arm = mp.drop_duplicates("patient").set_index("patient").arm
+ csp = [c for c in L.columns if arm[c] == "CS"]; cop = [c for c in L.columns if arm[c] == "COMPARATOR"]
+-assert len(csp) == 8 and len(cop) == 6
++assert _V3 or (len(csp) == 8 and len(cop) == 6)
+ dg = L[csp].mean(1) - L[cop].mean(1)          # per-gene CS - comparator
+ 
+ def welch(gs):
+@@ -123,7 +124,7 @@
+     sc = np.asarray(lc[:, [gidx[g] for g in gs]].mean(1)).ravel()
+     Sx = spots[["spot", "section", "cohort"]].assign(score=sc)
+     cs = mi.merge(Sx, on=["spot", "section"], how="left"); assert cs.score.notna().all() and len(cs) == len(mi)
+-    comp = Sx[Sx.cohort == "COMPARATOR"].groupby("section").score.mean(); assert len(comp) == 6
++    comp = Sx[Sx.cohort == "COMPARATOR"].groupby("section").score.mean(); assert _V3 or len(comp) == 6
+     pp = cs.groupby(["bin", "patient"]).score.mean().reset_index()
+     for b in bins:
+         v = pp[pp.bin == b].score; h = stats.t.ppf(0.975, len(v) - 1) * v.std(ddof=1) / np.sqrt(len(v))
+--- a/scripts/eschf/a1_patient_refit.R
++++ b/scripts/eschf/a1_patient_refit.R
+@@ -22,7 +22,7 @@
+ qc <- read.delim("results/spatial_first/q2_locus_qc.tsv")
+ hits <- read.delim(file.path(out, "q1_hits_annotated.tsv"))
+ genes <- q1$gene
+-stopifnot(length(genes) == 985)
++if (Sys.getenv("ESCHF_V3") != "1") stopifnot(length(genes) == 985)  # v3: outcome count not asserted
+ 
+ # ---------------------------------------------------------------- section -> patient map
+ # CS: Foong sections named CS_<patient>[-<section>] (GSE314910: 12 sections, 9 patients).
+@@ -89,10 +89,18 @@
+ blk <- ret$patient
+ v <- voom(d0, des0)
+ dc1 <- duplicateCorrelation(v, des0, block=blk)
++if (Sys.getenv("ESCHF_V3") == "1" && !is.finite(dc1$consensus.correlation)) {
++  # v3 only: refit 2 is not estimable (consensus correlation non-finite); recorded as NA, not substituted
++  cat(sprintf("[dupcor] NOT ESTIMABLE: consensus correlation %s; patients with >1 section: %d\n",
++              dc1$consensus.correlation, sum(table(blk) > 1)))
++  dc2 <- list(consensus.correlation=NA_real_); f2 <- list(df.prior=NA_real_)
++  o2 <- data.frame(gene=genes, logFC=NA_real_, t=NA_real_, P=NA_real_, adj=NA_real_, CI_lo=NA_real_, CI_hi=NA_real_)
++} else {
+ v2 <- voom(d0, des0, block=blk, correlation=dc1$consensus.correlation)
+ dc2 <- duplicateCorrelation(v2, des0, block=blk)
+ f2 <- eBayes(contrasts.fit(lmFit(v2, des0, block=blk, correlation=dc2$consensus.correlation), C0))
+ o2 <- tidy(f2)
++}
+ cat(sprintf("[dupcor] consensus correlation pass1 %.4f, pass2 %.4f\n", dc1$consensus.correlation, dc2$consensus.correlation))
+ 
+ # ---------------------------------------------------------------- summaries
+--- a/scripts/eschf/a2a6_spot_export.py
++++ b/scripts/eschf/a2a6_spot_export.py
+@@ -164,7 +164,7 @@
+     return [l.strip().upper() for l in open(f"{GS_DIR}/{fn}") if l.strip() and not l.startswith("#")]
+ 
+ 
+-S = load_cs() + load_comparators() + load_normal()
++S = load_cs() + load_comparators() + ([] if os.environ.get("ESCHF_V3") == "1" else load_normal())  # v3: no Kuppe normals
+ inner = set.intersection(*[set(s["sym"]) for s in S])
+ inner = sorted(inner)
+ for s in S:
+--- a/scripts/eschf/a3a4_qc_nonfailing.py
++++ b/scripts/eschf/a3a4_qc_nonfailing.py
+@@ -18,6 +18,7 @@
+     (tested in the spatial contrast AND in the snRNA NF contrast).
+ Hamed rows are appended by a5_hamed.py.
+ """
++_V3 = __import__("os").environ.get("ESCHF_V3") == "1"  # Kuppe-free v3 run: outcome counts not asserted
+ import importlib.util
+ 
+ import numpy as np
+@@ -45,7 +46,7 @@
+ core_up = sorted(g for g in core if full.loc[g, "logFC"] > 0)
+ hit_dn = sorted(g for g in hits if full.loc[g, "logFC"] < 0)
+ hit_up = sorted(g for g in hits if full.loc[g, "logFC"] > 0)
+-assert V2 or (len(core_dn), len(core_up), len(hit_dn), len(hit_up)) == (115, 26, 139, 53)
++assert V2 or _V3 or (len(core_dn), len(core_up), len(hit_dn), len(hit_up)) == (115, 26, 139, 53)
+ 
+ P = pool.pool_snrna()
+ rng = np.random.default_rng(SEED)
+@@ -122,7 +123,7 @@
+ # per-gene CS vs NF for the 18 concordant (replicating) genes
+ pg = pd.read_csv(f"{RES}/q1_core_snrna_pergene.tsv", sep="\t")
+ c18 = pg[pg.replicates_fdr5].set_index("gene")
+-assert V2 or len(c18) == 18
++assert V2 or _V3 or len(c18) == 18
+ print("[concordant set]", len(c18), "genes")
+ t18 = c18[["direction", "spatial_logFC", "lfc_pool", "fdr_pool"]].join(
+     nf[["logFC", "adj.P.Val"]].rename(columns={"logFC": "lfc_CS_vs_NF", "adj.P.Val": "fdr_CS_vs_NF"}))
+--- a/scripts/eschf/a5_hamed.py
++++ b/scripts/eschf/a5_hamed.py
+@@ -32,6 +32,7 @@
+ The ECM half is NOT interpreted as biology: Hamed is bulk tissue including fibrotic regions,
+ whereas the spatial spots are cardiomyocyte-dominant by construction.
+ """
++_V3 = __import__("os").environ.get("ESCHF_V3") == "1"  # Kuppe-free v3 run: outcome counts not asserted
+ import numpy as np
+ import pandas as pd
+ from scipy import stats
+@@ -70,7 +71,7 @@
+ H = pd.read_csv(f"{OUT}/q1_hits_annotated.tsv", sep="\t").set_index("gene")
+ SETS = {"all": list(H.index[H.direction == "down"]),
+         "qc_pass": list(H.index[(H.direction == "down") & H.qc_pass])}
+-assert V2 or (len(SETS["all"]) == 139 and len(SETS["qc_pass"]) == 88)
++assert V2 or _V3 or (len(SETS["all"]) == 139 and len(SETS["qc_pass"]) == 88)
+ bg_genes = [g for g in q1.index if g not in H.index]
+ rows_long, missing = [], []
+ 
+--- a/scripts/eschf/a5b_pool.py
++++ b/scripts/eschf/a5b_pool.py
+@@ -10,6 +10,7 @@
+ score over CS patients with a numeric LVEF (left-censored values excluded).
+ Disease duration is not in the Neyazi supplementary tables.
+ """
++_V3 = __import__("os").environ.get("ESCHF_V3") == "1"  # Kuppe-free v3 run: outcome counts not asserted
+ import numpy as np
+ import pandas as pd
+ from scipy import stats
+@@ -50,8 +51,8 @@
+         f"primary_qcpass_down_{int(((H.direction == 'down') & H.qc_pass).sum())}": sorted(H.index[(H.direction == "down") & H.qc_pass]),
+         "stable_core_down_qcpass": sorted(g for g in core if g in qcp and q1.loc[g, "logFC"] < 0),
+         "stable_core_up_qcpass": sorted(g for g in core if g in qcp and q1.loc[g, "logFC"] > 0)}
+-assert V2 or len(SETS["concordant_18"]) == 18
+-assert len(SETS["concordant_18"]) == 18, "concordant set size changed: rename the set label before use"
++assert V2 or _V3 or len(SETS["concordant_18"]) == 18
++assert _V3 or len(SETS["concordant_18"]) == 18, "concordant set size changed: rename the set label before use"
+ 
+ FULL = pool("data/snrna/snrna_CS_vs_{}.tsv")
+ TX = pool(OUT + "/a5b_snrna_txonly_CS_vs_{}.tsv")
+--- a/scripts/eschf/a7_figure.py
++++ b/scripts/eschf/a7_figure.py
+@@ -14,6 +14,7 @@
+ Every plotted number is written to results/eschf/a7_panel_values.tsv for manuscript_results.py. Comparator H&E
+ images are read from the local comparator Visium folder (argument 1); CS images are the JPEGs in data/eschf/img.
+ """
++_V3 = __import__("os").environ.get("ESCHF_V3") == "1"  # Kuppe-free v3 run: outcome counts not asserted
+ import glob, json
+ import sys
+ 
+@@ -30,7 +31,7 @@
+ 
+ COMP_IMG = sys.argv[1] if len(sys.argv) > 1 else "/Users/rvanguri/Downloads/new visium"
+ OUT, TOP, FIG = "results/eschf/primary_v2", "results/eschf", "figures"
+-YLIM_C = 2.5    # Panel C y-axis half-range; points beyond are drawn at the edge
++YLIM_C = 3.0 if _V3 else 2.5    # Panel C y-axis half-range; points beyond are drawn at the edge (v3: = SCREEN)
+ SCREEN = 3.0    # snRNA screen 3a: |pooled snRNA log2FC| > 3 is unreliable (pre-specified)
+ CS_SEC, COMP_SEC = "CS_108-1", "ARVC_1"
+ mpl.rcParams.update({"font.family": "sans-serif", "font.sans-serif": ["Arial", "Helvetica", "DejaVu Sans"],
+@@ -206,7 +207,7 @@
+ _core = pd.read_csv(f"{TOP}/primary_v2/q1_core_snrna_pergene.tsv", sep="\t").set_index("gene")
+ _core18 = set(_core.index[_core.replicates_fdr5])
+ assert set(genesD) == {g for g in _core18 if not bool(SCR.loc[g, "fail_3a"])} and set(genesD) <= set(H.index)
+-assert len(genesD) == 17 and sorted(_core18 - set(genesD)) == ["NDUFC2"]
++assert _V3 or (len(genesD) == 17 and sorted(_core18 - set(genesD)) == ["NDUFC2"])
+ val("D", "n_core_removed_screen_3a", len(_core18) - len(genesD))
+ # snRNA vs NF column: no plotted value beyond the 3a magnitude (user check, v5)
+ _nfmax = max(abs(NF.loc[g, "logFC"]) for g in genesD if g in NF.index)
+--- a/scripts/eschf/a8_summary.py
++++ b/scripts/eschf/a8_summary.py
+@@ -6,6 +6,7 @@
+ at the top level), then the earlier >=0.5 mm fit as a sensitivity analysis (tables at the top level of
+ results/eschf). Run from the repo root after the A0-A7 scripts.
+ """
++_V3 = __import__("os").environ.get("ESCHF_V3") == "1"  # Kuppe-free v3 run
+ import numpy as np
+ import pandas as pd
+ 
+@@ -32,7 +33,7 @@
+     s["gene_set"] = s.gene_set.replace({"all_985": "all_tested"})
+     for col in ["n_genes", "hits_fdr5", "hits_up", "hits_down", "n_orig_hits", "sign_concordant_orig_hits",
+                 "orig_hits_still_fdr5", "n_units_CS", "n_units_COMPARATOR"]:
+-        s[col] = s[col].astype(int)
++        s[col] = s[col].astype("Int64" if _V3 else int)  # v3: a not-estimable refit is NA
+     return s.set_index(["refit", "gene_set"])
+ 
+ 
+@@ -240,7 +241,7 @@
+ assert _pvD("max_abs_snrna_vs_nf_logFC") <= 3, "NF column exceeds the ±3 screen"
+ oor = pv[(pv.panel == "C") & pv.quantity.str.startswith("out_of_range|") & pv.quantity.str.endswith("|snrna_lfc")]
+ assert len(oor) == int(pv[(pv.panel == "C") & (pv.quantity == "n_out_of_range")].value.iloc[0]), "triangle list != off-scale count"
+-L += ["", f"Figure 1C: y-axis limited to ±2.5; {len(oor)} genes beyond it are drawn as outward triangles: "
++L += ["", f"Figure 1C: y-axis limited to ±{3 if _V3 else 2.5:g}; {len(oor)} genes beyond it are drawn as outward triangles: "
+       + ", ".join(f"*{q.split('|')[1]}* ({v:+.1f})" for q, v in zip(oor.quantity, oor.value)) + ".", ""]
+ 
+ # Part I: primary --------------------------------------------------------------
+--- a/scripts/eschf/a9_snrna_screen.py
++++ b/scripts/eschf/a9_snrna_screen.py
+@@ -18,6 +18,7 @@
+         the hit set AND from the null pool. Unscreened values are recomputed with the same
+         procedure and shown alongside the committed ones.
+ """
++_V3 = __import__("os").environ.get("ESCHF_V3") == "1"  # Kuppe-free v3 run: outcome counts not asserted
+ import importlib.util
+ import numpy as np
+ import pandas as pd
+@@ -29,7 +30,7 @@
+ P0 = pd.read_csv(f"{V2}/snrna_pooled_full.tsv", sep="\t").set_index("gene")
+ assert np.allclose(P.loc[P0.index, "lfc_pool"], P0.lfc_pool)
+ H = pd.read_csv(f"{V2}/q1_hits_annotated.tsv", sep="\t").set_index("gene")
+-H = H[H["adj.P.Val"] < FDR]; assert len(H) == 222
++H = H[H["adj.P.Val"] < FDR]; assert _V3 or len(H) == 222
+ core = pd.read_csv(f"{V2}/q1_core_snrna_pergene.tsv", sep="\t").set_index("gene")
+ core_conc = set(core.index[core.replicates_fdr5])
+ SM = pd.read_csv(f"{OUT}/a9_study_mean_log2cpm.tsv.gz", sep="\t").set_index("gene")
+--- a/scripts/manuscript_results.py
++++ b/scripts/manuscript_results.py
+@@ -23,10 +23,15 @@
+ TAB = "results/tables"
+ FDR = 0.05
+ rows = []
++_V3 = os.environ.get("ESCHF_V3") == "1"  # Kuppe-free v3 rerun: tag claims whose inputs were not regenerated
++_YC = 3.0 if _V3 else 2.5  # Figure 1C y-axis half-range (v3: widened to the +/-3 screen)
++_STALE = []
+ 
+ 
+ def claim(name, manuscript, recomputed, ok, note=""):
+-    status = "NOT_REPRODUCIBLE" if ok is None else ("OK" if bool(ok) else "MISMATCH")
++    status = "NOT_REPRODUCIBLE" if ok is None else ("NOT_RUN" if isinstance(ok, str) and ok == "NOT_RUN" else ("OK" if bool(ok) else "MISMATCH"))
++    if _V3 and _STALE:
++        note = (note + "; " if note else "") + "v3: " + _STALE[-1]
+     rows.append(dict(claim=name, manuscript=manuscript, recomputed=recomputed,
+                      status=status, note=note))
+ 
+@@ -83,7 +88,7 @@
+     ent = re.findall(r"\*([A-Za-z0-9\-]+)\* \(([+\-]\d+\.\d)\)", line)
+     Pn = rd(f"{V}/snrna_pooled_full.tsv").set_index("gene")
+     Hq = rd(f"{V}/q1_hits_annotated.tsv").set_index("gene"); Hq = Hq[TB(Hq.qc_pass)]
+-    lpq = Pn.lfc_pool.reindex(Hq.index).dropna(); off = lpq[lpq.abs() > 2.5]
++    lpq = Pn.lfc_pool.reindex(Hq.index).dropna(); off = lpq[lpq.abs() > _YC]
+     same("SUMMARY Fig 1C triangle genes (one entry each)", [g for g, _ in ent], list(off.index))
+     num("SUMMARY Fig 1C triangle entries", len(ent), len(off))
+     for g, v in ent:
+@@ -234,8 +239,12 @@
+             (np.sign(orig.logFC_patient) == np.sign(orig.logFC_orig)).sum())
+         num(f"A1 {gs} original hits still FDR<5% at patient level",
+             sm.loc[("patient_pseudobulk", gs), cfg["still_col"]], (orig.adj_patient < FDR).sum())
+-        num(f"A1 {gs} dupcor-blocked hits", sm.loc[("section_dupcor_patient_block", gs), "hits_fdr5"],
+-            (sub.adj_dupcor < FDR).sum())
++        if _V3 and pd.isna(sm.loc[("section_dupcor_patient_block", gs), "hits_fdr5"]):
++            claim_t(f"A1 {gs} dupcor-blocked hits", "not estimable", "not run", "NOT_RUN",
++                    "duplicateCorrelation consensus is NaN (a1 refit 2 NOT ESTIMABLE)")
++        else:
++            num(f"A1 {gs} dupcor-blocked hits", sm.loc[("section_dupcor_patient_block", gs), "hits_fdr5"],
++                (sub.adj_dupcor < FDR).sum())
+ 
+     # ---- A2 / A6 from the per-spot export ----------------------------------------
+     sp = pd.read_csv(cfg["perspot"], sep="\t")
+@@ -273,10 +282,11 @@
+     for k, f in (("program", "score_program ~ dist_gran_mm + cm_structural + z_log10_umi"),
+                  ("ACADVL", "score_ACADVL ~ dist_gran_mm + cm_structural + z_log10_umi"),
+                  ("cm_structural_positive_control", "cm_structural ~ dist_gran_mm + z_log10_umi")):
+-        assert bool(mod.loc[k, "singular"]) and mod.loc[k, "var_patient"] < 1e-6
++        assert (_V3 or bool(mod.loc[k, "singular"])) and mod.loc[k, "var_patient"] < 1e-6  # v3: variance bound only
+         fit = smf.mixedlm(f, md, groups=md.section).fit(reml=True)
+         num(f"A2 distance beta, {k} (statsmodels (1|section) refit)", mod.loc[k, "beta"],
+-            fit.params["dist_gran_mm"], tol=0.01, note="lme4 fit singular; patient variance 0")
++            fit.params["dist_gran_mm"], tol=0.01, note="lme4 fit singular; patient variance 0" if bool(mod.loc[k, "singular"])
++            else f"lme4 isSingular FALSE; patient variance {mod.loc[k, 'var_patient']:.1e}")
+     for k in ("program", "ACADVL", "oxphos_kegg", "cm_structural_positive_control"):
+         r = mod.loc[k]
+         excl = (r.ci_low > 0) or (r.ci_high < 0)
+@@ -514,6 +524,7 @@
+               "absent" if re.search(rf"_{re.escape(sj)}_", lst) is None else "present", re.search(rf"_{re.escape(sj)}_", lst) is None)
+ 
+     # ---- A13: GPNMB ---------------------------------------------------------------------------
++    _STALE.append("A13 tables are committed values (A13 not rerun without Kuppe)")
+     T13 = rd(f"{E}/a13_gpnmb.tsv")
+     PP = rd(f"{E}/a13_remote/a13_spatial_gpnmb_perspot.tsv.gz")
+     PP = PP[PP.cohort.isin(["CS", "COMPARATOR"])].copy()
+@@ -557,6 +568,7 @@
+         num(f"A13 GPNMB vs distance rho {p_}", r.spearman_rho, stats.spearmanr(d.g, d.dist_gran_mm).statistic)
+     claim("ESCHF[v3] A13 GPNMB passes screens 3a and 3b", "pass",
+           "pass" if ("GPNMB" not in f3a and not b3.get("GPNMB")) else "fail", "GPNMB" not in f3a and not b3.get("GPNMB"))
++    _STALE.clear()
+ 
+ 
+ def eschf_revision_claims():
+@@ -687,11 +699,11 @@
+     gC = [x for x in hqc.index if x in pool.index]
+     lC = pool.loc[gC, "lfc_pool"]
+     num("Fig C QC-passing hits plotted", pv[("C", "n_qcpass_genes_plotted")], len(gC))
+-    num("Fig C genes beyond +/-2.5", pv[("C", "n_out_of_range")], (lC.abs() > 2.5).sum())
++    num(f"Fig C genes beyond +/-{_YC:g}", pv[("C", "n_out_of_range")], (lC.abs() > _YC).sum())
+     num("Fig C genes failing screen 3a", pv[("C", "n_screen_3a_fail")], (lC.abs() > SCREEN).sum())
+     claim("ESCHF[rev] Fig C off-axis genes = screen-3a failures", "identical",
+-          "identical" if set(lC[lC.abs() > 2.5].index) == set(lC[lC.abs() > SCREEN].index) else "differ",
+-          set(lC[lC.abs() > 2.5].index) == set(lC[lC.abs() > SCREEN].index))
++          "identical" if set(lC[lC.abs() > _YC].index) == set(lC[lC.abs() > SCREEN].index) else "differ",
++          set(lC[lC.abs() > _YC].index) == set(lC[lC.abs() > SCREEN].index))
+     for g in lC[lC.abs() > SCREEN].index:
+         num(f"Fig C triangle {g} snRNA log2FC", pv[("C", f"out_of_range|{g}|snrna_lfc")], lC[g])
+         num(f"[v4] Fig C triangle {g} drawn open neutral (screened, no sign category)",
+@@ -796,7 +808,7 @@
+ 
+ def main():
+     q1 = pd.read_csv(f"{RES}/q1_raw_T2000_d25.tsv", sep="\t").set_index("gene")
+-    q2 = pd.read_csv(f"{RES}/q2_raw_T2000_d25.tsv", sep="\t").set_index("gene")
++    q2 = None if _V3 else pd.read_csv(f"{RES}/q2_raw_T2000_d25.tsv", sep="\t").set_index("gene")  # unused; Q2 removed in v3
+     qc = pd.read_csv(f"{RES}/q2_locus_qc.tsv", sep="\t").set_index("gene")
+     det = pd.read_csv(f"{DAT}/detection_fraction_T2000.tsv.gz", sep="\t", index_col=0)
+     rsel = pd.read_csv(f"{DAT}/region_selection.tsv", sep="\t")
+@@ -891,6 +903,10 @@
+     ctrl = pd.read_csv(f"{RES}/q1_control_comparison.tsv", sep="\t").set_index("gene")
+     for tag, label in (("pm", "panel-matched comparators"),
+                        ("pu", "adjustment for cardiomyocyte content")):
++        if _V3 and f"logFC_{tag}" not in ctrl.columns:  # v3: purity control not run (cm_purity undefined in repo)
++            claim(f"result persists under {label}", "persists", "not run", "NOT_RUN",
++                  "v3: control fit not run; cm_purity is not defined anywhere in the repository")
++            continue
+         same = int((np.sign(ctrl[f"logFC_{tag}"]) == np.sign(ctrl.logFC)).sum())
+         n = int(ctrl[f"logFC_{tag}"].notna().sum())
+         claim(f"result persists under {label}", "persists",
+@@ -919,11 +935,12 @@
+           pct_hcm > 50 and pct_hcm > pct_pooled.max())
+     claim("core genes testable in both platforms", 134, len(pergene),
+           len(pergene) == 134)
+-    rep_dn = int(conc.loc["stable down (115)", "rep_fdr5"])
+-    rep_up = int(conc.loc["stable up (26)", "rep_fdr5"])
++    _lab = (lambda pre, d: next(i for i in conc.index if i.startswith(pre + " ("))) if _V3 else (lambda pre, d: d)  # v3: counts in labels change
++    rep_dn = int(conc.loc[_lab("stable down", "stable down (115)"), "rep_fdr5"])
++    rep_up = int(conc.loc[_lab("stable up", "stable up (26)"), "rep_fdr5"])
+     claim("concordant and significant in both arms, lower in CS", 15, rep_dn, rep_dn == 15)
+     claim("concordant and significant in both arms, higher in CS", 3, rep_up, rep_up == 3)
+-    frac = float(conc.loc["stable down (115)", "frac_conc"])
++    frac = float(conc.loc[_lab("stable down", "stable down (115)"), "frac_conc"])
+     claim("sign concordance among lower-expression genes", "60%",
+           f"{frac * 100:.0f}%", round(frac * 100) == 60)
+     rho, p_rho = stats.spearmanr(pergene.spatial_logFC, pergene.lfc_pool)
+@@ -964,6 +981,7 @@
+           "lower in both" if acadvl_ok else "not both", bool(acadvl_ok))
+ 
+     # ---- figure ----------------------------------------------------------------
++    _STALE.append("figure1 panel tables are committed values (no generator in repo)")
+     pA = pd.read_csv(f"{TAB}/figure1_panelA_values.tsv", sep="\t")
+     pB = pd.read_csv(f"{TAB}/figure1_panelB_values.tsv", sep="\t")
+     claim("Figure panel a genes", 134, len(pA), len(pA) == 134)
+@@ -973,6 +991,7 @@
+           f"{int((pB.direction == 'up').sum())} up",
+           int((pB.direction == "down").sum()) == 15
+           and int((pB.direction == "up").sum()) == 3)
++    _STALE.clear()
+ 
+     # ---- ESC HF short report (A1-A7) ----------------------------------------------
+     eschf_claims()
+@@ -982,7 +1001,7 @@
+     out.to_csv("results/manuscript_results.tsv", sep="\t", index=False)
+     w = max(out.claim.str.len())
+     for _, r in out.iterrows():
+-        flag = {"OK": "  ok", "MISMATCH": "FAIL", "NOT_REPRODUCIBLE": "  --"}[r.status]
++        flag = {"OK": "  ok", "MISMATCH": "FAIL", "NOT_REPRODUCIBLE": "  --", "NOT_RUN": " n/r"}[r.status]
+         print(f"{flag}  {r.claim:<{w}}  manuscript {str(r.manuscript):>15}  "
+               f"recomputed {str(r.recomputed):>22}")
+     n_fail = int((out.status == "MISMATCH").sum())
+--- a/scripts/spatial_first/00_export_from_raw.py
++++ b/scripts/spatial_first/00_export_from_raw.py
+@@ -127,7 +127,7 @@
+ 
+ 
+ # ---------------------------------------------------------------- load + gene space
+-S = load_cs() + load_comparators() + load_normal()
++S = load_cs() + load_comparators() + ([] if os.environ.get("ESCHF_V3") == "1" else load_normal())  # v3: no Kuppe normals
+ for s in S:
+     assert abs(s["X"].data - np.round(s["X"].data)).max() < 1e-6, f"{s['section']}: non-integer counts"
+ 
+@@ -139,6 +139,9 @@
+     inner &= set(s["sym"])
+ inner = sorted(inner)
+ log(f"[join] union {len(union)} | inner-join {len(inner)}")
++if os.environ.get("ESCHF_V3_DIAG_GS22") == "1":  # diagnostic only: 22-section gene space, Kuppe dropped after the join
++    S = [s for s in S if s["cohort"] != "NORMAL"]
++    log(f"[diag GS22] {len(S)} sections after dropping normals; gene space kept at {len(inner)}")
+ 
+ # gene-space accounting: which sources lack each lost gene
+ lost = sorted(union - set(inner))
+--- a/scripts/spatial_first/01_limma_q1q2.R
++++ b/scripts/spatial_first/01_limma_q1q2.R
+@@ -29,7 +29,14 @@
+   list(fit=fit, n=sum(keep), v=v)
+ }
+ 
++tt <- function(fit, coef) {
++  t <- topTable(fit, coef=coef, number=Inf, sort.by="none")
++  data.frame(gene=rownames(t), logFC=t$logFC, AveExpr=t$AveExpr, t=t$t,
++             P.Value=t$P.Value, adj.P.Val=t$adj.P.Val, B=t$B)
++}
++V3 <- Sys.getenv("ESCHF_V3") == "1"   # v3: no Kuppe normal sections, so no Q2 contrast
+ # ---------------- Q2: diseased vs normal (one fit, three contrasts) ----------------
++if (!V3) {
+ src <- factor(meta$source, levels=c("foong", "new_visium", "kuppe"))
+ des2 <- model.matrix(~0 + src); colnames(des2) <- levels(src)
+ cont2 <- limma::makeContrasts(
+@@ -44,11 +51,6 @@
+ r2 <- run_fit(pb, meta, des2, cont2, keep2)
+ cat(sprintf("[Q2] %d genes pass detectability >= %.2f\n", r2$n, thresh))
+ 
+-tt <- function(fit, coef) {
+-  t <- topTable(fit, coef=coef, number=Inf, sort.by="none")
+-  data.frame(gene=rownames(t), logFC=t$logFC, AveExpr=t$AveExpr, t=t$t,
+-             P.Value=t$P.Value, adj.P.Val=t$adj.P.Val, B=t$B)
+-}
+ q2 <- tt(r2$fit, "pooled")
+ for (cn in c("cs_vs_normal", "comp_vs_normal")) {
+   x <- tt(r2$fit, cn)
+@@ -66,6 +68,7 @@
+ q2$replicated_dn <- q2$logFC_cs_vs_normal < 0 & q2$logFC_comp_vs_normal < 0 &
+   q2$P_cs_vs_normal < 0.05 & q2$P_comp_vs_normal < 0.05
+ write.table(q2, file.path(out, paste0("q2_raw", tag, ".tsv")), sep="\t", quote=FALSE, row.names=FALSE)
++}
+ 
+ # ---------------- Q1: CS vs comparators, diseased sections only ----------------
+ sel <- meta$cohort %in% c("CS", "COMPARATOR")
+@@ -87,7 +90,7 @@
+ q1$det_CS <- det[q1$gene, "CS"]; q1$det_COMPARATOR <- det[q1$gene, "COMPARATOR"]
+ write.table(q1, file.path(out, paste0("q1_raw", tag, ".tsv")), sep="\t", quote=FALSE, row.names=FALSE)
+ 
+-cat(sprintf("[Q2] FDR<0.05: %d up, %d down | replicated up %d\n",
++if (!V3) cat(sprintf("[Q2] FDR<0.05: %d up, %d down | replicated up %d\n",
+             sum(q2$adj.P.Val < 0.05 & q2$logFC > 0), sum(q2$adj.P.Val < 0.05 & q2$logFC < 0),
+             sum(q2$adj.P.Val < 0.05 & q2$logFC > 0 & q2$replicated_up)))
+ cat(sprintf("[Q1] FDR<0.05: %d (up in CS %d)\n", sum(q1$adj.P.Val < 0.05),
+--- a/scripts/spatial_first/03_locus_qc.py
++++ b/scripts/spatial_first/03_locus_qc.py
+@@ -45,6 +45,9 @@
+ FLAGS = ["flag_source_specific_absence", "flag_length_deviation", "flag_segdup",
+          "flag_missing_annotation", "flag_readthrough"]
+ SOURCES = ["foong", "new_visium", "kuppe"]
++V3 = __import__("os").environ.get("ESCHF_V3") == "1"
++if V3:  # Kuppe-free v3 run: two sources; universe from --universe (the fits' tested genes)
++    SOURCES = ["foong", "new_visium"]
+ 
+ 
+ def fetch_ensembl(genes):
+@@ -104,13 +107,19 @@
+     ap.add_argument("--refresh", action="store_true",
+                     help="re-fetch Ensembl/UCSC instead of using the committed caches")
+     ap.add_argument("--out", default=f"{RES}/q2_locus_qc.tsv")
++    ap.add_argument("--universe", nargs="+", default=None,
++                    help="v3: fit tables whose tested genes (union) form the QC universe")
+     args = ap.parse_args()
+ 
+     pb = pd.read_csv(f"{DATA}/pseudobulk_T2000.tsv.gz", sep="\t", index_col=0)
+     meta = pd.read_csv(f"{DATA}/meta_T2000.tsv", sep="\t", index_col=0)
+     dbs = pd.read_csv(f"{DATA}/detection_by_section_T2000.tsv.gz", sep="\t", index_col=0)
+     refsym = [x.strip() for x in open(f"{DATA}/reference_gene_symbols.txt") if x.strip()]
+-    genes = pd.read_csv(f"{RES}/q2_raw_T2000_d25.tsv", sep="\t").gene.tolist()
++    if V3:
++        assert args.universe, "ESCHF_V3=1 requires --universe"
++        genes = sorted(set().union(*[set(pd.read_csv(f, sep="\t").gene) for f in args.universe]))
++    else:
++        genes = pd.read_csv(f"{RES}/q2_raw_T2000_d25.tsv", sep="\t").gene.tolist()
+ 
+     ev = meta[meta.evaluable.astype(str).isin(["True", "TRUE"])]
+ 
+@@ -119,6 +128,15 @@
+         segdup = fetch_segdups()
+     else:
+         ann = pd.read_csv(f"{DATA}/ensembl_annotation_tested.tsv", sep="\t")
++        if V3:  # cached annotation reused; only universe genes absent from the cache are fetched
++            miss = [g for g in genes if g not in set(ann.gene)]
++            if miss:
++                new = fetch_ensembl(miss)
++                new.to_csv(args.out.replace(".tsv", "_ensembl_fetched.tsv"), sep="\t", index=False)
++                ann = pd.concat([ann, new], ignore_index=True)
++            print(f"[locus qc v3] universe {len(genes)} | not in annotation cache {len(miss)} | "
++                  f"fetched {0 if not miss else len(new)}")
++            ann = ann[ann.gene.isin(genes)]
+         segdup = pd.read_csv(f"{DATA}/segdups_hg38.tsv.gz", sep="\t")
+ 
+     # ---- source-specific absence -------------------------------------------------
+--- a/scripts/spatial_first/05_controls.py
++++ b/scripts/spatial_first/05_controls.py
+@@ -46,6 +46,9 @@
+     # comparators only, so detectability is assessed in the comparator arm alone
+     "ctrl_panelB_vs_panelA": ("meta_panel.tsv", "panelB", "panelA", "COMPARATOR", None),
+ }
++V3 = os.environ.get("ESCHF_V3") == "1"
++if V3:  # Kuppe-free v3 run: cm_purity has no definition in the repo, so the purity-adjusted fit is not run
++    TWOGROUP.pop("q1_purityadj")
+ 
+ 
+ # the R stages usually live in a separate conda environment
+@@ -104,8 +107,8 @@
+     panel_testable = set(pd.read_csv(f"{RES}/ctrl_panelB_vs_panelA.tsv", sep="\t").gene)
+     sig = [g for g in q1.index[q1["adj.P.Val"] < 0.05] if g in panel_testable]
+     C = pd.DataFrame({"logFC": q1.loc[sig, "logFC"]})
+-    for name, tag in [("ctrl_panelB_vs_panelA", "pnl"), ("q1_panelmatched", "pm"),
+-                      ("q1_purityadj", "pu")]:
++    for name, tag in [("ctrl_panelB_vs_panelA", "pnl"), ("q1_panelmatched", "pm")] + ([] if V3 else
++                     [("q1_purityadj", "pu")]):
+         t = pd.read_csv(f"{RES}/{name}.tsv", sep="\t").set_index("gene")
+         C[f"logFC_{tag}"] = t.logFC.reindex(C.index)
+         C[f"fdr_{tag}"] = t["adj.P.Val"].reindex(C.index)
+@@ -113,7 +116,7 @@
+     C.to_csv(f"{RES}/q1_control_comparison.tsv", sep="\t")
+ 
+     print(pd.read_csv(f"{RES}/q1_noMT_summary.tsv", sep="\t").to_string(index=False))
+-    for tag, label in [("pm", "panel-matched"), ("pu", "purity-adjusted")]:
++    for tag, label in [("pm", "panel-matched")] + ([] if V3 else [("pu", "purity-adjusted")]):
+         same = int((np.sign(C.logFC) == np.sign(C[f"logFC_{tag}"])).sum())
+         print(f"[control {label:<15}] {len(C)} main hits testable | "
+               f"same direction {same} | still FDR<0.05 {int((C[f'fdr_{tag}'] < 0.05).sum())}")
+--- /dev/null
++++ b/scripts/eschf/v3_derived_inputs.py
+@@ -0,0 +1,102 @@
++#!/usr/bin/env python3
++"""Regenerate derived input files that have no writer elsewhere in the repo.
++
++Written for the Kuppe-free v3 cascade. Each rule was checked against the current files:
++running `--check` on the unmodified tree reproduces every file exactly.
++
++  data/spatial_first/meta_T2000.tsv          region_selection.tsv rows with T == 2000
++  data/spatial_first/meta_panel.tsv          evaluable rows of meta_T2000 + probe panel;
++                                             group = panel for comparators
++  data/spatial_first/meta_q1_panelB.tsv      group = CS for CS, COMPB for panel-B comparators
++  data/spatial_first/meta_q1_panelmatched.tsv group = CS for CS, COMPA for panel-A comparators
++  metadata/tested_genes_985.txt              genes tested in q1_raw_T2000_d25.tsv (sensitivity arm)
++  metadata/geneset_primary_program_qcpass_down.txt
++                                             results/eschf/q1_hits_annotated.tsv rows with
++                                             qc_pass and direction == "down"
++
++Probe panel is a fixed per-section attribute (Foong CS: panelA; comparators as listed below);
++it does not depend on the data. Kuppe sections carried panel "polyA" and no group in every
++meta_panel* file. meta_q1_purity.tsv is NOT regenerated: cm_purity has no definition in the
++repo (see primary_v3/SUMMARY.md).
++
++Usage (repo root):
++  python scripts/eschf/v3_derived_inputs.py meta     # after the discovery export
++  python scripts/eschf/v3_derived_inputs.py lists    # after 00_inputs.py
++  python scripts/eschf/v3_derived_inputs.py check    # compare rules against files on disk
++"""
++import os
++import sys
++
++import pandas as pd
++
++D = "data/spatial_first"
++PANEL = {"foong": "panelA", "kuppe": "polyA",
++         "ARVC_1": "panelB", "ARVC_2": "panelB", "DC_LMNA": "panelB", "LMNA": "panelB",
++         "Chagas": "panelA", "HCM": "panelA"}
++META_COLS = ["section", "cohort", "disease", "source", "n_selected", "evaluable"]
++
++
++def panel_of(r):
++    return PANEL[r.section] if r.cohort == "COMPARATOR" else PANEL[r.source]
++
++
++def build_meta():
++    rs = pd.read_csv(f"{D}/region_selection.tsv", sep="\t")
++    m = rs[rs["T"] == 2000][META_COLS].reset_index(drop=True)
++    out = {"meta_T2000.tsv": m}
++    e = m[m.evaluable.astype(str) == "True"].reset_index(drop=True).copy()
++    e["panel"] = [panel_of(r) for r in e.itertuples()]
++    comp = e.cohort == "COMPARATOR"
++    p = e.copy(); p["group"] = p.panel.where(comp)
++    b = e.copy(); b["group"] = None
++    b.loc[b.cohort == "CS", "group"] = "CS"; b.loc[comp & (b.panel == "panelB"), "group"] = "COMPB"
++    a = e.copy(); a["group"] = None
++    a.loc[a.cohort == "CS", "group"] = "CS"; a.loc[comp & (a.panel == "panelA"), "group"] = "COMPA"
++    out.update({"meta_panel.tsv": p, "meta_q1_panelB.tsv": b, "meta_q1_panelmatched.tsv": a})
++    return out
++
++
++def build_lists():
++    q1 = pd.read_csv("results/spatial_first/q1_raw_T2000_d25.tsv", sep="\t")
++    h = pd.read_csv("results/eschf/q1_hits_annotated.tsv", sep="\t")
++    prog = h[(h.qc_pass == True) & (h.direction == "down")].gene.tolist()  # noqa: E712
++    return {"metadata/tested_genes_985.txt": q1.gene.tolist(),
++            "metadata/geneset_primary_program_qcpass_down.txt": prog}
++
++
++def read_list(p):
++    return [l.strip() for l in open(p) if l.strip() and not l.startswith("#")]
++
++
++def main(mode):
++    if mode == "check":
++        for f, df in build_meta().items():
++            old = pd.read_csv(f"{D}/{f}", sep="\t")
++            new = df.copy(); new.to_csv("/tmp/_v3chk.tsv", sep="\t", index=False)
++            new = pd.read_csv("/tmp/_v3chk.tsv", sep="\t")
++            print(f"{f}: identical={old.equals(new)} rows={len(old)}")
++        for f, g in build_lists().items():
++            print(f"{f}: identical={read_list(f) == g} n={len(g)}")
++        return
++    if mode == "meta":
++        for f, df in build_meta().items():
++            df.to_csv(f"{D}/{f}", sep="\t", index=False)
++            print(f"[meta] {f}: {len(df)} rows")
++    elif mode == "lists":
++        L = build_lists()
++        for f, g in L.items():
++            old_hdr = open(f).readline() if os.path.exists(f) else ""
++            with open(f, "w") as fh:
++                if f.endswith("qcpass_down.txt"):
++                    fh.write("# QC-passing hits lower in CS (FDR<5%, q1_raw_T2000_d25 joined to "
++                             f"q2_locus_qc); {len(g)} genes\n")
++                elif old_hdr.startswith("#"):
++                    fh.write(f"# genes tested in q1_raw_T2000_d25.tsv; {len(g)} genes\n")
++                fh.write("\n".join(g) + "\n")
++            print(f"[lists] {f}: {len(g)}")
++    else:
++        sys.exit(__doc__)
++
++
++if __name__ == "__main__":
++    main(sys.argv[1] if len(sys.argv) > 1 else "")
+--- /dev/null
++++ b/scripts/eschf/v3_old_vs_new.py
+@@ -0,0 +1,142 @@
++#!/usr/bin/env python3
++"""Old-vs-new comparison for the Kuppe-free rerun (primary_v3).
++
++usage: v3_old_vs_new.py OLD_ROOT NEW_ROOT OUTDIR
++
++OLD_ROOT is the committed tree, NEW_ROOT the v3 run tree (both with results/manuscript_results.tsv
++written by scripts/manuscript_results.py). Writes
++  OUTDIR/old_vs_new_manuscript_values.tsv   one row per harness claim (joined on claim text)
++  OUTDIR/old_vs_new_gene_lists.tsv          one row per named gene list, with set differences
++Flags are mechanical (no interpretation):
++  changed                value differs (numeric: relative difference > 1e-9)
++  direction_change       both numeric, non-zero, opposite sign
++  significance_crossing  claim names a p-value/FDR and the two values fall on opposite sides of 0.05
++  status_change          harness status differs (e.g. OK -> MISMATCH: manuscript value no longer reproduced)
++"""
++import glob
++import os
++import re
++import sys
++
++import numpy as np
++import pandas as pd
++
++OLD, NEW, OUT = sys.argv[1:4]
++os.makedirs(OUT, exist_ok=True)
++
++
++def num(x):
++    try:
++        v = float(str(x).replace("%", ""))
++        return v if np.isfinite(v) else None
++    except ValueError:
++        return None
++
++
++# ---- claims -------------------------------------------------------------------------------------
++o = pd.read_csv(f"{OLD}/results/manuscript_results.tsv", sep="\t", dtype=str, keep_default_na=False)
++n = pd.read_csv(f"{NEW}/results/manuscript_results.tsv", sep="\t", dtype=str, keep_default_na=False)
++for d in (o, n):
++    d["k"] = d.claim + "#" + d.groupby("claim").cumcount().astype(str)   # duplicate claim texts
++m = o.merge(n, on="k", how="outer", suffixes=("_old", "_new"), indicator=True)
++m["claim"] = m.claim_old.where(m.claim_old.notna(), m.claim_new)
++PV = re.compile(r"(\bp\b|p-value|p value|\bp_|\bP\b|FDR|fdr|adj\.?P|q-value)")
++rows = []
++for _, r in m.iterrows():
++    presence = {"both": "both", "left_only": "old only", "right_only": "v3 only"}[r._merge]
++    vo, vn = r.get("recomputed_old"), r.get("recomputed_new")
++    a, b = num(vo), num(vn)
++    if presence != "both":
++        changed = True
++    elif a is not None and b is not None:
++        changed = abs(a - b) > 1e-9 * max(1.0, abs(a), abs(b))
++    else:
++        changed = str(vo) != str(vn)
++    dirch = bool(presence == "both" and a is not None and b is not None and a != 0 and b != 0
++                 and np.sign(a) != np.sign(b))
++    sigx = bool(presence == "both" and a is not None and b is not None and PV.search(r.claim)
++                and 0 <= a <= 1 and 0 <= b <= 1 and ((a < 0.05) != (b < 0.05)))
++    stch = presence == "both" and r.status_old != r.status_new
++    rows.append(dict(claim=r.claim, presence=presence,
++                     manuscript_text_value=r.get("manuscript_old") if presence != "v3 only" else "",
++                     old_value=vo, v3_value=vn,
++                     delta=(b - a) if (a is not None and b is not None) else "",
++                     old_status=r.get("status_old"), v3_status=r.get("status_new"),
++                     changed=changed, direction_change=dirch, significance_crossing=sigx,
++                     status_change=stch, v3_note=r.get("note_new")))
++C = pd.DataFrame(rows)
++C.to_csv(f"{OUT}/old_vs_new_manuscript_values.tsv", sep="\t", index=False)
++
++
++# ---- gene lists ---------------------------------------------------------------------------------
++def rd(root, p):
++    return pd.read_csv(f"{root}/{p}", sep="\t")
++
++
++def tb(s):
++    return s.astype(str).str.lower().isin(["true", "1"])
++
++
++def stable_core(root, res):
++    conc = rd(root, f"{res}/q1_core_snrna_concordance.tsv").set_index("set")
++    k = int(re.search(r"\((\d+)\)", [i for i in conc.index if i.startswith("stable down")][0]).group(1))
++    return set(rd(root, f"{res}/q1_stable_down_{k}.tsv").iloc[:, 0])
++
++
++def readset(path):
++    return {l.strip() for l in open(path) if l.strip() and not l.startswith("#")}
++
++
++def lists(root):
++    L = {}
++    for arm, res, raw, hits in (("sensitivity", "results/spatial_first", "q1_raw_T2000_d25.tsv", "results/eschf/q1_hits_annotated.tsv"),
++                                ("primary", "results/eschf/primary_v2", "q1_raw_allcm.tsv", "results/eschf/a0_hits_annotated.tsv")):
++        q = rd(root, f"{res}/{raw}")
++        L[f"{arm}: tested genes"] = set(q.gene)
++        for dn, sgn in (("lower", -1), ("higher", 1)):
++            L[f"{arm}: FDR<5% {dn} in CS"] = set(q.gene[(q["adj.P.Val"] < 0.05) & (np.sign(q.logFC) == sgn)])
++        h = rd(root, hits)
++        L[f"{arm}: FDR<5% hits passing locus QC"] = set(h.gene[tb(h.qc_pass)])
++        L[f"{arm}: FDR<5% hits failing locus QC"] = set(h.gene[~tb(h.qc_pass)])
++        L[f"{arm}: leave-one-out stable lower core"] = stable_core(root, res)
++        pg = rd(root, f"{res}/q1_core_snrna_pergene.tsv")
++        L[f"{arm}: core genes testable in snRNA"] = set(pg.gene)
++        for d in ("down", "up"):
++            L[f"{arm}: core concordant and snRNA FDR<5%, {d}"] = set(
++                pg.gene[tb(pg.concordant) & tb(pg.replicates_fdr5) & (pg.direction == d)])
++    L["sensitivity: QC-pass CS-lower program (metadata)"] = readset(f"{root}/metadata/geneset_primary_program_qcpass_down.txt")
++    L["primary: QC-pass CS-lower program"] = readset(f"{root}/results/eschf/primary_v2/geneset_primary_program_qcpass_down.txt")
++    s9 = rd(root, "results/eschf/a9_snrna_screen.tsv")
++    for c in ("same_sign", "in_concordant_allhits", "in_concordant_core_v2", "fail_3a", "flag_3b",
++              "in_concordant_allhits_screened", "in_concordant_core"):
++        if c in s9.columns:
++            L[f"a9 screen: {c}"] = set(s9.gene[tb(s9[c])])
++    L["a3 excluded genes"] = set(rd(root, "results/eschf/a3_excluded_genes.tsv").gene)
++    L["a12 key genes"] = set(rd(root, "results/eschf/a12_key_genes.tsv").gene)
++    a14 = rd(root, "results/eschf/a14_pathway_hits_removed.tsv")
++    for _, r in a14.iterrows():
++        L[f"a14 removed genes: {r['set']} ({r['version']})"] = set(str(r.removed_genes).replace(";", ",").split(",")) - {"", "nan"}
++    for f in ("data/eschf/a2_missing_genes.tsv", "results/eschf/a5_missing_genes.tsv", "results/eschf/a5b_missing_genes.tsv"):
++        if os.path.exists(f"{root}/{f}"):
++            d = rd(root, f)
++            L[f"missing genes: {os.path.basename(f)}"] = set(d.iloc[:, 0].astype(str)) if len(d) else set()
++    pv = rd(root, "results/eschf/a7_panel_values.tsv")
++    q = pv.quantity[(pv.panel == "D") & (pv.quantity.astype(str).str.count(r"\|") == 2)].astype(str)  # GENE|series|stat
++    L["a7 figure panel D genes"] = set(q.str.split("|").str[0])
++    return L
++
++
++Lo, Ln = lists(OLD), lists(NEW)
++G = []
++for k in list(dict.fromkeys(list(Lo) + list(Ln))):
++    a, b = Lo.get(k), Ln.get(k)
++    G.append(dict(gene_list=k, n_old="" if a is None else len(a), n_v3="" if b is None else len(b),
++                  n_shared="" if a is None or b is None else len(a & b),
++                  only_old="" if a is None or b is None else ",".join(sorted(a - b)),
++                  only_v3="" if a is None or b is None else ",".join(sorted(b - a)),
++                  identical=(a == b)))
++pd.DataFrame(G).to_csv(f"{OUT}/old_vs_new_gene_lists.tsv", sep="\t", index=False)
++print(len(C), "claims;", int(C.changed.sum()), "changed;", int(C.direction_change.sum()), "direction;",
++      int(C.significance_crossing.sum()), "significance;", int(C.status_change.sum()), "status;",
++      dict(C.presence.value_counts()))
++print(len(G), "gene lists;", sum(not g["identical"] for g in G), "differ")
+--- /dev/null
++++ b/scripts/eschf/run_v3.sh
+@@ -0,0 +1,112 @@
++#!/usr/bin/env bash
++# Reproduce results/eschf/primary_v3: the ESC HF analysis with the four Kuppe normal sections removed
++# from the discovery pipeline (ESCHF_V3=1). Every other specification is unchanged. Without ESCHF_V3 the
++# edited scripts reproduce the committed results.
++#
++# The v3 run regenerates files under data/ and results/ in place, so run it in a COPY of the repo:
++#   rsync -a --exclude .git --exclude results/eschf/primary_v3 cs-cmsignature/ v3tree/ && cd v3tree
++#
++# Three exports need the raw Visium matrices and run on the cluster (BigPurple, SLURM; header below).
++# Each round needs outputs from the round before, so the order is:
++#   cluster1 -> local1 -> cluster2 -> local2 -> cluster3 -> local3 -> compare
++#
++#   bash scripts/eschf/run_v3.sh cluster1            # print the round-1 job script (submit it on the cluster)
++#   bash scripts/eschf/run_v3.sh local1  <round1_out> # install the discovery export, run the sensitivity arm
++#   bash scripts/eschf/run_v3.sh cluster2            # print the round-2 job script + list of files to stage
++#   bash scripts/eschf/run_v3.sh local2  <round2_out> # install the primary all-CM export, run the primary arm and A-scripts
++#   bash scripts/eschf/run_v3.sh cluster3            # print the round-3 job script + list of files to stage
++#   bash scripts/eschf/run_v3.sh local3  <round3_out> # install the per-spot export, run the per-spot A-scripts, figure, harness
++#   bash scripts/eschf/run_v3.sh compare <committed_repo> <outdir>
++#
++# Interpreters: PYTHON (default: python) needs pandas/numpy/scipy/statsmodels/matplotlib; RSCRIPT needs
++# limma/edgeR/lme4 (the cmde env in the original run). Some scripts call bare `Rscript` or `python`,
++# so put RSCRIPT on PATH through a shim directory instead of prepending the R env's bin/ (that would
++# shadow `python`).
++set -euo pipefail
++export ESCHF_V3=1
++PY=${PYTHON:-python}; RS=${RSCRIPT:-Rscript}; export RSCRIPT=$RS
++SHIM=$(mktemp -d); ln -sf "$(command -v "$RS")" "$SHIM/Rscript"; export PATH="$SHIM:$PATH"
++LOG=${LOGDIR:-../v3logs}; mkdir -p "$LOG"
++run(){ n=$1; shift; echo "== $n"; "$@" > "$LOG/$n.log" 2>&1 || { echo "$n FAILED (see $LOG/$n.log)"; exit 1; }; }
++
++SLURM='#SBATCH --time=03:00:00
++#SBATCH --partition=cpu_short
++#SBATCH --mem=128G
++#SBATCH --cpus-per-task=4
++PY=/gpfs/scratch/vangur01/heartmap-cs/conda/heartmap/bin/python
++COMP=/path/to/comparator_visium
++export ESCHF_V3=1'
++
++D=data/spatial_first; S=results/spatial_first; DP=data/eschf/primary_v2; V=results/eschf/primary_v2
++
++case "${1:-}" in
++cluster1)   # stage: scripts/spatial_first/00_export_from_raw.py, data/spatial_first/spatial_first_config.json
++  printf '%s\nln -sfn $COMP comparators\n$PY 00_export_from_raw.py 2>&1 | tee run_log.txt\n# outputs: out/*\n' "$SLURM" ;;
++
++local1)     # discovery export -> sensitivity (>=0.5 mm) arm
++  O=$2
++  for f in pseudobulk_T2000.tsv.gz detection_by_section_T2000.tsv.gz detection_fraction_T2000.tsv.gz region_selection.tsv; do cp "$O/$f" $D/$f; done
++  run v3_meta $PY scripts/eschf/v3_derived_inputs.py meta
++  run 01_sens $RS scripts/spatial_first/01_limma_q1q2.R --pb $D/pseudobulk_T2000.tsv.gz --det $D/detection_fraction_T2000.tsv.gz --meta $D/meta_T2000.tsv --thresh 0.25 --tag _T2000_d25 --out $S
++  # tested-gene list keeps its committed file name (renaming files is out of scope); content is the v3 tested set
++  $PY -c "import pandas as pd; q=pd.read_csv('$S/q1_raw_T2000_d25.tsv',sep='\t'); open('metadata/tested_genes_985.txt','w').write('\n'.join(q.gene)+'\n')"
++  for mode in section disease; do
++    run 02_sens_$mode $RS scripts/spatial_first/02_leave_one_out.R --pb $D/pseudobulk_T2000.tsv.gz --det $D/detection_fraction_T2000.tsv.gz --meta $D/meta_T2000.tsv --thresh 0.25 --mode $mode --out $S/loo
++  done ;;
++
++cluster2)   # primary all-cardiomyocyte arm export
++  echo "# stage: scripts/eschf/a0_primary_export.py data/spatial_first/{spatial_first_config.json,pseudobulk_T2000.tsv.gz,region_selection.tsv} metadata/{tested_genes_985.txt,geneset_cmstructural.txt,geneset_ecm7.txt,geneset_kegg_oxphos_hsa00190.txt}"
++  printf '%s\n$PY a0_primary_export.py spatial_first_config.json $COMP . pseudobulk_T2000.tsv.gz region_selection.tsv 2>&1 | tee run_log.txt\n# outputs: out/*\n' "$SLURM" ;;
++
++local2)     # primary-arm export -> primary arm, locus QC, pooling, controls, A-scripts not needing per-spot data
++  O=$2; mkdir -p $DP; cp "$O"/* $DP/
++  run 01_prim $RS scripts/spatial_first/01_limma_q1q2.R --pb $DP/pseudobulk_allcm_T2000.tsv.gz --det $DP/detection_fraction_allcm_T2000.tsv.gz --meta $DP/meta_allcm_T2000.tsv --thresh 0.25 --tag _allcm --out $V
++  for mode in section disease; do
++    run 02_prim_$mode $RS scripts/spatial_first/02_leave_one_out.R --pb $DP/pseudobulk_allcm_T2000.tsv.gz --det $DP/detection_fraction_allcm_T2000.tsv.gz --meta $DP/meta_allcm_T2000.tsv --thresh 0.25 --mode $mode --out $V/loo
++  done
++  run 03_qc $PY scripts/spatial_first/03_locus_qc.py --universe $S/q1_raw_T2000_d25.tsv $V/q1_raw_allcm.tsv   # queries Ensembl REST
++  run 04_sens $PY scripts/spatial_first/04_snrna_pool.py
++  run 04_prim $PY scripts/spatial_first/04_snrna_pool.py --q1 $V/q1_raw_allcm.tsv --loo $V/loo --res $V
++  run 05 $PY scripts/spatial_first/05_controls.py
++  run 06 $PY scripts/spatial_first/06_published_reference.py
++  run 00_inputs $PY scripts/eschf/00_inputs.py
++  run v3_lists $PY scripts/eschf/v3_derived_inputs.py lists
++  run a0_refit $RS scripts/eschf/a0_primary_refit.R
++  run a0_compare $PY scripts/eschf/a0_compare.py
++  run a1 $RS scripts/eschf/a1_patient_refit.R
++  for mode in old v2; do export ESCHF_PRIMARY=$mode
++    run a3a4_$mode $PY scripts/eschf/a3a4_qc_nonfailing.py
++    run a5_hamed_$mode $PY scripts/eschf/a5_hamed.py
++    run a5b_proc_$mode $RS scripts/eschf/a5b_procurement.R
++    run a5b_pool_$mode $PY scripts/eschf/a5b_pool.py
++  done; unset ESCHF_PRIMARY
++  run a9_means $RS scripts/eschf/a9_study_means.R
++  run a11_raw $PY scripts/eschf/a11_raw_donor_check.py
++  run a11_coh $PY scripts/eschf/a11_snrna_cohort.py
++  run a10_cpm $RS scripts/eschf/a10_patient_log2cpm.R ;;
++
++cluster3)   # per-spot program-score export (A2/A6)
++  echo "# stage: scripts/eschf/a2a6_spot_export.py data/spatial_first/{spatial_first_config.json,pseudobulk_T2000.tsv.gz,region_selection.tsv} metadata/{tested_genes_985.txt,geneset_primary_program_qcpass_down.txt,geneset_cmstructural.txt,geneset_ecm7.txt,geneset_kegg_oxphos_hsa00190.txt}"
++  printf '%s\n$PY a2a6_spot_export.py spatial_first_config.json $COMP . pseudobulk_T2000.tsv.gz region_selection.tsv 2>&1 | tee run_log.txt\n# outputs: out/* (images/ not needed locally)\n' "$SLURM" ;;
++
++local3)     # per-spot export -> per-spot A-scripts, figure, summary, harness
++  O=$2; for f in a2_missing_genes.tsv eschf_export_meta.json eschf_perspot_T2000.tsv.gz; do cp "$O/$f" data/eschf/$f; done
++  run a0_perspot $PY scripts/eschf/a0_perspot_scores.py
++  for mode in old v2; do export ESCHF_PRIMARY=$mode
++    run a2a6_$mode $PY scripts/eschf/a2a6_analysis.py
++    run a2_model_$mode $RS scripts/eschf/a2_model.R
++  done
++  export ESCHF_PRIMARY=v2; run a2_perpatient $PY scripts/eschf/a2_perpatient.py; unset ESCHF_PRIMARY
++  run a9_screen $PY scripts/eschf/a9_snrna_screen.py
++  run a10_levels $PY scripts/eschf/a10_pathway_levels.py
++  run a14 $PY scripts/eschf/a14_pathway_hits_removed.py
++  ESCHF_PRIMARY=v2 run a7 $PY scripts/eschf/a7_figure.py
++  run a8 $PY scripts/eschf/a8_summary.py
++  # The harness exits 1 when any claim mismatches; in v3 the MISMATCH rows are the changes being measured.
++  echo "== harness"; $PY scripts/manuscript_results.py > "$LOG/harness.log" 2>&1 || true; tail -1 "$LOG/harness.log" ;;
++
++compare)
++  $PY scripts/eschf/v3_old_vs_new.py "$2" . "$3" ;;
++
++*) sed -n 2,22p "$0"; exit 2 ;;
++esac

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Spatial-first export: genome-wide, depth-matched, section-level pseudobulk over
-cardiomyocyte-dominant spots for 21 Visium sections (12 Foong CS, 6 comparators, 4 Kuppe normal).
+cardiomyocyte-dominant spots for 18 Visium sections (12 Foong CS, 6 comparators).
 
 Every threshold is read from spatial_first_config.json, fixed before any gene names are seen.
 Region definition is COMPOSITIONAL (cardiomyocyte-argmax), not histologic; comparator sections
@@ -77,34 +77,6 @@ def load_cs():
     return out
 
 
-def load_normal():
-    out = []
-    for f in sorted(glob.glob(f"{RAW}/kuppe_control/*.h5ad")):
-        a = ad.read_h5ad(f)
-        sec = "NORMAL_" + os.path.basename(f)[:8]
-        vn = a.var_names.astype(str)
-        e2s = None
-        if pd.Index(vn).str.startswith("ENSG").mean() > 0.3:
-            for col in ("feature_name", "gene_symbols", "gene_symbol", "gene_name", "Symbol", "symbol"):
-                if col in a.var.columns:
-                    e2s = dict(zip(vn, a.var[col].astype(str))); break
-        src = a.raw if a.raw is not None else a
-        rsym = np.asarray(src.var_names, str)
-        if "feature_name" in getattr(src, "var", pd.DataFrame()).columns:
-            rsym = src.var["feature_name"].astype(str).values
-        elif e2s is not None:
-            rsym = np.array([e2s.get(s, s) for s in rsym])
-        keep = (a.obs["in_tissue"].astype(str) == "1").values if "in_tissue" in a.obs.columns \
-            else np.ones(a.n_obs, bool)
-        X = sp.csr_matrix(src.X)[keep]
-        X, sym = collapse_symbols(X, rsym)
-        coords = np.asarray(a.obsm["spatial"], float)[keep] if "spatial" in a.obsm else None
-        out.append(dict(section=sec, cohort="NORMAL", disease="normal_donor", source="kuppe",
-                        X=X, sym=sym, obs=np.asarray(a.obs_names, str)[keep], coords=coords))
-        log(f"[load NORMAL] {sec:20s} {X.shape[0]:5d} spots {X.shape[1]:6d} symbols coords={coords is not None}")
-    return out
-
-
 def load_comparators():
     out = []
     for d, dis in CFG["comparator_map"].items():
@@ -127,7 +99,7 @@ def load_comparators():
 
 
 # ---------------------------------------------------------------- load + gene space
-S = load_cs() + load_comparators() + load_normal()
+S = load_cs() + load_comparators()
 for s in S:
     assert abs(s["X"].data - np.round(s["X"].data)).max() < 1e-6, f"{s['section']}: non-integer counts"
 
@@ -277,7 +249,7 @@ for T in T_GRID:
 
     # group-level detection fraction over selected spots
     grp = {}
-    for coh in ["CS", "COMPARATOR", "NORMAL"]:
+    for coh in ["CS", "COMPARATOR"]:
         m = (md.cohort.values == coh) & sel
         if m.sum() == 0:
             continue

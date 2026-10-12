@@ -1,0 +1,12 @@
+{
+ "T": 2000,
+ "inner_join": 18039,
+ "verified_pseudobulk": true,
+ "verified_region_counts": true,
+ "n_universe_new": 985,
+ "n_universe_old": 990,
+ "overlap": 977,
+ "n_spots_exported": 27717,
+ "n_genes_exported": 1042,
+ "nnz": 11888305
+}

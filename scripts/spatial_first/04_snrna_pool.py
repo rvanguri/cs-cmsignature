@@ -76,7 +76,7 @@ def pool_snrna():
     return P
 
 
-def gene_length_scan():
+def gene_length_scan(res=RES):
     """Per-contrast regression of snRNA-seq log2FC on log10 gene span.
 
     Documents why CS vs HCM is excluded from the pooled comparator: its effect sizes
@@ -97,7 +97,7 @@ def gene_length_scan():
             pct_positive=round(100 * (t.logFC > 0).mean(), 1), n_sig=int(sig.sum()),
             median_span_kb_sig=round(t.span_kb[sig].median(), 1),
             median_span_kb_all=round(t.span_kb.median(), 1)))
-    pd.DataFrame(rows).to_csv(f"{RES}/snrna_gene_length_regression.tsv",
+    pd.DataFrame(rows).to_csv(f"{res}/snrna_gene_length_regression.tsv",
                               sep="\t", index=False)
 
 
@@ -105,6 +105,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--q1", default=f"{RES}/q1_raw_T2000_d25.tsv")
     ap.add_argument("--loo", default=f"{RES}/loo")
+    ap.add_argument("--res", default=RES, help="output directory")
     args = ap.parse_args()
 
     meta = pd.read_csv(f"{DATA}/meta_T2000.tsv", sep="\t", index_col=0)
@@ -131,7 +132,7 @@ def main():
             retained_of_192=len(hits & h), new_hits=len(h - hits),
             median_abs_lfc_192=round(jh.logFC_loo.abs().median(), 3)))
     pd.DataFrame(rows).sort_values("n_sig").to_csv(
-        f"{RES}/q1_leave_one_comparator_out.tsv", sep="\t", index=False)
+        f"{args.res}/q1_leave_one_comparator_out.tsv", sep="\t", index=False)
 
     # ---- 1b. leave-one-disease-out -----------------------------------------------
     LODO, dropped_n = {}, {}
@@ -154,7 +155,7 @@ def main():
             sign_concord_192=int((np.sign(jh.logFC) == np.sign(jh.logFC_loo)).sum()),
             retained_of_192=len(hits & h), new_hits=len(h - hits)))
     pd.DataFrame(rows).sort_values("n_sig").to_csv(
-        f"{RES}/q1_leave_one_disease_out.tsv", sep="\t", index=False)
+        f"{args.res}/q1_leave_one_disease_out.tsv", sep="\t", index=False)
 
     # ---- 2. stable core + snRNA pooling ------------------------------------------
     core = set.intersection(*[set(LOO[c].index[LOO[c]["adj.P.Val"] < FDR]) for c in comps]) & hits
@@ -176,7 +177,7 @@ def main():
     G["snrna_fdr_pool"] = P.reindex(G.index).fdr_pool
     G["snrna_concordant"] = np.where(G.snrna_lfc_pool.isna(), "-",
                                      np.where(G.snrna_lfc_pool < 0, "yes", "no"))
-    G.sort_values("logFC").to_csv(f"{RES}/q1_stable_down_115.tsv", sep="\t")
+    G.sort_values("logFC").to_csv(f"{args.res}/q1_stable_down_{len(core_dn)}.tsv", sep="\t")
 
     # ---- 3. cross-platform concordance -------------------------------------------
     rng = np.random.default_rng(SEED)
@@ -217,7 +218,7 @@ def main():
 
     A = pd.DataFrame([assess(core_dn, -1, f"stable down ({len(core_dn)})"),
                       assess(core_up, +1, f"stable up ({len(core_up)})")])
-    A.to_csv(f"{RES}/q1_core_snrna_concordance.tsv", sep="\t", index=False)
+    A.to_csv(f"{args.res}/q1_core_snrna_concordance.tsv", sep="\t", index=False)
     print(A[["set", "n_in_snrna", "concordant", "frac_conc", "null_frac",
              "null_p", "rep_fdr5", "spearman_rho"]].to_string(index=False))
 
@@ -232,10 +233,10 @@ def main():
     T["concordant"] = np.sign(T.lfc_pool) == exp_sign
     T["replicates_fdr5"] = T.concordant & (T.fdr_pool < FDR)
     T = T.sort_values(["direction", "spatial_logFC"], ascending=[True, True])
-    T.to_csv(f"{RES}/q1_core_snrna_pergene.tsv", sep="\t", index=False)
+    T.to_csv(f"{args.res}/q1_core_snrna_pergene.tsv", sep="\t", index=False)
     print(f"[cross-platform] {len(T)} of {len(core)} core genes testable in both arms")
 
-    gene_length_scan()
+    gene_length_scan(args.res)
     print("[cross-platform] wrote snrna_gene_length_regression.tsv "
           "(gene-length trend per snRNA-seq contrast)")
 

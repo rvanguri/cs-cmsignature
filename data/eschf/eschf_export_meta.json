@@ -1,0 +1,15 @@
+{
+ "T": 2000,
+ "n_spots": 61645,
+ "inner_join": 18039,
+ "verified_pseudobulk": true,
+ "verified_region_counts": true,
+ "sets": {
+  "program": 101,
+  "ACADVL": 1,
+  "IDH2": 1,
+  "oxphos_kegg": 73,
+  "cm_structural": 10,
+  "ecm7": 7
+ }
+}

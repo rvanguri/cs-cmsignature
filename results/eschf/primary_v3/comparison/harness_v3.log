@@ -1,0 +1,882 @@
+  ok  CS sections profiled                                                                                             manuscript              12  recomputed                     12
+FAIL  CS sections evaluable for non-lesional myocardium (50-spot threshold)                                            manuscript               7  recomputed                      6
+  --  CS sections with non-lesional myocardium present                                                                 manuscript              11  recomputed                     10
+  ok  comparator sections                                                                                              manuscript               6  recomputed                      6
+FAIL  genes tested at 25% detectability                                                                                manuscript             985  recomputed                    990
+FAIL  genes differential at FDR 5%                                                                                     manuscript             192  recomputed                    193
+FAIL  genes lower in CS                                                                                                manuscript             139  recomputed                    133
+FAIL  genes higher in CS                                                                                               manuscript              53  recomputed                     60
+FAIL  hits passing locus-level QC                                                                                      manuscript             128  recomputed                    153
+FAIL  genes with lower detection fraction in CS (sensitivity balance)                                                  manuscript         494/985  recomputed                477/990
+FAIL  named metabolic/ion/adhesion genes are all in the lower-in-CS set                                                manuscript     all 9 lower  recomputed     missing ['SLC2A4']
+  ok  all 192 hits retain direction in every refit                                                                     manuscript             192  recomputed                    192
+FAIL  hits retaining significance in every leave-one-section-out refit                                                 manuscript             141  recomputed                    123
+FAIL  hits retaining significance in every leave-one-disease-out refit                                                 manuscript             117  recomputed                    105
+  ok  removing mitochondrial genes and recomputing normalisation does not change the result                            manuscript       unchanged  recomputed 190/190 same direction, 184/190 still FDR<5%
+  ok  result persists under panel-matched comparators                                                                  manuscript        persists  recomputed 180/180 same direction
+ n/r  result persists under adjustment for cardiomyocyte content                                                       manuscript        persists  recomputed                not run
+  ok  snRNA-seq patients, CS                                                                                           manuscript              21  recomputed                     21
+  ok  snRNA-seq patients, DCM                                                                                          manuscript              52  recomputed                     52
+  ok  snRNA-seq patients, ARVC                                                                                         manuscript               8  recomputed                      8
+  ok  snRNA-seq CS vs HCM effect size scales with gene length                                                          manuscript scales with gene length  recomputed slope=1.43 log2FC per log10 kb, r=0.34 (pooled comparators |r|<=0.12)
+  ok  most genes called differential in snRNA-seq CS vs HCM                                                            manuscript            most  recomputed 10580/14446 (73%) at FDR<5%; pooled comparators 18-32%
+FAIL  core genes testable in both platforms                                                                            manuscript             134  recomputed                    116
+FAIL  concordant and significant in both arms, lower in CS                                                             manuscript              15  recomputed                     12
+FAIL  concordant and significant in both arms, higher in CS                                                            manuscript               3  recomputed                      1
+FAIL  sign concordance among lower-expression genes                                                                    manuscript             60%  recomputed                    57%
+FAIL  effect-magnitude correlation across platforms                                                                    manuscript        rho=0.03  recomputed     rho=-0.06 (p=0.52)
+FAIL  lower-in-CS genes carried into the published comparison                                                          manuscript             139  recomputed                    133
+FAIL  DCM: CS-lower genes testable in the published table                                                              manuscript              36  recomputed                     32
+FAIL  DCM: testable genes lower in disease than non-failing                                                            manuscript           25/36  recomputed                  22/32
+  ok  DCM: reference rate among published differential genes                                                           manuscript             48%  recomputed                  48.3%
+FAIL  DCM: binomial p                                                                                                  manuscript           0.009  recomputed                  0.016
+FAIL  HCM: CS-lower genes testable in the published table                                                              manuscript              35  recomputed                     33
+FAIL  HCM: testable genes lower in disease than non-failing                                                            manuscript           22/35  recomputed                  20/33
+  ok  HCM: reference rate among published differential genes                                                           manuscript             45%  recomputed                  44.7%
+FAIL  HCM: binomial p                                                                                                  manuscript           0.023  recomputed                  0.048
+  ok  IDH2 lower in CS spatially, in snRNA-seq, and in DCM and HCM vs non-failing                                      manuscript    lower in all  recomputed           lower in all
+  --  IDH2 lower in all 5 genotype strata of the comparator snRNA-seq cohort                                           manuscript    lower in 5/5  recomputed genotype strata not in committed data
+  ok  ACADVL lower in CS and in HCM vs non-failing                                                                     manuscript   lower in both  recomputed          lower in both
+  ok  Figure panel a genes                                                                                             manuscript             134  recomputed                    134
+  ok  Figure panel b genes                                                                                             manuscript              18  recomputed                     18
+  ok  Figure panel b direction split                                                                                   manuscript  15 down / 3 up  recomputed         15 down / 3 up
+  ok  ESCHF[primary] A1 CS sections retained                                                                           manuscript            11.0  recomputed                   11.0
+  ok  ESCHF[primary] A1 CS patients retained                                                                           manuscript             8.0  recomputed                    8.0
+  ok  ESCHF[primary] A1 COMPARATOR sections retained                                                                   manuscript             6.0  recomputed                    6.0
+  ok  ESCHF[primary] A1 COMPARATOR patients retained                                                                   manuscript             6.0  recomputed                    6.0
+  ok  ESCHF[primary] A1 all_tested original hits                                                                       manuscript           223.0  recomputed                  223.0
+  ok  ESCHF[primary] A1 all_tested patient-pseudobulk hits                                                             manuscript           206.0  recomputed                  206.0
+  ok  ESCHF[primary] A1 all_tested original hits same sign at patient level                                            manuscript           223.0  recomputed                  223.0
+  ok  ESCHF[primary] A1 all_tested original hits still FDR<5% at patient level                                         manuscript           193.0  recomputed                  193.0
+  ok  ESCHF[primary] A1 all_tested dupcor-blocked hits                                                                 manuscript           203.0  recomputed                  203.0
+  ok  ESCHF[primary] A1 qc_pass original hits                                                                          manuscript           180.0  recomputed                  180.0
+  ok  ESCHF[primary] A1 qc_pass patient-pseudobulk hits                                                                manuscript           163.0  recomputed                  163.0
+  ok  ESCHF[primary] A1 qc_pass original hits same sign at patient level                                               manuscript           180.0  recomputed                  180.0
+  ok  ESCHF[primary] A1 qc_pass original hits still FDR<5% at patient level                                            manuscript           153.0  recomputed                  153.0
+  ok  ESCHF[primary] A1 qc_pass dupcor-blocked hits                                                                    manuscript           161.0  recomputed                  161.0
+  ok  ESCHF[primary] A2 bin <0.25 spots                                                                                manuscript          5772.0  recomputed                 5772.0
+  ok  ESCHF[primary] A2 bin <0.25 patients                                                                             manuscript             8.0  recomputed                    8.0
+  ok  ESCHF[primary] A2 bin <0.25 score_program mean of patient means                                                  manuscript          0.5233  recomputed                 0.5233
+  ok  ESCHF[primary] A2 bin <0.25 score_ACADVL mean of patient means                                                   manuscript          0.9853  recomputed                 0.9853
+  ok  ESCHF[primary] A2 bin 0.25-0.5 spots                                                                             manuscript          6075.0  recomputed                 6075.0
+  ok  ESCHF[primary] A2 bin 0.25-0.5 patients                                                                          manuscript             8.0  recomputed                    8.0
+  ok  ESCHF[primary] A2 bin 0.25-0.5 score_program mean of patient means                                               manuscript          0.5334  recomputed                 0.5334
+  ok  ESCHF[primary] A2 bin 0.25-0.5 score_ACADVL mean of patient means                                                manuscript          1.0024  recomputed                 1.0024
+  ok  ESCHF[primary] A2 bin 0.5-1 spots                                                                                manuscript          3883.0  recomputed                 3883.0
+  ok  ESCHF[primary] A2 bin 0.5-1 patients                                                                             manuscript             7.0  recomputed                    7.0
+  ok  ESCHF[primary] A2 bin 0.5-1 score_program mean of patient means                                                  manuscript           0.502  recomputed                  0.502
+  ok  ESCHF[primary] A2 bin 0.5-1 score_ACADVL mean of patient means                                                   manuscript          0.9065  recomputed                 0.9065
+  ok  ESCHF[primary] A2 bin 1-2 spots                                                                                  manuscript           395.0  recomputed                  395.0
+  ok  ESCHF[primary] A2 bin 1-2 patients                                                                               manuscript             4.0  recomputed                    4.0
+  ok  ESCHF[primary] A2 bin 1-2 score_program mean of patient means                                                    manuscript          0.5337  recomputed                 0.5337
+  ok  ESCHF[primary] A2 bin 1-2 score_ACADVL mean of patient means                                                     manuscript          1.2627  recomputed                 1.2627
+  ok  ESCHF[primary] A2 bin 2-3 spots                                                                                  manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[primary] A2 bin 2-3 patients                                                                               manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[primary] A2 bin >3 spots                                                                                   manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[primary] A2 bin >3 patients                                                                                manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[primary] A2 max CM-spot distance to granuloma (mm)                                                         manuscript          1.6401  recomputed                 1.6401
+  ok  ESCHF[primary] A2 CS sections without granuloma                                                                  manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[primary] A2 comparator score_program mean                                                                  manuscript          0.9146  recomputed                 0.9146
+  ok  ESCHF[primary] A2 comparator score_program min                                                                   manuscript          0.8741  recomputed                 0.8741
+  ok  ESCHF[primary] A2 comparator score_program max                                                                   manuscript          0.9473  recomputed                 0.9473
+  ok  ESCHF[primary] A2 comparator score_ACADVL mean                                                                   manuscript          1.6631  recomputed                 1.6631
+  ok  ESCHF[primary] A2 comparator score_ACADVL min                                                                    manuscript          1.4743  recomputed                 1.4743
+  ok  ESCHF[primary] A2 comparator score_ACADVL max                                                                    manuscript          1.9848  recomputed                 1.9848
+  ok  ESCHF[primary] A2 distance beta, program (statsmodels (1|section) refit)                                         manuscript         -0.0036  recomputed                -0.0036
+  ok  ESCHF[primary] A2 distance beta, ACADVL (statsmodels (1|section) refit)                                          manuscript          0.0384  recomputed                 0.0384
+  ok  ESCHF[primary] A2 distance beta, cm_structural_positive_control (statsmodels (1|section) refit)                  manuscript          0.0799  recomputed                 0.0799
+  ok  ESCHF[primary] A2 program distance CI excludes 0 (spot-level model)                                              manuscript              no  recomputed                     no
+  ok  ESCHF[primary] A2 ACADVL distance CI excludes 0 (spot-level model)                                               manuscript              no  recomputed                     no
+  ok  ESCHF[primary] A2 oxphos_kegg distance CI excludes 0 (spot-level model)                                          manuscript             yes  recomputed                    yes
+  ok  ESCHF[primary] A2 cm_structural_positive_control distance CI excludes 0 (spot-level model)                       manuscript             yes  recomputed                    yes
+  ok  ESCHF[primary] A2 n patients / sections / spots in model                                                         manuscript      8/11/16125  recomputed             8/11/16125
+  ok  ESCHF[primary] A6 frac_fibroblast_dominant CS minus comparator                                                   manuscript         -0.1103  recomputed                -0.1103
+  ok  ESCHF[primary] A6 frac_fibroblast_dominant Welch p                                                               manuscript          0.2295  recomputed                 0.2295
+  ok  ESCHF[primary] A6 frac_fibroblast_dominant Mann-Whitney p                                                        manuscript          0.2721  recomputed                 0.2721
+  ok  ESCHF[primary] A6 frac_fibroblast_dominant n patients CS                                                         manuscript             9.0  recomputed                    9.0
+  ok  ESCHF[primary] A6 mean_ecm7 CS minus comparator                                                                  manuscript          0.0556  recomputed                 0.0556
+  ok  ESCHF[primary] A6 mean_ecm7 Welch p                                                                              manuscript          0.8195  recomputed                 0.8195
+  ok  ESCHF[primary] A6 mean_ecm7 Mann-Whitney p                                                                       manuscript          0.8639  recomputed                 0.8639
+  ok  ESCHF[primary] A6 mean_ecm7 n patients CS                                                                        manuscript             9.0  recomputed                    9.0
+  ok  ESCHF[primary] A6 frac_immune_dominant CS minus comparator                                                       manuscript          0.2242  recomputed                 0.2242
+  ok  ESCHF[primary] A6 frac_immune_dominant Welch p                                                                   manuscript          0.1291  recomputed                 0.1291
+  ok  ESCHF[primary] A6 frac_immune_dominant Mann-Whitney p                                                            manuscript           0.036  recomputed                  0.036
+  ok  ESCHF[primary] A6 frac_immune_dominant n patients CS                                                             manuscript             9.0  recomputed                    9.0
+  ok  ESCHF[primary] A6 frac_cm_dominant CS minus comparator                                                           manuscript         -0.1624  recomputed                -0.1624
+  ok  ESCHF[primary] A6 frac_cm_dominant Welch p                                                                       manuscript          0.1597  recomputed                 0.1597
+  ok  ESCHF[primary] A6 frac_cm_dominant Mann-Whitney p                                                                manuscript          0.2721  recomputed                 0.2721
+  ok  ESCHF[primary] A6 frac_cm_dominant n patients CS                                                                 manuscript             9.0  recomputed                    9.0
+  ok  ESCHF[primary] A3 down all_hits n testable                                                                       manuscript           143.0  recomputed                  143.0
+  ok  ESCHF[primary] A3 down all_hits fraction same sign                                                               manuscript          0.6154  recomputed                 0.6154
+  ok  ESCHF[primary] A3 down all_hits Spearman rho                                                                     manuscript          0.0257  recomputed                 0.0257
+  ok  ESCHF[primary] A3 down qc_passing_only n testable                                                                manuscript           110.0  recomputed                  110.0
+  ok  ESCHF[primary] A3 down qc_passing_only fraction same sign                                                        manuscript          0.6545  recomputed                 0.6545
+  ok  ESCHF[primary] A3 down qc_passing_only Spearman rho                                                              manuscript          0.0346  recomputed                 0.0346
+  ok  ESCHF[primary] A3 up all_hits n testable                                                                         manuscript            67.0  recomputed                   67.0
+  ok  ESCHF[primary] A3 up all_hits fraction same sign                                                                 manuscript          0.4478  recomputed                 0.4478
+  ok  ESCHF[primary] A3 up all_hits Spearman rho                                                                       manuscript         -0.3733  recomputed                -0.3733
+  ok  ESCHF[primary] A3 up qc_passing_only n testable                                                                  manuscript            60.0  recomputed                   60.0
+  ok  ESCHF[primary] A3 up qc_passing_only fraction same sign                                                          manuscript          0.4333  recomputed                 0.4333
+  ok  ESCHF[primary] A3 up qc_passing_only Spearman rho                                                                manuscript         -0.3925  recomputed                -0.3925
+  ok  ESCHF[primary] A4 Chaffin DCM all_hits lower in disease                                                          manuscript            24.0  recomputed                   24.0
+  ok  ESCHF[primary] A4 Chaffin DCM all_hits n testable                                                                manuscript            34.0  recomputed                   34.0
+  ok  ESCHF[primary] A4 Chaffin DCM all_hits binomial p                                                                manuscript          0.0072  recomputed                 0.0072
+  ok  ESCHF[primary] A4 Chaffin DCM qc_passing_only lower in disease                                                   manuscript            19.0  recomputed                   19.0
+  ok  ESCHF[primary] A4 Chaffin DCM qc_passing_only n testable                                                         manuscript            24.0  recomputed                   24.0
+  ok  ESCHF[primary] A4 Chaffin DCM qc_passing_only binomial p                                                         manuscript           0.002  recomputed                  0.002
+  ok  ESCHF[primary] A4 Chaffin HCM all_hits lower in disease                                                          manuscript            25.0  recomputed                   25.0
+  ok  ESCHF[primary] A4 Chaffin HCM all_hits n testable                                                                manuscript            38.0  recomputed                   38.0
+  ok  ESCHF[primary] A4 Chaffin HCM all_hits binomial p                                                                manuscript           0.007  recomputed                  0.007
+  ok  ESCHF[primary] A4 Chaffin HCM qc_passing_only lower in disease                                                   manuscript            20.0  recomputed                   20.0
+  ok  ESCHF[primary] A4 Chaffin HCM qc_passing_only n testable                                                         manuscript            28.0  recomputed                   28.0
+  ok  ESCHF[primary] A4 Chaffin HCM qc_passing_only binomial p                                                         manuscript          0.0038  recomputed                 0.0038
+  ok  ESCHF[primary] A4 internal CS vs NF all_hits n testable                                                          manuscript           143.0  recomputed                  143.0
+  ok  ESCHF[primary] A4 internal CS vs NF all_hits fraction lower                                                      manuscript          0.4266  recomputed                 0.4266
+  ok  ESCHF[primary] A4 internal CS vs NF qc_passing_only n testable                                                   manuscript           110.0  recomputed                  110.0
+  ok  ESCHF[primary] A4 internal CS vs NF qc_passing_only fraction lower                                               manuscript          0.4455  recomputed                 0.4455
+  ok  ESCHF[primary] A5 Hamed overlap n                                                                                manuscript           688.0  recomputed                  688.0
+  ok  ESCHF[primary] A5 Hamed severity Spearman rho (all overlap)                                                      manuscript         -0.0332  recomputed                -0.0332
+  ok  ESCHF[primary] A5 CS-lower genes in proteome                                                                     manuscript           105.0  recomputed                  105.0
+  ok  ESCHF[primary] A5 raw G2-lower among CS-lower                                                                    manuscript            26.0  recomputed                   26.0
+  ok  ESCHF[primary] A5 raw G2-higher among CS-lower                                                                   manuscript            49.0  recomputed                   49.0
+  ok  ESCHF[primary] A5 cm_adjusted G2-lower among CS-lower                                                            manuscript            21.0  recomputed                   21.0
+  ok  ESCHF[primary] A5 cm_adjusted G2-higher among CS-lower                                                           manuscript            40.0  recomputed                   40.0
+  ok  ESCHF[primary] A5b primary program full n testable                                                               manuscript           110.0  recomputed                  110.0
+  ok  ESCHF[primary] A5b primary program full fraction lower                                                           manuscript          0.6545  recomputed                 0.6545
+  ok  ESCHF[primary] A5b primary program transplant_only n testable                                                    manuscript           110.0  recomputed                  110.0
+  ok  ESCHF[primary] A5b primary program transplant_only fraction lower                                                manuscript          0.6182  recomputed                 0.6182
+  ok  ESCHF[primary] A5b LVAD minus TX, program_score                                                                  manuscript         -0.0126  recomputed                -0.0126
+  ok  ESCHF[primary] A5b LVAD vs TX Welch p, program_score                                                             manuscript          0.3655  recomputed                 0.3655
+  ok  ESCHF[primary] A5b LVEF Spearman rho, program_score                                                              manuscript         -0.0068  recomputed                -0.0068
+  ok  ESCHF[primary] A5b LVEF n, program_score                                                                         manuscript            20.0  recomputed                   20.0
+  ok  ESCHF[primary] A5b LVAD minus TX, ACADVL                                                                         manuscript         -0.1816  recomputed                -0.1816
+  ok  ESCHF[primary] A5b LVAD vs TX Welch p, ACADVL                                                                    manuscript          0.0556  recomputed                 0.0556
+  ok  ESCHF[primary] A5b LVEF Spearman rho, ACADVL                                                                     manuscript          0.0958  recomputed                 0.0958
+  ok  ESCHF[primary] A5b LVEF n, ACADVL                                                                                manuscript            20.0  recomputed                   20.0
+  ok  ESCHF[primary] A5b concordant genes carried into transplant-only check                                           manuscript              20  recomputed                     20
+  ok  ESCHF[sens>=0.5mm] A1 CS sections retained                                                                       manuscript             6.0  recomputed                    6.0
+  ok  ESCHF[sens>=0.5mm] A1 CS patients retained                                                                       manuscript             5.0  recomputed                    5.0
+  ok  ESCHF[sens>=0.5mm] A1 COMPARATOR sections retained                                                               manuscript             6.0  recomputed                    6.0
+  ok  ESCHF[sens>=0.5mm] A1 COMPARATOR patients retained                                                               manuscript             6.0  recomputed                    6.0
+  ok  ESCHF[sens>=0.5mm] A1 all_985 original hits                                                                      manuscript           193.0  recomputed                  193.0
+  ok  ESCHF[sens>=0.5mm] A1 all_985 patient-pseudobulk hits                                                            manuscript           137.0  recomputed                  137.0
+  ok  ESCHF[sens>=0.5mm] A1 all_985 original hits same sign at patient level                                           manuscript           193.0  recomputed                  193.0
+  ok  ESCHF[sens>=0.5mm] A1 all_985 original hits still FDR<5% at patient level                                        manuscript           134.0  recomputed                  134.0
+ n/r  ESCHF[sens>=0.5mm] A1 all_985 dupcor-blocked hits                                                                manuscript   not estimable  recomputed                not run
+  ok  ESCHF[sens>=0.5mm] A1 qc_pass original hits                                                                      manuscript           153.0  recomputed                  153.0
+  ok  ESCHF[sens>=0.5mm] A1 qc_pass patient-pseudobulk hits                                                            manuscript           107.0  recomputed                  107.0
+  ok  ESCHF[sens>=0.5mm] A1 qc_pass original hits same sign at patient level                                           manuscript           153.0  recomputed                  153.0
+  ok  ESCHF[sens>=0.5mm] A1 qc_pass original hits still FDR<5% at patient level                                        manuscript           105.0  recomputed                  105.0
+ n/r  ESCHF[sens>=0.5mm] A1 qc_pass dupcor-blocked hits                                                                manuscript   not estimable  recomputed                not run
+  ok  ESCHF[sens>=0.5mm] A2 bin <0.25 spots                                                                            manuscript          5772.0  recomputed                 5772.0
+  ok  ESCHF[sens>=0.5mm] A2 bin <0.25 patients                                                                         manuscript             8.0  recomputed                    8.0
+  ok  ESCHF[sens>=0.5mm] A2 bin <0.25 score_program mean of patient means                                              manuscript          0.5651  recomputed                 0.5651
+  ok  ESCHF[sens>=0.5mm] A2 bin <0.25 score_ACADVL mean of patient means                                               manuscript          0.9853  recomputed                 0.9853
+  ok  ESCHF[sens>=0.5mm] A2 bin 0.25-0.5 spots                                                                         manuscript          6075.0  recomputed                 6075.0
+  ok  ESCHF[sens>=0.5mm] A2 bin 0.25-0.5 patients                                                                      manuscript             8.0  recomputed                    8.0
+  ok  ESCHF[sens>=0.5mm] A2 bin 0.25-0.5 score_program mean of patient means                                           manuscript          0.5668  recomputed                 0.5668
+  ok  ESCHF[sens>=0.5mm] A2 bin 0.25-0.5 score_ACADVL mean of patient means                                            manuscript          1.0024  recomputed                 1.0024
+  ok  ESCHF[sens>=0.5mm] A2 bin 0.5-1 spots                                                                            manuscript          3883.0  recomputed                 3883.0
+  ok  ESCHF[sens>=0.5mm] A2 bin 0.5-1 patients                                                                         manuscript             7.0  recomputed                    7.0
+  ok  ESCHF[sens>=0.5mm] A2 bin 0.5-1 score_program mean of patient means                                              manuscript          0.5288  recomputed                 0.5288
+  ok  ESCHF[sens>=0.5mm] A2 bin 0.5-1 score_ACADVL mean of patient means                                               manuscript          0.9065  recomputed                 0.9065
+  ok  ESCHF[sens>=0.5mm] A2 bin 1-2 spots                                                                              manuscript           395.0  recomputed                  395.0
+  ok  ESCHF[sens>=0.5mm] A2 bin 1-2 patients                                                                           manuscript             4.0  recomputed                    4.0
+  ok  ESCHF[sens>=0.5mm] A2 bin 1-2 score_program mean of patient means                                                manuscript          0.5486  recomputed                 0.5486
+  ok  ESCHF[sens>=0.5mm] A2 bin 1-2 score_ACADVL mean of patient means                                                 manuscript          1.2627  recomputed                 1.2627
+  ok  ESCHF[sens>=0.5mm] A2 bin 2-3 spots                                                                              manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[sens>=0.5mm] A2 bin 2-3 patients                                                                           manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[sens>=0.5mm] A2 bin >3 spots                                                                               manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[sens>=0.5mm] A2 bin >3 patients                                                                            manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[sens>=0.5mm] A2 max CM-spot distance to granuloma (mm)                                                     manuscript          1.6401  recomputed                 1.6401
+  ok  ESCHF[sens>=0.5mm] A2 CS sections without granuloma                                                              manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[sens>=0.5mm] A2 comparator score_program mean                                                              manuscript           0.979  recomputed                  0.979
+  ok  ESCHF[sens>=0.5mm] A2 comparator score_program min                                                               manuscript          0.9335  recomputed                 0.9335
+  ok  ESCHF[sens>=0.5mm] A2 comparator score_program max                                                               manuscript          1.0029  recomputed                 1.0029
+  ok  ESCHF[sens>=0.5mm] A2 comparator score_ACADVL mean                                                               manuscript          1.6631  recomputed                 1.6631
+  ok  ESCHF[sens>=0.5mm] A2 comparator score_ACADVL min                                                                manuscript          1.4743  recomputed                 1.4743
+  ok  ESCHF[sens>=0.5mm] A2 comparator score_ACADVL max                                                                manuscript          1.9848  recomputed                 1.9848
+  ok  ESCHF[sens>=0.5mm] A2 distance beta, program (statsmodels (1|section) refit)                                     manuscript         -0.0111  recomputed                -0.0111
+  ok  ESCHF[sens>=0.5mm] A2 distance beta, ACADVL (statsmodels (1|section) refit)                                      manuscript          0.0384  recomputed                 0.0384
+  ok  ESCHF[sens>=0.5mm] A2 distance beta, cm_structural_positive_control (statsmodels (1|section) refit)              manuscript          0.0799  recomputed                 0.0799
+  ok  ESCHF[sens>=0.5mm] A2 program distance CI excludes 0 (spot-level model)                                          manuscript             yes  recomputed                    yes
+  ok  ESCHF[sens>=0.5mm] A2 ACADVL distance CI excludes 0 (spot-level model)                                           manuscript              no  recomputed                     no
+  ok  ESCHF[sens>=0.5mm] A2 oxphos_kegg distance CI excludes 0 (spot-level model)                                      manuscript             yes  recomputed                    yes
+  ok  ESCHF[sens>=0.5mm] A2 cm_structural_positive_control distance CI excludes 0 (spot-level model)                   manuscript             yes  recomputed                    yes
+  ok  ESCHF[sens>=0.5mm] A2 n patients / sections / spots in model                                                     manuscript      8/11/16125  recomputed             8/11/16125
+  ok  ESCHF[sens>=0.5mm] A6 frac_fibroblast_dominant CS minus comparator                                               manuscript         -0.1103  recomputed                -0.1103
+  ok  ESCHF[sens>=0.5mm] A6 frac_fibroblast_dominant Welch p                                                           manuscript          0.2295  recomputed                 0.2295
+  ok  ESCHF[sens>=0.5mm] A6 frac_fibroblast_dominant Mann-Whitney p                                                    manuscript          0.2721  recomputed                 0.2721
+  ok  ESCHF[sens>=0.5mm] A6 frac_fibroblast_dominant n patients CS                                                     manuscript             9.0  recomputed                    9.0
+  ok  ESCHF[sens>=0.5mm] A6 mean_ecm7 CS minus comparator                                                              manuscript          0.0556  recomputed                 0.0556
+  ok  ESCHF[sens>=0.5mm] A6 mean_ecm7 Welch p                                                                          manuscript          0.8195  recomputed                 0.8195
+  ok  ESCHF[sens>=0.5mm] A6 mean_ecm7 Mann-Whitney p                                                                   manuscript          0.8639  recomputed                 0.8639
+  ok  ESCHF[sens>=0.5mm] A6 mean_ecm7 n patients CS                                                                    manuscript             9.0  recomputed                    9.0
+  ok  ESCHF[sens>=0.5mm] A6 frac_immune_dominant CS minus comparator                                                   manuscript          0.2242  recomputed                 0.2242
+  ok  ESCHF[sens>=0.5mm] A6 frac_immune_dominant Welch p                                                               manuscript          0.1291  recomputed                 0.1291
+  ok  ESCHF[sens>=0.5mm] A6 frac_immune_dominant Mann-Whitney p                                                        manuscript           0.036  recomputed                  0.036
+  ok  ESCHF[sens>=0.5mm] A6 frac_immune_dominant n patients CS                                                         manuscript             9.0  recomputed                    9.0
+  ok  ESCHF[sens>=0.5mm] A6 frac_cm_dominant CS minus comparator                                                       manuscript         -0.1624  recomputed                -0.1624
+  ok  ESCHF[sens>=0.5mm] A6 frac_cm_dominant Welch p                                                                   manuscript          0.1597  recomputed                 0.1597
+  ok  ESCHF[sens>=0.5mm] A6 frac_cm_dominant Mann-Whitney p                                                            manuscript          0.2721  recomputed                 0.2721
+  ok  ESCHF[sens>=0.5mm] A6 frac_cm_dominant n patients CS                                                             manuscript             9.0  recomputed                    9.0
+  ok  ESCHF[sens>=0.5mm] A3 down all_hits n testable                                                                   manuscript           126.0  recomputed                  126.0
+  ok  ESCHF[sens>=0.5mm] A3 down all_hits fraction same sign                                                           manuscript          0.5794  recomputed                 0.5794
+  ok  ESCHF[sens>=0.5mm] A3 down all_hits Spearman rho                                                                 manuscript         -0.0301  recomputed                -0.0301
+  ok  ESCHF[sens>=0.5mm] A3 down qc_passing_only n testable                                                            manuscript            96.0  recomputed                   96.0
+  ok  ESCHF[sens>=0.5mm] A3 down qc_passing_only fraction same sign                                                    manuscript           0.625  recomputed                  0.625
+  ok  ESCHF[sens>=0.5mm] A3 down qc_passing_only Spearman rho                                                          manuscript         -0.0771  recomputed                -0.0771
+  ok  ESCHF[sens>=0.5mm] A3 up all_hits n testable                                                                     manuscript            56.0  recomputed                   56.0
+  ok  ESCHF[sens>=0.5mm] A3 up all_hits fraction same sign                                                             manuscript          0.4464  recomputed                 0.4464
+  ok  ESCHF[sens>=0.5mm] A3 up all_hits Spearman rho                                                                   manuscript         -0.3755  recomputed                -0.3755
+  ok  ESCHF[sens>=0.5mm] A3 up qc_passing_only n testable                                                              manuscript            49.0  recomputed                   49.0
+  ok  ESCHF[sens>=0.5mm] A3 up qc_passing_only fraction same sign                                                      manuscript          0.4082  recomputed                 0.4082
+  ok  ESCHF[sens>=0.5mm] A3 up qc_passing_only Spearman rho                                                            manuscript         -0.3396  recomputed                -0.3396
+  ok  ESCHF[sens>=0.5mm] A4 Chaffin DCM all_hits lower in disease                                                      manuscript            22.0  recomputed                   22.0
+  ok  ESCHF[sens>=0.5mm] A4 Chaffin DCM all_hits n testable                                                            manuscript            32.0  recomputed                   32.0
+  ok  ESCHF[sens>=0.5mm] A4 Chaffin DCM all_hits binomial p                                                            manuscript          0.0159  recomputed                 0.0159
+  ok  ESCHF[sens>=0.5mm] A4 Chaffin DCM qc_passing_only lower in disease                                               manuscript            18.0  recomputed                   18.0
+  ok  ESCHF[sens>=0.5mm] A4 Chaffin DCM qc_passing_only n testable                                                     manuscript            24.0  recomputed                   24.0
+  ok  ESCHF[sens>=0.5mm] A4 Chaffin DCM qc_passing_only binomial p                                                     manuscript          0.0073  recomputed                 0.0073
+  ok  ESCHF[sens>=0.5mm] A4 Chaffin HCM all_hits lower in disease                                                      manuscript            20.0  recomputed                   20.0
+  ok  ESCHF[sens>=0.5mm] A4 Chaffin HCM all_hits n testable                                                            manuscript            33.0  recomputed                   33.0
+  ok  ESCHF[sens>=0.5mm] A4 Chaffin HCM all_hits binomial p                                                            manuscript           0.048  recomputed                  0.048
+  ok  ESCHF[sens>=0.5mm] A4 Chaffin HCM qc_passing_only lower in disease                                               manuscript            16.0  recomputed                   16.0
+  ok  ESCHF[sens>=0.5mm] A4 Chaffin HCM qc_passing_only n testable                                                     manuscript            24.0  recomputed                   24.0
+  ok  ESCHF[sens>=0.5mm] A4 Chaffin HCM qc_passing_only binomial p                                                     manuscript          0.0249  recomputed                 0.0249
+  ok  ESCHF[sens>=0.5mm] A4 internal CS vs NF all_hits n testable                                                      manuscript           126.0  recomputed                  126.0
+  ok  ESCHF[sens>=0.5mm] A4 internal CS vs NF all_hits fraction lower                                                  manuscript          0.4206  recomputed                 0.4206
+  ok  ESCHF[sens>=0.5mm] A4 internal CS vs NF qc_passing_only n testable                                               manuscript            96.0  recomputed                   96.0
+  ok  ESCHF[sens>=0.5mm] A4 internal CS vs NF qc_passing_only fraction lower                                           manuscript          0.4479  recomputed                 0.4479
+  ok  ESCHF[sens>=0.5mm] A5 Hamed overlap n                                                                            manuscript           694.0  recomputed                  694.0
+  ok  ESCHF[sens>=0.5mm] A5 Hamed severity Spearman rho (all overlap)                                                  manuscript         -0.1811  recomputed                -0.1811
+  ok  ESCHF[sens>=0.5mm] A5 CS-lower genes in proteome                                                                 manuscript            84.0  recomputed                   84.0
+  ok  ESCHF[sens>=0.5mm] A5 raw G2-lower among CS-lower                                                                manuscript            21.0  recomputed                   21.0
+  ok  ESCHF[sens>=0.5mm] A5 raw G2-higher among CS-lower                                                               manuscript            43.0  recomputed                   43.0
+  ok  ESCHF[sens>=0.5mm] A5 cm_adjusted G2-lower among CS-lower                                                        manuscript            16.0  recomputed                   16.0
+  ok  ESCHF[sens>=0.5mm] A5 cm_adjusted G2-higher among CS-lower                                                       manuscript            35.0  recomputed                   35.0
+  ok  ESCHF[sens>=0.5mm] A5b primary program full n testable                                                           manuscript            96.0  recomputed                   96.0
+  ok  ESCHF[sens>=0.5mm] A5b primary program full fraction lower                                                       manuscript           0.625  recomputed                  0.625
+  ok  ESCHF[sens>=0.5mm] A5b primary program transplant_only n testable                                                manuscript            96.0  recomputed                   96.0
+  ok  ESCHF[sens>=0.5mm] A5b primary program transplant_only fraction lower                                            manuscript          0.5938  recomputed                 0.5938
+  ok  ESCHF[sens>=0.5mm] A5b LVAD minus TX, program_score                                                              manuscript         -0.0028  recomputed                -0.0028
+  ok  ESCHF[sens>=0.5mm] A5b LVAD vs TX Welch p, program_score                                                         manuscript           0.809  recomputed                  0.809
+  ok  ESCHF[sens>=0.5mm] A5b LVEF Spearman rho, program_score                                                          manuscript         -0.0513  recomputed                -0.0513
+  ok  ESCHF[sens>=0.5mm] A5b LVEF n, program_score                                                                     manuscript            20.0  recomputed                   20.0
+  ok  ESCHF[sens>=0.5mm] A5b LVAD minus TX, ACADVL                                                                     manuscript         -0.1816  recomputed                -0.1816
+  ok  ESCHF[sens>=0.5mm] A5b LVAD vs TX Welch p, ACADVL                                                                manuscript          0.0556  recomputed                 0.0556
+  ok  ESCHF[sens>=0.5mm] A5b LVEF Spearman rho, ACADVL                                                                 manuscript          0.0958  recomputed                 0.0958
+  ok  ESCHF[sens>=0.5mm] A5b LVEF n, ACADVL                                                                            manuscript            20.0  recomputed                   20.0
+  ok  ESCHF[sens>=0.5mm] A5b concordant genes carried into transplant-only check                                       manuscript              13  recomputed                     13
+  ok  ESCHF[rev] A0 tested genes = new universe                                                                        manuscript             985  recomputed                    985
+  ok  ESCHF[rev] A0 new primary hits                                                                                   manuscript           223.0  recomputed                  223.0
+  ok  ESCHF[rev] A0 new primary hits lower in CS                                                                       manuscript           151.0  recomputed                  151.0
+  ok  ESCHF[rev] A0 old-fit hits                                                                                       manuscript           193.0  recomputed                  193.0
+  ok  ESCHF[rev] A0 hits in both fits                                                                                  manuscript           158.0  recomputed                  158.0
+  ok  ESCHF[rev] A0 old hits keeping sign in new fit                                                                   manuscript           191.0  recomputed                  191.0
+  ok  ESCHF[rev] A0 new primary QC-passing hits                                                                        manuscript           180.0  recomputed                  180.0
+  ok  ESCHF[rev] A0 program genes = QC-passing lower-in-CS hits                                                        manuscript             116  recomputed                    116
+  ok  ESCHF[rev] A2 per-patient program n patients                                                                     manuscript             8.0  recomputed                    8.0
+  ok  ESCHF[rev] A2 per-patient program mean slope                                                                     manuscript          0.0209  recomputed                 0.0209
+  ok  ESCHF[rev] A2 per-patient program CI low                                                                         manuscript         -0.0211  recomputed                -0.0211
+  ok  ESCHF[rev] A2 per-patient program CI high                                                                        manuscript          0.0629  recomputed                 0.0629
+  ok  ESCHF[rev] A2 per-patient program n negative                                                                     manuscript             3.0  recomputed                    3.0
+  ok  ESCHF[rev] A2 per-patient program gap share across 1.64 mm                                                       manuscript          0.0887  recomputed                 0.0887
+  ok  ESCHF[rev] A2 per-patient ACADVL n patients                                                                      manuscript             8.0  recomputed                    8.0
+  ok  ESCHF[rev] A2 per-patient ACADVL mean slope                                                                      manuscript          0.0624  recomputed                 0.0624
+  ok  ESCHF[rev] A2 per-patient ACADVL CI low                                                                          manuscript         -0.2118  recomputed                -0.2118
+  ok  ESCHF[rev] A2 per-patient ACADVL CI high                                                                         manuscript          0.3367  recomputed                 0.3367
+  ok  ESCHF[rev] A2 per-patient ACADVL n negative                                                                      manuscript             3.0  recomputed                    3.0
+  ok  ESCHF[rev] A2 per-patient ACADVL gap share across 1.64 mm                                                        manuscript          0.1545  recomputed                 0.1545
+  ok  ESCHF[rev] A2 per-patient oxphos_kegg n patients                                                                 manuscript             8.0  recomputed                    8.0
+  ok  ESCHF[rev] A2 per-patient oxphos_kegg mean slope                                                                 manuscript          0.0561  recomputed                 0.0561
+  ok  ESCHF[rev] A2 per-patient oxphos_kegg CI low                                                                     manuscript         -0.0563  recomputed                -0.0563
+  ok  ESCHF[rev] A2 per-patient oxphos_kegg CI high                                                                    manuscript          0.1685  recomputed                 0.1685
+  ok  ESCHF[rev] A2 per-patient oxphos_kegg n negative                                                                 manuscript             2.0  recomputed                    2.0
+  ok  ESCHF[rev] A2 per-patient cm_structural_positive_control n patients                                              manuscript             8.0  recomputed                    8.0
+  ok  ESCHF[rev] A2 per-patient cm_structural_positive_control mean slope                                              manuscript          0.1898  recomputed                 0.1898
+  ok  ESCHF[rev] A2 per-patient cm_structural_positive_control CI low                                                  manuscript          0.0245  recomputed                 0.0245
+  ok  ESCHF[rev] A2 per-patient cm_structural_positive_control CI high                                                 manuscript          0.3551  recomputed                 0.3551
+  ok  ESCHF[rev] A2 per-patient cm_structural_positive_control n negative                                              manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] A2 max CM-dominant distance to immune-dominant spot (mm)                                              manuscript          1.6401  recomputed                 1.6401
+  ok  ESCHF[rev] A2 OXPHOS bin 0.25-0.5 CS mean                                                                        manuscript          1.0294  recomputed                 1.0294
+  ok  ESCHF[rev] A2 OXPHOS bin 0.25-0.5 CS CI high                                                                     manuscript          1.0776  recomputed                 1.0776
+  ok  ESCHF[rev] A2 OXPHOS bin 0.25-0.5 CS mean below comparator range                                                 manuscript           False  recomputed                  False
+  ok  ESCHF[rev] A2 OXPHOS bin 0.5-1 CS mean                                                                           manuscript          1.0262  recomputed                 1.0262
+  ok  ESCHF[rev] A2 OXPHOS bin 0.5-1 CS CI high                                                                        manuscript          1.0945  recomputed                 1.0945
+  ok  ESCHF[rev] A2 OXPHOS bin 0.5-1 CS mean below comparator range                                                    manuscript           False  recomputed                  False
+  ok  ESCHF[rev] A2 OXPHOS bin 1-2 CS mean                                                                             manuscript          1.0377  recomputed                 1.0377
+  ok  ESCHF[rev] A2 OXPHOS bin 1-2 CS CI high                                                                          manuscript          1.1573  recomputed                 1.1573
+  ok  ESCHF[rev] A2 OXPHOS bin 1-2 CS mean below comparator range                                                      manuscript           False  recomputed                  False
+  ok  ESCHF[rev] A2 OXPHOS bin <0.25 CS mean                                                                           manuscript          0.9995  recomputed                 0.9995
+  ok  ESCHF[rev] A2 OXPHOS bin <0.25 CS CI high                                                                        manuscript          1.0428  recomputed                 1.0428
+  ok  ESCHF[rev] A2 OXPHOS bin <0.25 CS mean below comparator range                                                    manuscript           False  recomputed                  False
+  ok  ESCHF[rev] A2 OXPHOS populated bins                                                                              manuscript               4  recomputed                      4
+  ok  ESCHF[rev] s6 cross_platform_snrna all_hits n testable                                                           manuscript           143.0  recomputed                  143.0
+  ok  ESCHF[rev] s6 cross_platform_snrna all_hits fraction lower                                                       manuscript          0.6154  recomputed                 0.6154
+  ok  ESCHF[rev] s6 cross_platform_snrna qc_passing_only n testable                                                    manuscript           110.0  recomputed                  110.0
+  ok  ESCHF[rev] s6 cross_platform_snrna qc_passing_only fraction lower                                                manuscript          0.6545  recomputed                 0.6545
+  ok  ESCHF[rev] s6 snrna_CS_vs_NF all_hits n testable                                                                 manuscript           143.0  recomputed                  143.0
+  ok  ESCHF[rev] s6 snrna_CS_vs_NF all_hits fraction lower                                                             manuscript          0.4266  recomputed                 0.4266
+  ok  ESCHF[rev] s6 snrna_CS_vs_NF qc_passing_only n testable                                                          manuscript           110.0  recomputed                  110.0
+  ok  ESCHF[rev] s6 snrna_CS_vs_NF qc_passing_only fraction lower                                                      manuscript          0.4455  recomputed                 0.4455
+  ok  ESCHF[rev] s6 chaffin_DCM_vs_NF all_hits n testable                                                              manuscript            34.0  recomputed                   34.0
+  ok  ESCHF[rev] s6 chaffin_DCM_vs_NF all_hits fraction lower                                                          manuscript          0.7059  recomputed                 0.7059
+  ok  ESCHF[rev] s6 chaffin_DCM_vs_NF qc_passing_only n testable                                                       manuscript            24.0  recomputed                   24.0
+  ok  ESCHF[rev] s6 chaffin_DCM_vs_NF qc_passing_only fraction lower                                                   manuscript          0.7917  recomputed                 0.7917
+  ok  ESCHF[rev] s6 chaffin_HCM_vs_NF all_hits n testable                                                              manuscript            38.0  recomputed                   38.0
+  ok  ESCHF[rev] s6 chaffin_HCM_vs_NF all_hits fraction lower                                                          manuscript          0.6579  recomputed                 0.6579
+  ok  ESCHF[rev] s6 chaffin_HCM_vs_NF qc_passing_only n testable                                                       manuscript            28.0  recomputed                   28.0
+  ok  ESCHF[rev] s6 chaffin_HCM_vs_NF qc_passing_only fraction lower                                                   manuscript          0.7143  recomputed                 0.7143
+  ok  ESCHF[rev] s6 p-values reported for all four comparisons                                                         manuscript             yes  recomputed                    yes
+  ok  ESCHF[rev] Fig A CS_108-1 CM-dominant spots                                                                      manuscript          1218.0  recomputed                 1218.0
+  ok  ESCHF[rev] Fig A CS_108-1 immune-dominant spots                                                                  manuscript           178.0  recomputed                  178.0
+  ok  ESCHF[rev] Fig A ARVC_1 CM-dominant spots                                                                        manuscript          2349.0  recomputed                 2349.0
+  ok  ESCHF[rev] Fig A ARVC_1 immune-dominant spots                                                                    manuscript            70.0  recomputed                   70.0
+  ok  ESCHF[rev] Fig B program perpatient_slope                                                                        manuscript          0.0209  recomputed                 0.0209
+  ok  ESCHF[rev] Fig B program perpatient_slope_ci_low                                                                 manuscript         -0.0211  recomputed                -0.0211
+  ok  ESCHF[rev] Fig B program perpatient_slope_ci_high                                                                manuscript          0.0629  recomputed                 0.0629
+  ok  ESCHF[rev] Fig B program perpatient_n                                                                            manuscript             8.0  recomputed                    8.0
+  ok  ESCHF[rev] Fig B program perpatient_n_negative                                                                   manuscript             3.0  recomputed                    3.0
+  ok  ESCHF[rev] Fig B program bin 0.25-0.5 pooled mean                                                                manuscript          0.5334  recomputed                 0.5334
+  ok  ESCHF[rev] Fig B program bin 0.5-1 pooled mean                                                                   manuscript           0.502  recomputed                  0.502
+  ok  ESCHF[rev] Fig B program bin 1-2 pooled mean                                                                     manuscript          0.5337  recomputed                 0.5337
+  ok  ESCHF[rev] Fig B program bin <0.25 pooled mean                                                                   manuscript          0.5233  recomputed                 0.5233
+  ok  ESCHF[rev] Fig B ACADVL perpatient_slope                                                                         manuscript          0.0624  recomputed                 0.0624
+  ok  ESCHF[rev] Fig B ACADVL perpatient_slope_ci_low                                                                  manuscript         -0.2118  recomputed                -0.2118
+  ok  ESCHF[rev] Fig B ACADVL perpatient_slope_ci_high                                                                 manuscript          0.3367  recomputed                 0.3367
+  ok  ESCHF[rev] Fig B ACADVL perpatient_n                                                                             manuscript             8.0  recomputed                    8.0
+  ok  ESCHF[rev] Fig B ACADVL perpatient_n_negative                                                                    manuscript             3.0  recomputed                    3.0
+  ok  ESCHF[rev] Fig B ACADVL bin 0.25-0.5 pooled mean                                                                 manuscript          1.0024  recomputed                 1.0024
+  ok  ESCHF[rev] Fig B ACADVL bin 0.5-1 pooled mean                                                                    manuscript          0.9065  recomputed                 0.9065
+  ok  ESCHF[rev] Fig B ACADVL bin 1-2 pooled mean                                                                      manuscript          1.2627  recomputed                 1.2627
+  ok  ESCHF[rev] Fig B ACADVL bin <0.25 pooled mean                                                                    manuscript          0.9853  recomputed                 0.9853
+  ok  ESCHF[rev] Fig B plotted bins = populated bins                                                                   manuscript 0.25-0.5,0.5-1,1-2,<0.25  recomputed 0.25-0.5,0.5-1,1-2,<0.25
+  ok  ESCHF[rev] Fig B legend max distance (mm)                                                                        manuscript          1.6401  recomputed                 1.6401
+  ok  ESCHF[rev] Fig B score genes (QC-passing hits lower in CS)                                                       manuscript           116.0  recomputed                  116.0
+  ok  ESCHF[rev] Fig C QC-passing hits plotted                                                                         manuscript           170.0  recomputed                  170.0
+  ok  ESCHF[rev] Fig C genes beyond +/-2.5                                                                             manuscript             6.0  recomputed                    6.0
+  ok  ESCHF[rev] Fig C genes failing screen 3a                                                                         manuscript             5.0  recomputed                    5.0
+FAIL  ESCHF[rev] Fig C off-axis genes = screen-3a failures                                                             manuscript       identical  recomputed                 differ
+  ok  ESCHF[rev] Fig C triangle CALM2 snRNA log2FC                                                                     manuscript          7.4016  recomputed                 7.4016
+  ok  ESCHF[rev] [v4] Fig C triangle CALM2 drawn open neutral (screened, no sign category)                             manuscript             1.0  recomputed                    1.0
+  ok  ESCHF[rev] Fig C triangle CFD snRNA log2FC                                                                       manuscript         -5.5094  recomputed                -5.5094
+  ok  ESCHF[rev] [v4] Fig C triangle CFD drawn open neutral (screened, no sign category)                               manuscript             1.0  recomputed                    1.0
+  ok  ESCHF[rev] Fig C triangle ENG snRNA log2FC                                                                       manuscript           4.513  recomputed                  4.513
+  ok  ESCHF[rev] [v4] Fig C triangle ENG drawn open neutral (screened, no sign category)                               manuscript             1.0  recomputed                    1.0
+  ok  ESCHF[rev] Fig C triangle HSPB2 snRNA log2FC                                                                     manuscript          7.0509  recomputed                 7.0509
+  ok  ESCHF[rev] [v4] Fig C triangle HSPB2 drawn open neutral (screened, no sign category)                             manuscript             1.0  recomputed                    1.0
+  ok  ESCHF[rev] Fig C triangle NDUFC2 snRNA log2FC                                                                    manuscript          8.0869  recomputed                 8.0869
+  ok  ESCHF[rev] [v4] Fig C triangle NDUFC2 drawn open neutral (screened, no sign category)                            manuscript             1.0  recomputed                    1.0
+  ok  ESCHF[rev] [v4] Fig C open-neutral triangles = screen-3a failures                                                manuscript CALM2,CFD,ENG,HSPB2,NDUFC2  recomputed CALM2,CFD,ENG,HSPB2,NDUFC2
+  ok  ESCHF[rev] [v4] Fig C no category-filled triangle values remain                                                  manuscript               0  recomputed                      0
+  ok  ESCHF[rev] Fig C screened down n                                                                                 manuscript           108.0  recomputed                  108.0
+  ok  ESCHF[rev] Fig C screened down fraction same sign                                                                manuscript          0.6667  recomputed                 0.6667
+  ok  ESCHF[rev] Fig C screened down rho                                                                               manuscript          0.0318  recomputed                 0.0318
+  ok  ESCHF[rev] Fig C unscreened down fraction same sign                                                              manuscript          0.6545  recomputed                 0.6545
+  ok  ESCHF[rev] Fig C screened down background (a9 permutation)                                                       manuscript          0.4814  recomputed                 0.4814
+  ok  ESCHF[rev] Fig C unscreened down background (a9 permutation)                                                     manuscript          0.4822  recomputed                 0.4822
+  ok  ESCHF[rev] Fig C screened up n                                                                                   manuscript            57.0  recomputed                   57.0
+  ok  ESCHF[rev] Fig C screened up fraction same sign                                                                  manuscript          0.4211  recomputed                 0.4211
+  ok  ESCHF[rev] Fig C screened up rho                                                                                 manuscript         -0.3818  recomputed                -0.3818
+  ok  ESCHF[rev] Fig C unscreened up fraction same sign                                                                manuscript          0.4333  recomputed                 0.4333
+  ok  ESCHF[rev] Fig C screened up background (a9 permutation)                                                         manuscript          0.5096  recomputed                 0.5096
+  ok  ESCHF[rev] Fig C unscreened up background (a9 permutation)                                                       manuscript           0.509  recomputed                  0.509
+  ok  ESCHF[rev] [v4] Fig D leave-one-comparator-section-out refits                                                    manuscript             6.0  recomputed                    6.0
+  ok  ESCHF[rev] [v5] Fig D concordant genes (section-stable core after screen 3a)                                     manuscript            19.0  recomputed                   19.0
+  ok  ESCHF[rev] [v5] Fig D core genes removed by screen 3a                                                            manuscript             1.0  recomputed                    1.0
+  ok  ESCHF[rev] [v5] Fig D gene set = section-stable core concordant after 3a (recomputed from refits)                manuscript ACADVL,ACSL1,ALKBH7,ARHGAP1,ARL6IP4,AURKAIP1,FBXW5,FITM2,GPNMB,IDH2,JUP,LMO7,MPRIP,S100A13,SLC2A4,SPAG7,SPTAN1,TINAGL1,TRDN  recomputed ACADVL,ACSL1,ALKBH7,ARHGAP1,ARL6IP4,AURKAIP1,FBXW5,FITM2,GPNMB,IDH2,JUP,LMO7,MPRIP,S100A13,SLC2A4,SPAG7,SPTAN1,TINAGL1,TRDN
+  ok  ESCHF[rev] [v5] Fig D no pilcrow values or key remain                                                            manuscript               0  recomputed                      0
+  ok  ESCHF[rev] [v5] Fig D max |snRNA vs NF log2FC| over panel genes                                                  manuscript          1.7941  recomputed                 1.7941
+  ok  ESCHF[rev] [v5] Fig D min snRNA vs NF AveExpr over panel genes                                                   manuscript          2.5933  recomputed                 2.5933
+  ok  ESCHF[rev] [v5] Fig D snRNA vs NF: no panel gene beyond +/-3 log2                                                manuscript               0  recomputed                      0
+  ok  ESCHF[rev] [v5] Legend C: all screened genes near-absent in one source study (3b, recomputed)                    manuscript             5/5  recomputed                    5/5
+  ok  ESCHF[rev] [v5] Legend C: FPGT (FPGT-TNNI3K locus) shows the same pattern                                        manuscript             yes  recomputed                    yes
+  ok  ESCHF[rev] [v5] Legend C CALM2 absent-study mean log2 CPM                                                        manuscript          -0.108  recomputed                 -0.108
+  ok  ESCHF[rev] [v5] Legend C CALM2 other-studies mean log2 CPM                                                       manuscript           6.976  recomputed                  6.976
+  ok  ESCHF[rev] [v5] Legend C CFD absent-study mean log2 CPM                                                          manuscript         -4.5416  recomputed                -4.5416
+  ok  ESCHF[rev] [v5] Legend C CFD other-studies mean log2 CPM                                                         manuscript          2.5507  recomputed                 2.5507
+  ok  ESCHF[rev] [v5] Legend C ENG absent-study mean log2 CPM                                                          manuscript         -1.0814  recomputed                -1.0814
+  ok  ESCHF[rev] [v5] Legend C ENG other-studies mean log2 CPM                                                         manuscript          3.9734  recomputed                 3.9734
+  ok  ESCHF[rev] [v5] Legend C HSPB2 absent-study mean log2 CPM                                                        manuscript         -4.3555  recomputed                -4.3555
+  ok  ESCHF[rev] [v5] Legend C HSPB2 other-studies mean log2 CPM                                                       manuscript          3.7548  recomputed                 3.7548
+  ok  ESCHF[rev] [v5] Legend C NDUFC2 absent-study mean log2 CPM                                                       manuscript         -4.3235  recomputed                -4.3235
+  ok  ESCHF[rev] [v5] Legend C NDUFC2 other-studies mean log2 CPM                                                      manuscript          2.9076  recomputed                 2.9076
+  ok  ESCHF[rev] Fig D ACADVL dagger (locus outlier)                                                                   manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D ACADVL double dagger (outside QC universe)                                                      manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D ACADVL section mark (segdup)                                                                    manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D ACSL1 dagger (locus outlier)                                                                    manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D ACSL1 double dagger (outside QC universe)                                                       manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D ACSL1 section mark (segdup)                                                                     manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D ALKBH7 dagger (locus outlier)                                                                   manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D ALKBH7 double dagger (outside QC universe)                                                      manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D ALKBH7 section mark (segdup)                                                                    manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D ARHGAP1 dagger (locus outlier)                                                                  manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D ARHGAP1 double dagger (outside QC universe)                                                     manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D ARHGAP1 section mark (segdup)                                                                   manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D ARL6IP4 dagger (locus outlier)                                                                  manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D ARL6IP4 double dagger (outside QC universe)                                                     manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D ARL6IP4 section mark (segdup)                                                                   manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D AURKAIP1 dagger (locus outlier)                                                                 manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D AURKAIP1 double dagger (outside QC universe)                                                    manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D AURKAIP1 section mark (segdup)                                                                  manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D FBXW5 dagger (locus outlier)                                                                    manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D FBXW5 double dagger (outside QC universe)                                                       manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D FBXW5 section mark (segdup)                                                                     manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D FITM2 dagger (locus outlier)                                                                    manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D FITM2 double dagger (outside QC universe)                                                       manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D FITM2 section mark (segdup)                                                                     manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D GPNMB dagger (locus outlier)                                                                    manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D GPNMB double dagger (outside QC universe)                                                       manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D GPNMB section mark (segdup)                                                                     manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D IDH2 dagger (locus outlier)                                                                     manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D IDH2 double dagger (outside QC universe)                                                        manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D IDH2 section mark (segdup)                                                                      manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D JUP dagger (locus outlier)                                                                      manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D JUP double dagger (outside QC universe)                                                         manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D JUP section mark (segdup)                                                                       manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D LMO7 dagger (locus outlier)                                                                     manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D LMO7 double dagger (outside QC universe)                                                        manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D LMO7 section mark (segdup)                                                                      manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D MPRIP dagger (locus outlier)                                                                    manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D MPRIP double dagger (outside QC universe)                                                       manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D MPRIP section mark (segdup)                                                                     manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D S100A13 dagger (locus outlier)                                                                  manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D S100A13 double dagger (outside QC universe)                                                     manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D S100A13 section mark (segdup)                                                                   manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D SLC2A4 dagger (locus outlier)                                                                   manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D SLC2A4 double dagger (outside QC universe)                                                      manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D SLC2A4 section mark (segdup)                                                                    manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D SPAG7 dagger (locus outlier)                                                                    manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D SPAG7 double dagger (outside QC universe)                                                       manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D SPAG7 section mark (segdup)                                                                     manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D SPTAN1 dagger (locus outlier)                                                                   manuscript             1.0  recomputed                    1.0
+  ok  ESCHF[rev] Fig D SPTAN1 double dagger (outside QC universe)                                                      manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D SPTAN1 section mark (segdup)                                                                    manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D TINAGL1 dagger (locus outlier)                                                                  manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D TINAGL1 double dagger (outside QC universe)                                                     manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D TINAGL1 section mark (segdup)                                                                   manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D TRDN dagger (locus outlier)                                                                     manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D TRDN double dagger (outside QC universe)                                                        manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Fig D TRDN section mark (segdup)                                                                      manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[rev] Legend patient-pseudobulk section hits                                                                manuscript           223.0  recomputed                  223.0
+  ok  ESCHF[rev] Legend patient-pseudobulk hits still FDR<5%                                                           manuscript           193.0  recomputed                  193.0
+  ok  ESCHF[rev] Legend patient-pseudobulk hits same sign                                                              manuscript           223.0  recomputed                  223.0
+  ok  ESCHF[rev] [v4] Legend B pathway sentence: no hits-removed 95% CI entirely below zero (3 pathways x 2 removals)  manuscript             6/6  recomputed                    6/6
+  ok  ESCHF[rev] [v4] Legend B tca_cycle_hsa00020 minus_primary diff_cs_minus_comparator                               manuscript          0.1578  recomputed                 0.1578
+  ok  ESCHF[rev] [v4] Legend B tca_cycle_hsa00020 minus_primary diff_ci_low                                            manuscript         -0.0372  recomputed                -0.0372
+  ok  ESCHF[rev] [v4] Legend B tca_cycle_hsa00020 minus_primary diff_ci_high                                           manuscript          0.3529  recomputed                 0.3529
+  ok  ESCHF[rev] [v4] Legend B tca_cycle_hsa00020 minus_union diff_cs_minus_comparator                                 manuscript          0.1185  recomputed                 0.1185
+  ok  ESCHF[rev] [v4] Legend B tca_cycle_hsa00020 minus_union diff_ci_low                                              manuscript         -0.0692  recomputed                -0.0692
+  ok  ESCHF[rev] [v4] Legend B tca_cycle_hsa00020 minus_union diff_ci_high                                             manuscript          0.3062  recomputed                 0.3062
+  ok  ESCHF[rev] [v4] Legend B fatty_acid_degradation_hsa00071 minus_primary diff_cs_minus_comparator                  manuscript          0.1035  recomputed                 0.1035
+  ok  ESCHF[rev] [v4] Legend B fatty_acid_degradation_hsa00071 minus_primary diff_ci_low                               manuscript         -0.0771  recomputed                -0.0771
+  ok  ESCHF[rev] [v4] Legend B fatty_acid_degradation_hsa00071 minus_primary diff_ci_high                              manuscript          0.2842  recomputed                 0.2842
+  ok  ESCHF[rev] [v4] Legend B fatty_acid_degradation_hsa00071 minus_union diff_cs_minus_comparator                    manuscript          0.1035  recomputed                 0.1035
+  ok  ESCHF[rev] [v4] Legend B fatty_acid_degradation_hsa00071 minus_union diff_ci_low                                 manuscript         -0.0771  recomputed                -0.0771
+  ok  ESCHF[rev] [v4] Legend B fatty_acid_degradation_hsa00071 minus_union diff_ci_high                                manuscript          0.2842  recomputed                 0.2842
+  ok  ESCHF[rev] [v4] Legend B oxphos_hsa00190 minus_primary diff_cs_minus_comparator                                  manuscript           0.119  recomputed                  0.119
+  ok  ESCHF[rev] [v4] Legend B oxphos_hsa00190 minus_primary diff_ci_low                                               manuscript          0.0095  recomputed                 0.0095
+  ok  ESCHF[rev] [v4] Legend B oxphos_hsa00190 minus_primary diff_ci_high                                              manuscript          0.2286  recomputed                 0.2286
+  ok  ESCHF[rev] [v4] Legend B oxphos_hsa00190 minus_union diff_cs_minus_comparator                                    manuscript          0.0992  recomputed                 0.0992
+  ok  ESCHF[rev] [v4] Legend B oxphos_hsa00190 minus_union diff_ci_low                                                 manuscript         -0.0074  recomputed                -0.0074
+  ok  ESCHF[rev] [v4] Legend B oxphos_hsa00190 minus_union diff_ci_high                                                manuscript          0.2058  recomputed                 0.2058
+  ok  ESCHF[rev] [v4] Legend B no OXPHOS-range values remain                                                           manuscript               0  recomputed                      0
+  ok  ESCHF[rev] Legend CS sections in fit                                                                             manuscript            11.0  recomputed                   11.0
+  ok  ESCHF[rev] Legend CS patients in fit                                                                             manuscript             8.0  recomputed                    8.0
+  ok  ESCHF[rev] Legend comparator patients in fit                                                                     manuscript             6.0  recomputed                    6.0
+  ok  ESCHF[v3] A9 3a failures among testable hits                                                                     manuscript CALM2,CFD,ENG,HSPB2,NDUFC2  recomputed CALM2,CFD,ENG,HSPB2,NDUFC2
+  ok  ESCHF[v3] A9 3b flags among testable hits                                                                        manuscript ALKBH7,CALM2,CFD,COX17,CXCL12,ENG,FN1,GSN,HSPB2,LGALS1,NDUFB7,NDUFC2,S100A13,TOMM7  recomputed ALKBH7,CALM2,CFD,COX17,CXCL12,ENG,FN1,GSN,HSPB2,LGALS1,NDUFB7,NDUFC2,S100A13,TOMM7
+  ok  ESCHF[v3] A9 3a failures all also flagged by 3b                                                                  manuscript             yes  recomputed                    yes
+  ok  ESCHF[v3] A9 FPGT flagged by 3b (sanity gene)                                                                    manuscript             yes  recomputed                    yes
+  ok  ESCHF[v3] A9 concordant set from all hits                                                                        manuscript ACADVL,ACSL1,AHSA1,ALKBH7,ARHGAP1,ARL6IP4,AURKAIP1,CHMP3,DYNLL2,ENG,FBXW5,FITM2,GPNMB,IDH2,JUP,LMO7,MPRIP,NDUFC2,POLDIP2,POPDC2,RBPMS2,S100A13,SLC2A4,SPAG7,SPTAN1,TINAGL1,TRDN,UQCRC1  recomputed ACADVL,ACSL1,AHSA1,ALKBH7,ARHGAP1,ARL6IP4,AURKAIP1,CHMP3,DYNLL2,ENG,FBXW5,FITM2,GPNMB,IDH2,JUP,LMO7,MPRIP,NDUFC2,POLDIP2,POPDC2,RBPMS2,S100A13,SLC2A4,SPAG7,SPTAN1,TINAGL1,TRDN,UQCRC1
+  ok  ESCHF[v3] A9 concordant set from all hits after 3a                                                               manuscript ACADVL,ACSL1,AHSA1,ALKBH7,ARHGAP1,ARL6IP4,AURKAIP1,CHMP3,DYNLL2,FBXW5,FITM2,GPNMB,IDH2,JUP,LMO7,MPRIP,POLDIP2,POPDC2,RBPMS2,S100A13,SLC2A4,SPAG7,SPTAN1,TINAGL1,TRDN,UQCRC1  recomputed ACADVL,ACSL1,AHSA1,ALKBH7,ARHGAP1,ARL6IP4,AURKAIP1,CHMP3,DYNLL2,FBXW5,FITM2,GPNMB,IDH2,JUP,LMO7,MPRIP,POLDIP2,POPDC2,RBPMS2,S100A13,SLC2A4,SPAG7,SPTAN1,TINAGL1,TRDN,UQCRC1
+  ok  ESCHF[v3] A9 3a failures in section-stable core panel                                                            manuscript             ENG  recomputed                    ENG
+  ok  ESCHF[v3] A9 all_hits_testable n                                                                                 manuscript           210.0  recomputed                  210.0
+  ok  ESCHF[v3] A9 all_hits_testable n failing 3a                                                                      manuscript             5.0  recomputed                    5.0
+  ok  ESCHF[v3] A9 all_hits_testable n flagged 3b                                                                      manuscript            14.0  recomputed                   14.0
+  ok  ESCHF[v3] A9 qc_pass_hits_testable n                                                                             manuscript           170.0  recomputed                  170.0
+  ok  ESCHF[v3] A9 qc_pass_hits_testable n failing 3a                                                                  manuscript             5.0  recomputed                    5.0
+  ok  ESCHF[v3] A9 qc_pass_hits_testable n flagged 3b                                                                  manuscript            14.0  recomputed                   14.0
+  ok  ESCHF[v3] A9 concordant_allhits n                                                                                manuscript            28.0  recomputed                   28.0
+  ok  ESCHF[v3] A9 concordant_allhits n failing 3a                                                                     manuscript             2.0  recomputed                    2.0
+  ok  ESCHF[v3] A9 concordant_allhits n flagged 3b                                                                     manuscript             4.0  recomputed                    4.0
+  ok  ESCHF[v3] A9 Chaffin DCM published genes beyond +/-3                                                             manuscript            71.0  recomputed                   71.0
+  ok  ESCHF[v3] A9 Chaffin HCM published genes beyond +/-3                                                             manuscript           129.0  recomputed                  129.0
+  ok  ESCHF[v3] A9 sign agreement unscreened down all_hits n testable                                                  manuscript           143.0  recomputed                  143.0
+  ok  ESCHF[v3] A9 sign agreement unscreened down all_hits n same sign                                                 manuscript            88.0  recomputed                   88.0
+  ok  ESCHF[v3] A9 sign agreement unscreened down all_hits n concordant FDR<5%                                         manuscript            21.0  recomputed                   21.0
+  ok  ESCHF[v3] A9 sign agreement unscreened down qc_passing_only n testable                                           manuscript           110.0  recomputed                  110.0
+  ok  ESCHF[v3] A9 sign agreement unscreened down qc_passing_only n same sign                                          manuscript            72.0  recomputed                   72.0
+  ok  ESCHF[v3] A9 sign agreement unscreened down qc_passing_only n concordant FDR<5%                                  manuscript            20.0  recomputed                   20.0
+  ok  ESCHF[v3] A9 sign agreement unscreened up all_hits n testable                                                    manuscript            67.0  recomputed                   67.0
+  ok  ESCHF[v3] A9 sign agreement unscreened up all_hits n same sign                                                   manuscript            30.0  recomputed                   30.0
+  ok  ESCHF[v3] A9 sign agreement unscreened up all_hits n concordant FDR<5%                                           manuscript             7.0  recomputed                    7.0
+  ok  ESCHF[v3] A9 sign agreement unscreened up qc_passing_only n testable                                             manuscript            60.0  recomputed                   60.0
+  ok  ESCHF[v3] A9 sign agreement unscreened up qc_passing_only n same sign                                            manuscript            26.0  recomputed                   26.0
+  ok  ESCHF[v3] A9 sign agreement unscreened up qc_passing_only n concordant FDR<5%                                    manuscript             7.0  recomputed                    7.0
+  ok  ESCHF[v3] A9 sign agreement screened_3a down all_hits n testable                                                 manuscript           141.0  recomputed                  141.0
+  ok  ESCHF[v3] A9 sign agreement screened_3a down all_hits n same sign                                                manuscript            88.0  recomputed                   88.0
+  ok  ESCHF[v3] A9 sign agreement screened_3a down all_hits n concordant FDR<5%                                        manuscript            21.0  recomputed                   21.0
+  ok  ESCHF[v3] A9 sign agreement screened_3a down qc_passing_only n testable                                          manuscript           108.0  recomputed                  108.0
+  ok  ESCHF[v3] A9 sign agreement screened_3a down qc_passing_only n same sign                                         manuscript            72.0  recomputed                   72.0
+  ok  ESCHF[v3] A9 sign agreement screened_3a down qc_passing_only n concordant FDR<5%                                 manuscript            20.0  recomputed                   20.0
+  ok  ESCHF[v3] A9 sign agreement screened_3a up all_hits n testable                                                   manuscript            64.0  recomputed                   64.0
+  ok  ESCHF[v3] A9 sign agreement screened_3a up all_hits n same sign                                                  manuscript            28.0  recomputed                   28.0
+  ok  ESCHF[v3] A9 sign agreement screened_3a up all_hits n concordant FDR<5%                                          manuscript             5.0  recomputed                    5.0
+  ok  ESCHF[v3] A9 sign agreement screened_3a up qc_passing_only n testable                                            manuscript            57.0  recomputed                   57.0
+  ok  ESCHF[v3] A9 sign agreement screened_3a up qc_passing_only n same sign                                           manuscript            24.0  recomputed                   24.0
+  ok  ESCHF[v3] A9 sign agreement screened_3a up qc_passing_only n concordant FDR<5%                                   manuscript             5.0  recomputed                    5.0
+  ok  ESCHF[v3] A12 KCTD14 absent from snRNA counts                                                                    manuscript          absent  recomputed                 absent
+  ok  ESCHF[v3] A10 fatty_acid_degradation_hsa00071 bin <0.25 n genes                                                  manuscript            14.0  recomputed                   14.0
+  ok  ESCHF[v3] A10 fatty_acid_degradation_hsa00071 bin <0.25 CS mean of patient means                                 manuscript          0.7582  recomputed                 0.7582
+  ok  ESCHF[v3] A10 fatty_acid_degradation_hsa00071 bin <0.25 comparator min                                           manuscript          0.7718  recomputed                 0.7718
+  ok  ESCHF[v3] A10 fatty_acid_degradation_hsa00071 bin <0.25 CS mean below comparator minimum                         manuscript            True  recomputed                   True
+  ok  ESCHF[v3] A10 fatty_acid_degradation_hsa00071 bin 0.25-0.5 n genes                                               manuscript            14.0  recomputed                   14.0
+  ok  ESCHF[v3] A10 fatty_acid_degradation_hsa00071 bin 0.25-0.5 CS mean of patient means                              manuscript          0.7824  recomputed                 0.7824
+  ok  ESCHF[v3] A10 fatty_acid_degradation_hsa00071 bin 0.25-0.5 comparator min                                        manuscript          0.7718  recomputed                 0.7718
+  ok  ESCHF[v3] A10 fatty_acid_degradation_hsa00071 bin 0.25-0.5 CS mean below comparator minimum                      manuscript           False  recomputed                  False
+  ok  ESCHF[v3] A10 fatty_acid_degradation_hsa00071 bin 0.5-1 n genes                                                  manuscript            14.0  recomputed                   14.0
+  ok  ESCHF[v3] A10 fatty_acid_degradation_hsa00071 bin 0.5-1 CS mean of patient means                                 manuscript            0.79  recomputed                   0.79
+  ok  ESCHF[v3] A10 fatty_acid_degradation_hsa00071 bin 0.5-1 comparator min                                           manuscript          0.7718  recomputed                 0.7718
+  ok  ESCHF[v3] A10 fatty_acid_degradation_hsa00071 bin 0.5-1 CS mean below comparator minimum                         manuscript           False  recomputed                  False
+  ok  ESCHF[v3] A10 fatty_acid_degradation_hsa00071 bin 1-2 n genes                                                    manuscript            14.0  recomputed                   14.0
+  ok  ESCHF[v3] A10 fatty_acid_degradation_hsa00071 bin 1-2 CS mean of patient means                                   manuscript           0.831  recomputed                  0.831
+  ok  ESCHF[v3] A10 fatty_acid_degradation_hsa00071 bin 1-2 comparator min                                             manuscript          0.7718  recomputed                 0.7718
+  ok  ESCHF[v3] A10 fatty_acid_degradation_hsa00071 bin 1-2 CS mean below comparator minimum                           manuscript           False  recomputed                  False
+  ok  ESCHF[v3] A10 fatty_acid_degradation_hsa00071 patient level CS minus comparator                                  manuscript         -0.2859  recomputed                -0.2859
+  ok  ESCHF[v3] A10 fatty_acid_degradation_hsa00071 patient level Welch p                                              manuscript          0.0257  recomputed                 0.0257
+  ok  ESCHF[v3] A10 fatty_acid_degradation_hsa00071 patient level n CS / comparator                                    manuscript           806.0  recomputed                  806.0
+  ok  ESCHF[v3] A10 tca_cycle_hsa00020 bin <0.25 n genes                                                               manuscript            15.0  recomputed                   15.0
+  ok  ESCHF[v3] A10 tca_cycle_hsa00020 bin <0.25 CS mean of patient means                                              manuscript          0.9011  recomputed                 0.9011
+  ok  ESCHF[v3] A10 tca_cycle_hsa00020 bin <0.25 comparator min                                                        manuscript          0.9609  recomputed                 0.9609
+  ok  ESCHF[v3] A10 tca_cycle_hsa00020 bin <0.25 CS mean below comparator minimum                                      manuscript            True  recomputed                   True
+  ok  ESCHF[v3] A10 tca_cycle_hsa00020 bin 0.25-0.5 n genes                                                            manuscript            15.0  recomputed                   15.0
+  ok  ESCHF[v3] A10 tca_cycle_hsa00020 bin 0.25-0.5 CS mean of patient means                                           manuscript          0.9273  recomputed                 0.9273
+  ok  ESCHF[v3] A10 tca_cycle_hsa00020 bin 0.25-0.5 comparator min                                                     manuscript          0.9609  recomputed                 0.9609
+  ok  ESCHF[v3] A10 tca_cycle_hsa00020 bin 0.25-0.5 CS mean below comparator minimum                                   manuscript            True  recomputed                   True
+  ok  ESCHF[v3] A10 tca_cycle_hsa00020 bin 0.5-1 n genes                                                               manuscript            15.0  recomputed                   15.0
+  ok  ESCHF[v3] A10 tca_cycle_hsa00020 bin 0.5-1 CS mean of patient means                                              manuscript           0.934  recomputed                  0.934
+  ok  ESCHF[v3] A10 tca_cycle_hsa00020 bin 0.5-1 comparator min                                                        manuscript          0.9609  recomputed                 0.9609
+  ok  ESCHF[v3] A10 tca_cycle_hsa00020 bin 0.5-1 CS mean below comparator minimum                                      manuscript            True  recomputed                   True
+  ok  ESCHF[v3] A10 tca_cycle_hsa00020 bin 1-2 n genes                                                                 manuscript            15.0  recomputed                   15.0
+  ok  ESCHF[v3] A10 tca_cycle_hsa00020 bin 1-2 CS mean of patient means                                                manuscript          0.8979  recomputed                 0.8979
+  ok  ESCHF[v3] A10 tca_cycle_hsa00020 bin 1-2 comparator min                                                          manuscript          0.9609  recomputed                 0.9609
+  ok  ESCHF[v3] A10 tca_cycle_hsa00020 bin 1-2 CS mean below comparator minimum                                        manuscript            True  recomputed                   True
+  ok  ESCHF[v3] A10 tca_cycle_hsa00020 patient level CS minus comparator                                               manuscript          -0.411  recomputed                 -0.411
+  ok  ESCHF[v3] A10 tca_cycle_hsa00020 patient level Welch p                                                           manuscript          0.0036  recomputed                 0.0036
+  ok  ESCHF[v3] A10 tca_cycle_hsa00020 patient level n CS / comparator                                                 manuscript           806.0  recomputed                  806.0
+  ok  ESCHF[v3] A10 oxphos_hsa00190 bin <0.25 n genes                                                                  manuscript            72.0  recomputed                   72.0
+  ok  ESCHF[v3] A10 oxphos_hsa00190 bin <0.25 CS mean of patient means                                                 manuscript          0.9995  recomputed                 0.9995
+  ok  ESCHF[v3] A10 oxphos_hsa00190 bin <0.25 comparator min                                                           manuscript          0.9697  recomputed                 0.9697
+  ok  ESCHF[v3] A10 oxphos_hsa00190 bin <0.25 CS mean below comparator minimum                                         manuscript           False  recomputed                  False
+  ok  ESCHF[v3] A10 oxphos_hsa00190 bin 0.25-0.5 n genes                                                               manuscript            72.0  recomputed                   72.0
+  ok  ESCHF[v3] A10 oxphos_hsa00190 bin 0.25-0.5 CS mean of patient means                                              manuscript          1.0294  recomputed                 1.0294
+  ok  ESCHF[v3] A10 oxphos_hsa00190 bin 0.25-0.5 comparator min                                                        manuscript          0.9697  recomputed                 0.9697
+  ok  ESCHF[v3] A10 oxphos_hsa00190 bin 0.25-0.5 CS mean below comparator minimum                                      manuscript           False  recomputed                  False
+  ok  ESCHF[v3] A10 oxphos_hsa00190 bin 0.5-1 n genes                                                                  manuscript            72.0  recomputed                   72.0
+  ok  ESCHF[v3] A10 oxphos_hsa00190 bin 0.5-1 CS mean of patient means                                                 manuscript          1.0262  recomputed                 1.0262
+  ok  ESCHF[v3] A10 oxphos_hsa00190 bin 0.5-1 comparator min                                                           manuscript          0.9697  recomputed                 0.9697
+  ok  ESCHF[v3] A10 oxphos_hsa00190 bin 0.5-1 CS mean below comparator minimum                                         manuscript           False  recomputed                  False
+  ok  ESCHF[v3] A10 oxphos_hsa00190 bin 1-2 n genes                                                                    manuscript            72.0  recomputed                   72.0
+  ok  ESCHF[v3] A10 oxphos_hsa00190 bin 1-2 CS mean of patient means                                                   manuscript          1.0377  recomputed                 1.0377
+  ok  ESCHF[v3] A10 oxphos_hsa00190 bin 1-2 comparator min                                                             manuscript          0.9697  recomputed                 0.9697
+  ok  ESCHF[v3] A10 oxphos_hsa00190 bin 1-2 CS mean below comparator minimum                                           manuscript           False  recomputed                  False
+  ok  ESCHF[v3] A10 oxphos_hsa00190 patient level CS minus comparator                                                  manuscript         -0.0731  recomputed                -0.0731
+  ok  ESCHF[v3] A10 oxphos_hsa00190 patient level Welch p                                                              manuscript          0.2213  recomputed                 0.2213
+  ok  ESCHF[v3] A10 oxphos_hsa00190 patient level n CS / comparator                                                    manuscript           806.0  recomputed                  806.0
+  ok  ESCHF[v3] A10 fatty_acid_degradation_hsa00071 members that are primary hits                                      manuscript             4.0  recomputed                    4.0
+  ok  ESCHF[v3] A10 tca_cycle_hsa00020 members that are primary hits                                                   manuscript             5.0  recomputed                    5.0
+  ok  ESCHF[v3] A10 oxphos_hsa00190 members that are primary hits                                                      manuscript            13.0  recomputed                   13.0
+  ok  ESCHF[v3] A11 S1 subjects not in analysed snRNA cohort                                                           manuscript           SNU-1  recomputed                  SNU-1
+  ok  ESCHF[v3] A11 analysed specimen counts = S2 region counts, every patient                                         manuscript             yes  recomputed                    yes
+  ok  ESCHF[v3] A11 analysed CS patients                                                                               manuscript            21.0  recomputed                   21.0
+  ok  ESCHF[v3] A11 GEO snRNA samples in download                                                                      manuscript            41.0  recomputed                   41.0
+  ok  ESCHF[v3] A11 SNU-1 absent from GEO snRNA listing                                                                manuscript          absent  recomputed                 absent
+FAIL  ESCHF[v3] A13 per-spot GPNMB counts = committed primary spot counts                                              manuscript       identical  recomputed                 differ
+  ok  ESCHF[v3] A13 CS CM-dominant spots                                                                               manuscript         16435.0  recomputed                16435.0
+  ok  ESCHF[v3] A13 CS CM-dominant detection                                                                           manuscript          0.3113  recomputed                 0.3113
+  ok  ESCHF[v3] A13 CS CM-dominant mean of patient means                                                               manuscript          0.5999  recomputed                 0.5999
+  ok  ESCHF[v3] A13 CS immune-dominant spots                                                                           manuscript          8779.0  recomputed                 8779.0
+  ok  ESCHF[v3] A13 CS immune-dominant detection                                                                       manuscript          0.5099  recomputed                 0.5099
+  ok  ESCHF[v3] A13 CS immune-dominant mean of patient means                                                           manuscript          0.8721  recomputed                 0.8721
+  ok  ESCHF[v3] A13 COMPARATOR CM-dominant spots                                                                       manuscript         11561.0  recomputed                11561.0
+  ok  ESCHF[v3] A13 COMPARATOR CM-dominant detection                                                                   manuscript          0.4946  recomputed                 0.4946
+  ok  ESCHF[v3] A13 COMPARATOR CM-dominant mean of patient means                                                       manuscript          0.9913  recomputed                 0.9913
+  ok  ESCHF[v3] A13 COMPARATOR immune-dominant spots                                                                   manuscript          2022.0  recomputed                 2022.0
+  ok  ESCHF[v3] A13 COMPARATOR immune-dominant detection                                                               manuscript           0.366  recomputed                  0.366
+  ok  ESCHF[v3] A13 COMPARATOR immune-dominant mean of patient means                                                   manuscript          0.9305  recomputed                 0.9305
+  ok  ESCHF[v3] A13 CS within-patient immune minus CM, mean                                                            manuscript          0.0341  recomputed                 0.0341
+  ok  ESCHF[v3] A13 CS patients with immune > CM                                                                       manuscript             5.0  recomputed                    5.0
+  ok  ESCHF[v3] A13 CS patients with both spot classes                                                                 manuscript             8.0  recomputed                    8.0
+  ok  ESCHF[v3] A13 snRNA subjects with both classes (>=10 nuclei)                                                     manuscript            18.0  recomputed                   18.0
+  ok  ESCHF[v3] A13 snRNA subjects with myeloid > cardiomyocyte                                                        manuscript            13.0  recomputed                   13.0
+  ok  ESCHF[v3] A13 snRNA subjects total                                                                               manuscript            21.0  recomputed                   21.0
+  ok  ESCHF[v3] A13 snRNA myeloid minus cardiomyocyte, mean                                                            manuscript          0.3228  recomputed                 0.3228
+  ok  ESCHF[v3] A13 snRNA CS classes with zero GPNMB detection                                                         manuscript other: Endothelial,other: Mast,other: Pericyte,other: TNK  recomputed other: Endothelial,other: Mast,other: Pericyte,other: TNK
+  ok  ESCHF[v3] A13 GPNMB vs distance rho CS_100                                                                       manuscript         -0.0747  recomputed                -0.0747
+  ok  ESCHF[v3] A13 GPNMB vs distance rho CS_101                                                                       manuscript          0.0993  recomputed                 0.0993
+  ok  ESCHF[v3] A13 GPNMB vs distance rho CS_102                                                                       manuscript         -0.0323  recomputed                -0.0323
+  ok  ESCHF[v3] A13 GPNMB vs distance rho CS_103                                                                       manuscript          0.0662  recomputed                 0.0662
+  ok  ESCHF[v3] A13 GPNMB vs distance rho CS_104                                                                       manuscript         -0.0006  recomputed                -0.0006
+  ok  ESCHF[v3] A13 GPNMB vs distance rho CS_106                                                                       manuscript         -0.0231  recomputed                -0.0231
+  ok  ESCHF[v3] A13 GPNMB vs distance rho CS_107                                                                       manuscript          0.0683  recomputed                 0.0683
+  ok  ESCHF[v3] A13 GPNMB vs distance rho CS_108                                                                       manuscript         -0.0094  recomputed                -0.0094
+  ok  ESCHF[v3] A13 GPNMB vs distance rho pooled                                                                       manuscript            0.05  recomputed                   0.05
+  ok  ESCHF[v3] A13 GPNMB passes screens 3a and 3b                                                                     manuscript            pass  recomputed                   pass
+  ok  ESCHF[a14] SUMMARY Fig 1C triangle genes (one entry each)                                                        manuscript CALM2,CFD,CHMP3,ENG,HSPB2,NDUFC2  recomputed CALM2,CFD,CHMP3,ENG,HSPB2,NDUFC2
+  ok  ESCHF[a14] SUMMARY Fig 1C triangle entries                                                                       manuscript             6.0  recomputed                    6.0
+  ok  ESCHF[a14] SUMMARY Fig 1C triangle HSPB2 value (1 dp)                                                            manuscript             7.1  recomputed                    7.1
+  ok  ESCHF[a14] SUMMARY Fig 1C triangle CALM2 value (1 dp)                                                            manuscript             7.4  recomputed                    7.4
+  ok  ESCHF[a14] SUMMARY Fig 1C triangle NDUFC2 value (1 dp)                                                           manuscript             8.1  recomputed                    8.1
+  ok  ESCHF[a14] SUMMARY Fig 1C triangle CHMP3 value (1 dp)                                                            manuscript             2.9  recomputed                    2.9
+  ok  ESCHF[a14] SUMMARY Fig 1C triangle ENG value (1 dp)                                                              manuscript             4.5  recomputed                    4.5
+  ok  ESCHF[a14] SUMMARY Fig 1C triangle CFD value (1 dp)                                                              manuscript            -5.5  recomputed                   -5.5
+  ok  ESCHF[a14] patient pseudobulk CS patients                                                                        manuscript             8.0  recomputed                    8.0
+  ok  ESCHF[a14] patient pseudobulk comparator patients                                                                manuscript             6.0  recomputed                    6.0
+  ok  ESCHF[a14] tca_cycle_hsa00020 full members                                                                       manuscript ACO2,DLAT,DLD,FH,IDH2,IDH3A,IDH3B,MDH1,MDH2,OGDH,PDHA1,PDHB,SDHA,SDHB,SUCLG1  recomputed ACO2,DLAT,DLD,FH,IDH2,IDH3A,IDH3B,MDH1,MDH2,OGDH,PDHA1,PDHB,SDHA,SDHB,SUCLG1
+  ok  ESCHF[a14] tca_cycle_hsa00020 full removed genes                                                                 manuscript            none  recomputed                   none
+  ok  ESCHF[a14] tca_cycle_hsa00020 full too-small flag                                                                manuscript           False  recomputed                  False
+  ok  ESCHF[a14] tca_cycle_hsa00020 full CS mean                                                                       manuscript           8.605  recomputed                  8.605
+  ok  ESCHF[a14] tca_cycle_hsa00020 full comparator mean                                                               manuscript           9.016  recomputed                  9.016
+  ok  ESCHF[a14] tca_cycle_hsa00020 full comparator min                                                                manuscript          8.8841  recomputed                 8.8841
+  ok  ESCHF[a14] tca_cycle_hsa00020 full comparator max                                                                manuscript          9.1728  recomputed                 9.1728
+  ok  ESCHF[a14] tca_cycle_hsa00020 full CS - comparator                                                               manuscript          -0.411  recomputed                 -0.411
+  ok  ESCHF[a14] tca_cycle_hsa00020 full Welch CI low                                                                  manuscript         -0.6506  recomputed                -0.6506
+  ok  ESCHF[a14] tca_cycle_hsa00020 full Welch CI high                                                                 manuscript         -0.1713  recomputed                -0.1713
+  ok  ESCHF[a14] tca_cycle_hsa00020 full Welch p                                                                       manuscript          0.0036  recomputed                 0.0036
+  ok  ESCHF[a14] tca_cycle_hsa00020 minus_primary members                                                              manuscript ACO2,DLAT,DLD,IDH3A,MDH1,MDH2,OGDH,PDHA1,SDHA,SUCLG1  recomputed ACO2,DLAT,DLD,IDH3A,MDH1,MDH2,OGDH,PDHA1,SDHA,SUCLG1
+  ok  ESCHF[a14] tca_cycle_hsa00020 minus_primary removed genes                                                        manuscript FH,IDH2,IDH3B,PDHB,SDHB  recomputed FH,IDH2,IDH3B,PDHB,SDHB
+  ok  ESCHF[a14] tca_cycle_hsa00020 minus_primary too-small flag                                                       manuscript           False  recomputed                  False
+  ok  ESCHF[a14] tca_cycle_hsa00020 minus_primary CS mean                                                              manuscript          9.1165  recomputed                 9.1165
+  ok  ESCHF[a14] tca_cycle_hsa00020 minus_primary comparator mean                                                      manuscript          8.9586  recomputed                 8.9586
+  ok  ESCHF[a14] tca_cycle_hsa00020 minus_primary comparator min                                                       manuscript           8.787  recomputed                  8.787
+  ok  ESCHF[a14] tca_cycle_hsa00020 minus_primary comparator max                                                       manuscript          9.0521  recomputed                 9.0521
+  ok  ESCHF[a14] tca_cycle_hsa00020 minus_primary CS - comparator                                                      manuscript          0.1578  recomputed                 0.1578
+  ok  ESCHF[a14] tca_cycle_hsa00020 minus_primary Welch CI low                                                         manuscript         -0.0372  recomputed                -0.0372
+  ok  ESCHF[a14] tca_cycle_hsa00020 minus_primary Welch CI high                                                        manuscript          0.3529  recomputed                 0.3529
+  ok  ESCHF[a14] tca_cycle_hsa00020 minus_primary Welch p                                                              manuscript          0.1025  recomputed                 0.1025
+  ok  ESCHF[a14] tca_cycle_hsa00020 minus_union members                                                                manuscript ACO2,DLAT,DLD,IDH3A,MDH2,OGDH,PDHA1,SDHA,SUCLG1  recomputed ACO2,DLAT,DLD,IDH3A,MDH2,OGDH,PDHA1,SDHA,SUCLG1
+  ok  ESCHF[a14] tca_cycle_hsa00020 minus_union removed genes                                                          manuscript FH,IDH2,IDH3B,MDH1,PDHB,SDHB  recomputed FH,IDH2,IDH3B,MDH1,PDHB,SDHB
+  ok  ESCHF[a14] tca_cycle_hsa00020 minus_union too-small flag                                                         manuscript           False  recomputed                  False
+  ok  ESCHF[a14] tca_cycle_hsa00020 minus_union CS mean                                                                manuscript          9.0651  recomputed                 9.0651
+  ok  ESCHF[a14] tca_cycle_hsa00020 minus_union comparator mean                                                        manuscript          8.9466  recomputed                 8.9466
+  ok  ESCHF[a14] tca_cycle_hsa00020 minus_union comparator min                                                         manuscript          8.7718  recomputed                 8.7718
+  ok  ESCHF[a14] tca_cycle_hsa00020 minus_union comparator max                                                         manuscript          9.0639  recomputed                 9.0639
+  ok  ESCHF[a14] tca_cycle_hsa00020 minus_union CS - comparator                                                        manuscript          0.1185  recomputed                 0.1185
+  ok  ESCHF[a14] tca_cycle_hsa00020 minus_union Welch CI low                                                           manuscript         -0.0692  recomputed                -0.0692
+  ok  ESCHF[a14] tca_cycle_hsa00020 minus_union Welch CI high                                                          manuscript          0.3062  recomputed                 0.3062
+  ok  ESCHF[a14] tca_cycle_hsa00020 minus_union Welch p                                                                manuscript          0.1932  recomputed                 0.1932
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 full members                                                          manuscript ACAA1,ACAA2,ACADM,ACADVL,ACAT1,ACSL1,ALDH2,CPT1B,ECHS1,ECI1,ECI2,HADH,HADHA,HADHB  recomputed ACAA1,ACAA2,ACADM,ACADVL,ACAT1,ACSL1,ALDH2,CPT1B,ECHS1,ECI1,ECI2,HADH,HADHA,HADHB
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 full removed genes                                                    manuscript            none  recomputed                   none
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 full too-small flag                                                   manuscript           False  recomputed                  False
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 full CS mean                                                          manuscript          8.3847  recomputed                 8.3847
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 full comparator mean                                                  manuscript          8.6706  recomputed                 8.6706
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 full comparator min                                                   manuscript          8.4758  recomputed                 8.4758
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 full comparator max                                                   manuscript          8.8052  recomputed                 8.8052
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 full CS - comparator                                                  manuscript         -0.2859  recomputed                -0.2859
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 full Welch CI low                                                     manuscript         -0.5292  recomputed                -0.5292
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 full Welch CI high                                                    manuscript         -0.0426  recomputed                -0.0426
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 full Welch p                                                          manuscript          0.0257  recomputed                 0.0257
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 minus_primary members                                                 manuscript ACAA1,ACAA2,ALDH2,CPT1B,ECHS1,ECI1,ECI2,HADH,HADHA,HADHB  recomputed ACAA1,ACAA2,ALDH2,CPT1B,ECHS1,ECI1,ECI2,HADH,HADHA,HADHB
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 minus_primary removed genes                                           manuscript ACADM,ACADVL,ACAT1,ACSL1  recomputed ACADM,ACADVL,ACAT1,ACSL1
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 minus_primary too-small flag                                          manuscript           False  recomputed                  False
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 minus_primary CS mean                                                 manuscript          8.5864  recomputed                 8.5864
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 minus_primary comparator mean                                         manuscript          8.4829  recomputed                 8.4829
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 minus_primary comparator min                                          manuscript          8.3666  recomputed                 8.3666
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 minus_primary comparator max                                          manuscript          8.6223  recomputed                 8.6223
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 minus_primary CS - comparator                                         manuscript          0.1035  recomputed                 0.1035
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 minus_primary Welch CI low                                            manuscript         -0.0771  recomputed                -0.0771
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 minus_primary Welch CI high                                           manuscript          0.2842  recomputed                 0.2842
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 minus_primary Welch p                                                 manuscript          0.2323  recomputed                 0.2323
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 minus_union members                                                   manuscript ACAA1,ACAA2,ALDH2,CPT1B,ECHS1,ECI1,ECI2,HADH,HADHA,HADHB  recomputed ACAA1,ACAA2,ALDH2,CPT1B,ECHS1,ECI1,ECI2,HADH,HADHA,HADHB
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 minus_union removed genes                                             manuscript ACADM,ACADVL,ACAT1,ACSL1  recomputed ACADM,ACADVL,ACAT1,ACSL1
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 minus_union too-small flag                                            manuscript           False  recomputed                  False
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 minus_union CS mean                                                   manuscript          8.5864  recomputed                 8.5864
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 minus_union comparator mean                                           manuscript          8.4829  recomputed                 8.4829
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 minus_union comparator min                                            manuscript          8.3666  recomputed                 8.3666
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 minus_union comparator max                                            manuscript          8.6223  recomputed                 8.6223
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 minus_union CS - comparator                                           manuscript          0.1035  recomputed                 0.1035
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 minus_union Welch CI low                                              manuscript         -0.0771  recomputed                -0.0771
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 minus_union Welch CI high                                             manuscript          0.2842  recomputed                 0.2842
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 minus_union Welch p                                                   manuscript          0.2323  recomputed                 0.2323
+  ok  ESCHF[a14] oxphos_hsa00190 full members                                                                          manuscript ATP5F1A,ATP5F1B,ATP5F1C,ATP5F1D,ATP5F1E,ATP5MC1,ATP5MC2,ATP5MC3,ATP5ME,ATP5MF,ATP5MG,ATP5PB,ATP5PD,ATP5PF,ATP6V1D,ATP6V1E1,COX17,COX4I1,COX5B,COX6A2,COX6B1,COX6C,COX7A1,COX7A2,COX7A2L,COX7B,COX7C,COX8A,CYC1,NDUFA1,NDUFA10,NDUFA11,NDUFA13,NDUFA2,NDUFA3,NDUFA5,NDUFA7,NDUFA8,NDUFA9,NDUFAB1,NDUFB1,NDUFB10,NDUFB11,NDUFB2,NDUFB3,NDUFB5,NDUFB6,NDUFB7,NDUFB8,NDUFB9,NDUFC1,NDUFC2,NDUFS1,NDUFS2,NDUFS3,NDUFS4,NDUFS5,NDUFS6,NDUFS7,NDUFS8,NDUFV1,NDUFV2,NDUFV3,SDHA,SDHB,UQCR10,UQCR11,UQCRB,UQCRC1,UQCRC2,UQCRH,UQCRQ  recomputed ATP5F1A,ATP5F1B,ATP5F1C,ATP5F1D,ATP5F1E,ATP5MC1,ATP5MC2,ATP5MC3,ATP5ME,ATP5MF,ATP5MG,ATP5PB,ATP5PD,ATP5PF,ATP6V1D,ATP6V1E1,COX17,COX4I1,COX5B,COX6A2,COX6B1,COX6C,COX7A1,COX7A2,COX7A2L,COX7B,COX7C,COX8A,CYC1,NDUFA1,NDUFA10,NDUFA11,NDUFA13,NDUFA2,NDUFA3,NDUFA5,NDUFA7,NDUFA8,NDUFA9,NDUFAB1,NDUFB1,NDUFB10,NDUFB11,NDUFB2,NDUFB3,NDUFB5,NDUFB6,NDUFB7,NDUFB8,NDUFB9,NDUFC1,NDUFC2,NDUFS1,NDUFS2,NDUFS3,NDUFS4,NDUFS5,NDUFS6,NDUFS7,NDUFS8,NDUFV1,NDUFV2,NDUFV3,SDHA,SDHB,UQCR10,UQCR11,UQCRB,UQCRC1,UQCRC2,UQCRH,UQCRQ
+  ok  ESCHF[a14] oxphos_hsa00190 full removed genes                                                                    manuscript            none  recomputed                   none
+  ok  ESCHF[a14] oxphos_hsa00190 full too-small flag                                                                   manuscript           False  recomputed                  False
+  ok  ESCHF[a14] oxphos_hsa00190 full CS mean                                                                          manuscript          8.8831  recomputed                 8.8831
+  ok  ESCHF[a14] oxphos_hsa00190 full comparator mean                                                                  manuscript          8.9562  recomputed                 8.9562
+  ok  ESCHF[a14] oxphos_hsa00190 full comparator min                                                                   manuscript          8.8731  recomputed                 8.8731
+  ok  ESCHF[a14] oxphos_hsa00190 full comparator max                                                                   manuscript          9.0351  recomputed                 9.0351
+  ok  ESCHF[a14] oxphos_hsa00190 full CS - comparator                                                                  manuscript         -0.0731  recomputed                -0.0731
+  ok  ESCHF[a14] oxphos_hsa00190 full Welch CI low                                                                     manuscript         -0.1975  recomputed                -0.1975
+  ok  ESCHF[a14] oxphos_hsa00190 full Welch CI high                                                                    manuscript          0.0513  recomputed                 0.0513
+  ok  ESCHF[a14] oxphos_hsa00190 full Welch p                                                                          manuscript          0.2213  recomputed                 0.2213
+  ok  ESCHF[a14] oxphos_hsa00190 minus_primary members                                                                 manuscript ATP5F1B,ATP5F1C,ATP5F1D,ATP5F1E,ATP5MC3,ATP5ME,ATP5MF,ATP5MG,ATP5PB,ATP5PF,ATP6V1D,ATP6V1E1,COX4I1,COX5B,COX6A2,COX6C,COX7A1,COX7A2L,COX7B,COX7C,COX8A,CYC1,NDUFA1,NDUFA10,NDUFA11,NDUFA13,NDUFA2,NDUFA3,NDUFA5,NDUFA7,NDUFA8,NDUFA9,NDUFAB1,NDUFB1,NDUFB10,NDUFB11,NDUFB2,NDUFB3,NDUFB5,NDUFB6,NDUFB8,NDUFB9,NDUFC1,NDUFS1,NDUFS2,NDUFS3,NDUFS4,NDUFS5,NDUFS6,NDUFS8,NDUFV1,NDUFV2,NDUFV3,SDHA,UQCR10,UQCR11,UQCRB,UQCRC2,UQCRH  recomputed ATP5F1B,ATP5F1C,ATP5F1D,ATP5F1E,ATP5MC3,ATP5ME,ATP5MF,ATP5MG,ATP5PB,ATP5PF,ATP6V1D,ATP6V1E1,COX4I1,COX5B,COX6A2,COX6C,COX7A1,COX7A2L,COX7B,COX7C,COX8A,CYC1,NDUFA1,NDUFA10,NDUFA11,NDUFA13,NDUFA2,NDUFA3,NDUFA5,NDUFA7,NDUFA8,NDUFA9,NDUFAB1,NDUFB1,NDUFB10,NDUFB11,NDUFB2,NDUFB3,NDUFB5,NDUFB6,NDUFB8,NDUFB9,NDUFC1,NDUFS1,NDUFS2,NDUFS3,NDUFS4,NDUFS5,NDUFS6,NDUFS8,NDUFV1,NDUFV2,NDUFV3,SDHA,UQCR10,UQCR11,UQCRB,UQCRC2,UQCRH
+  ok  ESCHF[a14] oxphos_hsa00190 minus_primary removed genes                                                           manuscript ATP5F1A,ATP5MC1,ATP5MC2,ATP5PD,COX17,COX6B1,COX7A2,NDUFB7,NDUFC2,NDUFS7,SDHB,UQCRC1,UQCRQ  recomputed ATP5F1A,ATP5MC1,ATP5MC2,ATP5PD,COX17,COX6B1,COX7A2,NDUFB7,NDUFC2,NDUFS7,SDHB,UQCRC1,UQCRQ
+  ok  ESCHF[a14] oxphos_hsa00190 minus_primary too-small flag                                                          manuscript           False  recomputed                  False
+  ok  ESCHF[a14] oxphos_hsa00190 minus_primary CS mean                                                                 manuscript           9.079  recomputed                  9.079
+  ok  ESCHF[a14] oxphos_hsa00190 minus_primary comparator mean                                                         manuscript            8.96  recomputed                   8.96
+  ok  ESCHF[a14] oxphos_hsa00190 minus_primary comparator min                                                          manuscript          8.8968  recomputed                 8.8968
+  ok  ESCHF[a14] oxphos_hsa00190 minus_primary comparator max                                                          manuscript          9.0462  recomputed                 9.0462
+  ok  ESCHF[a14] oxphos_hsa00190 minus_primary CS - comparator                                                         manuscript           0.119  recomputed                  0.119
+  ok  ESCHF[a14] oxphos_hsa00190 minus_primary Welch CI low                                                            manuscript          0.0095  recomputed                 0.0095
+  ok  ESCHF[a14] oxphos_hsa00190 minus_primary Welch CI high                                                           manuscript          0.2286  recomputed                 0.2286
+  ok  ESCHF[a14] oxphos_hsa00190 minus_primary Welch p                                                                 manuscript          0.0358  recomputed                 0.0358
+  ok  ESCHF[a14] oxphos_hsa00190 minus_union members                                                                   manuscript ATP5F1B,ATP5F1C,ATP5F1D,ATP5F1E,ATP5ME,ATP5MF,ATP5PB,ATP5PF,ATP6V1D,ATP6V1E1,COX4I1,COX5B,COX6C,COX7A1,COX7A2L,COX7B,COX7C,COX8A,CYC1,NDUFA1,NDUFA10,NDUFA11,NDUFA13,NDUFA2,NDUFA3,NDUFA5,NDUFA7,NDUFA8,NDUFA9,NDUFAB1,NDUFB1,NDUFB10,NDUFB11,NDUFB2,NDUFB3,NDUFB5,NDUFB6,NDUFB8,NDUFB9,NDUFC1,NDUFS1,NDUFS2,NDUFS3,NDUFS4,NDUFS5,NDUFS6,NDUFS8,NDUFV1,NDUFV2,NDUFV3,SDHA,UQCR10,UQCR11,UQCRB,UQCRC2,UQCRH  recomputed ATP5F1B,ATP5F1C,ATP5F1D,ATP5F1E,ATP5ME,ATP5MF,ATP5PB,ATP5PF,ATP6V1D,ATP6V1E1,COX4I1,COX5B,COX6C,COX7A1,COX7A2L,COX7B,COX7C,COX8A,CYC1,NDUFA1,NDUFA10,NDUFA11,NDUFA13,NDUFA2,NDUFA3,NDUFA5,NDUFA7,NDUFA8,NDUFA9,NDUFAB1,NDUFB1,NDUFB10,NDUFB11,NDUFB2,NDUFB3,NDUFB5,NDUFB6,NDUFB8,NDUFB9,NDUFC1,NDUFS1,NDUFS2,NDUFS3,NDUFS4,NDUFS5,NDUFS6,NDUFS8,NDUFV1,NDUFV2,NDUFV3,SDHA,UQCR10,UQCR11,UQCRB,UQCRC2,UQCRH
+  ok  ESCHF[a14] oxphos_hsa00190 minus_union removed genes                                                             manuscript ATP5F1A,ATP5MC1,ATP5MC2,ATP5MC3,ATP5MG,ATP5PD,COX17,COX6A2,COX6B1,COX7A2,NDUFB7,NDUFC2,NDUFS7,SDHB,UQCRC1,UQCRQ  recomputed ATP5F1A,ATP5MC1,ATP5MC2,ATP5MC3,ATP5MG,ATP5PD,COX17,COX6A2,COX6B1,COX7A2,NDUFB7,NDUFC2,NDUFS7,SDHB,UQCRC1,UQCRQ
+  ok  ESCHF[a14] oxphos_hsa00190 minus_union too-small flag                                                            manuscript           False  recomputed                  False
+  ok  ESCHF[a14] oxphos_hsa00190 minus_union CS mean                                                                   manuscript          9.0327  recomputed                 9.0327
+  ok  ESCHF[a14] oxphos_hsa00190 minus_union comparator mean                                                           manuscript          8.9335  recomputed                 8.9335
+  ok  ESCHF[a14] oxphos_hsa00190 minus_union comparator min                                                            manuscript          8.8743  recomputed                 8.8743
+  ok  ESCHF[a14] oxphos_hsa00190 minus_union comparator max                                                            manuscript           9.015  recomputed                  9.015
+  ok  ESCHF[a14] oxphos_hsa00190 minus_union CS - comparator                                                           manuscript          0.0992  recomputed                 0.0992
+  ok  ESCHF[a14] oxphos_hsa00190 minus_union Welch CI low                                                              manuscript         -0.0074  recomputed                -0.0074
+  ok  ESCHF[a14] oxphos_hsa00190 minus_union Welch CI high                                                             manuscript          0.2058  recomputed                 0.2058
+  ok  ESCHF[a14] oxphos_hsa00190 minus_union Welch p                                                                   manuscript           0.065  recomputed                  0.065
+  ok  ESCHF[a14] tca_cycle_hsa00020 null pool size                                                                     manuscript           752.0  recomputed                  752.0
+  ok  ESCHF[a14] tca_cycle_hsa00020 null set size                                                                      manuscript            10.0  recomputed                   10.0
+  ok  ESCHF[a14] tca_cycle_hsa00020 null decile composition                                                            manuscript 2:1,3:1,4:1,5:1,6:1,7:1,8:3,9:1  recomputed 2:1,3:1,4:1,5:1,6:1,7:1,8:3,9:1
+  ok  ESCHF[a14] tca_cycle_hsa00020 null draws                                                                         manuscript         10000.0  recomputed                10000.0
+  ok  ESCHF[a14] tca_cycle_hsa00020 every draw: size, distinct genes, in pool, decile-matched                          manuscript             all  recomputed size=True distinct=True pool=True decile=True
+  ok  ESCHF[a14] tca_cycle_hsa00020 null observed diff                                                                 manuscript          0.1578  recomputed                 0.1578
+  ok  ESCHF[a14] tca_cycle_hsa00020 null mean                                                                          manuscript          0.0552  recomputed                 0.0552
+  ok  ESCHF[a14] tca_cycle_hsa00020 null 2.5%                                                                          manuscript         -0.1047  recomputed                -0.1047
+  ok  ESCHF[a14] tca_cycle_hsa00020 null 97.5%                                                                         manuscript          0.2037  recomputed                 0.2037
+  ok  ESCHF[a14] tca_cycle_hsa00020 null percentile                                                                    manuscript           90.68  recomputed                  90.68
+  ok  ESCHF[a14] tca_cycle_hsa00020 null two-sided p                                                                   manuscript          0.1866  recomputed                 0.1866
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 null pool size                                                        manuscript           752.0  recomputed                  752.0
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 null set size                                                         manuscript            10.0  recomputed                   10.0
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 null decile composition                                               manuscript 0:1,2:2,3:1,4:1,5:1,7:1,8:3  recomputed 0:1,2:2,3:1,4:1,5:1,7:1,8:3
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 null draws                                                            manuscript         10000.0  recomputed                10000.0
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 every draw: size, distinct genes, in pool, decile-matched             manuscript             all  recomputed size=True distinct=True pool=True decile=True
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 null observed diff                                                    manuscript          0.1035  recomputed                 0.1035
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 null mean                                                             manuscript          0.0152  recomputed                 0.0152
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 null 2.5%                                                             manuscript         -0.4393  recomputed                -0.4393
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 null 97.5%                                                            manuscript          0.1906  recomputed                 0.1906
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 null percentile                                                       manuscript           80.76  recomputed                  80.76
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 null two-sided p                                                      manuscript           0.385  recomputed                  0.385
+  ok  ESCHF[a14] oxphos_hsa00190 null pool size                                                                        manuscript           703.0  recomputed                  703.0
+  ok  ESCHF[a14] oxphos_hsa00190 null set size                                                                         manuscript            59.0  recomputed                   59.0
+  ok  ESCHF[a14] oxphos_hsa00190 null decile composition                                                               manuscript 0:2,1:3,2:2,3:4,4:4,5:6,6:8,7:13,8:11,9:6  recomputed 0:2,1:3,2:2,3:4,4:4,5:6,6:8,7:13,8:11,9:6
+  ok  ESCHF[a14] oxphos_hsa00190 null draws                                                                            manuscript         10000.0  recomputed                10000.0
+  ok  ESCHF[a14] oxphos_hsa00190 every draw: size, distinct genes, in pool, decile-matched                             manuscript             all  recomputed size=True distinct=True pool=True decile=True
+  ok  ESCHF[a14] oxphos_hsa00190 null observed diff                                                                    manuscript           0.119  recomputed                  0.119
+  ok  ESCHF[a14] oxphos_hsa00190 null mean                                                                             manuscript           0.038  recomputed                  0.038
+  ok  ESCHF[a14] oxphos_hsa00190 null 2.5%                                                                             manuscript          -0.058  recomputed                 -0.058
+  ok  ESCHF[a14] oxphos_hsa00190 null 97.5%                                                                            manuscript          0.1064  recomputed                 0.1064
+  ok  ESCHF[a14] oxphos_hsa00190 null percentile                                                                       manuscript           99.01  recomputed                  99.01
+  ok  ESCHF[a14] oxphos_hsa00190 null two-sided p                                                                      manuscript            0.02  recomputed                   0.02
+  ok  ESCHF[a14] tca_cycle_hsa00020 LOGO min                                                                           manuscript          0.1185  recomputed                 0.1185
+  ok  ESCHF[a14] tca_cycle_hsa00020 LOGO max                                                                           manuscript          0.2002  recomputed                 0.2002
+  ok  ESCHF[a14] tca_cycle_hsa00020 LOGO most influential gene                                                         manuscript           IDH3A  recomputed                  IDH3A
+  ok  ESCHF[a14] tca_cycle_hsa00020 LOGO largest change                                                                manuscript          0.0423  recomputed                 0.0423
+  ok  ESCHF[a14] tca_cycle_hsa00020 members lower in CS                                                                manuscript             2.0  recomputed                    2.0
+  ok  ESCHF[a14] tca_cycle_hsa00020 members higher in CS                                                               manuscript             8.0  recomputed                    8.0
+  ok  ESCHF[a14] tca_cycle_hsa00020 per-gene CS - comparator, max abs deviation                                        manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[a14] tca_cycle_hsa00020 bin <0.25 CS mean of patient means                                                 manuscript          1.0782  recomputed                 1.0782
+  ok  ESCHF[a14] tca_cycle_hsa00020 bin <0.25 CI low                                                                   manuscript          0.9818  recomputed                 0.9818
+  ok  ESCHF[a14] tca_cycle_hsa00020 bin <0.25 CI high                                                                  manuscript          1.1746  recomputed                 1.1746
+  ok  ESCHF[a14] tca_cycle_hsa00020 bin <0.25 comparator min                                                           manuscript           0.911  recomputed                  0.911
+  ok  ESCHF[a14] tca_cycle_hsa00020 bin <0.25 comparator max                                                           manuscript          1.0794  recomputed                 1.0794
+  ok  ESCHF[a14] tca_cycle_hsa00020 bin <0.25 CS mean below comparator min                                             manuscript           False  recomputed                  False
+  ok  ESCHF[a14] tca_cycle_hsa00020 bin 0.25-0.5 CS mean of patient means                                              manuscript          1.1026  recomputed                 1.1026
+  ok  ESCHF[a14] tca_cycle_hsa00020 bin 0.25-0.5 CI low                                                                manuscript          0.9909  recomputed                 0.9909
+  ok  ESCHF[a14] tca_cycle_hsa00020 bin 0.25-0.5 CI high                                                               manuscript          1.2143  recomputed                 1.2143
+  ok  ESCHF[a14] tca_cycle_hsa00020 bin 0.25-0.5 comparator min                                                        manuscript           0.911  recomputed                  0.911
+  ok  ESCHF[a14] tca_cycle_hsa00020 bin 0.25-0.5 comparator max                                                        manuscript          1.0794  recomputed                 1.0794
+  ok  ESCHF[a14] tca_cycle_hsa00020 bin 0.25-0.5 CS mean below comparator min                                          manuscript           False  recomputed                  False
+  ok  ESCHF[a14] tca_cycle_hsa00020 bin 0.5-1 CS mean of patient means                                                 manuscript          1.1329  recomputed                 1.1329
+  ok  ESCHF[a14] tca_cycle_hsa00020 bin 0.5-1 CI low                                                                   manuscript          1.0229  recomputed                 1.0229
+  ok  ESCHF[a14] tca_cycle_hsa00020 bin 0.5-1 CI high                                                                  manuscript          1.2429  recomputed                 1.2429
+  ok  ESCHF[a14] tca_cycle_hsa00020 bin 0.5-1 comparator min                                                           manuscript           0.911  recomputed                  0.911
+  ok  ESCHF[a14] tca_cycle_hsa00020 bin 0.5-1 comparator max                                                           manuscript          1.0794  recomputed                 1.0794
+  ok  ESCHF[a14] tca_cycle_hsa00020 bin 0.5-1 CS mean below comparator min                                             manuscript           False  recomputed                  False
+  ok  ESCHF[a14] tca_cycle_hsa00020 bin 1-2 CS mean of patient means                                                   manuscript          1.0548  recomputed                 1.0548
+  ok  ESCHF[a14] tca_cycle_hsa00020 bin 1-2 CI low                                                                     manuscript          0.8058  recomputed                 0.8058
+  ok  ESCHF[a14] tca_cycle_hsa00020 bin 1-2 CI high                                                                    manuscript          1.3037  recomputed                 1.3037
+  ok  ESCHF[a14] tca_cycle_hsa00020 bin 1-2 comparator min                                                             manuscript           0.911  recomputed                  0.911
+  ok  ESCHF[a14] tca_cycle_hsa00020 bin 1-2 comparator max                                                             manuscript          1.0794  recomputed                 1.0794
+  ok  ESCHF[a14] tca_cycle_hsa00020 bin 1-2 CS mean below comparator min                                               manuscript           False  recomputed                  False
+  ok  ESCHF[a14] tca_cycle_hsa00020 slope max abs deviation over patients                                              manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[a14] tca_cycle_hsa00020 mean slope per mm                                                                  manuscript          0.0539  recomputed                 0.0539
+  ok  ESCHF[a14] tca_cycle_hsa00020 slope CI low                                                                       manuscript         -0.0246  recomputed                -0.0246
+  ok  ESCHF[a14] tca_cycle_hsa00020 slope CI high                                                                      manuscript          0.1324  recomputed                 0.1324
+  ok  ESCHF[a14] tca_cycle_hsa00020 slope n negative                                                                   manuscript             2.0  recomputed                    2.0
+  ok  ESCHF[a14] tca_cycle_hsa00020 slope t p                                                                          manuscript          0.1485  recomputed                 0.1485
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 LOGO min                                                              manuscript          0.0737  recomputed                 0.0737
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 LOGO max                                                              manuscript          0.1706  recomputed                 0.1706
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 LOGO most influential gene                                            manuscript           ACAA2  recomputed                  ACAA2
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 LOGO largest change                                                   manuscript          0.0671  recomputed                 0.0671
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 members lower in CS                                                   manuscript             4.0  recomputed                    4.0
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 members higher in CS                                                  manuscript             6.0  recomputed                    6.0
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 per-gene CS - comparator, max abs deviation                           manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 bin <0.25 CS mean of patient means                                    manuscript          0.8004  recomputed                 0.8004
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 bin <0.25 CI low                                                      manuscript           0.735  recomputed                  0.735
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 bin <0.25 CI high                                                     manuscript          0.8657  recomputed                 0.8657
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 bin <0.25 comparator min                                              manuscript           0.711  recomputed                  0.711
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 bin <0.25 comparator max                                              manuscript          0.8528  recomputed                 0.8528
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 bin <0.25 CS mean below comparator min                                manuscript           False  recomputed                  False
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 bin 0.25-0.5 CS mean of patient means                                 manuscript          0.8188  recomputed                 0.8188
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 bin 0.25-0.5 CI low                                                   manuscript          0.7332  recomputed                 0.7332
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 bin 0.25-0.5 CI high                                                  manuscript          0.9045  recomputed                 0.9045
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 bin 0.25-0.5 comparator min                                           manuscript           0.711  recomputed                  0.711
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 bin 0.25-0.5 comparator max                                           manuscript          0.8528  recomputed                 0.8528
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 bin 0.25-0.5 CS mean below comparator min                             manuscript           False  recomputed                  False
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 bin 0.5-1 CS mean of patient means                                    manuscript          0.8519  recomputed                 0.8519
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 bin 0.5-1 CI low                                                      manuscript          0.7469  recomputed                 0.7469
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 bin 0.5-1 CI high                                                     manuscript          0.9569  recomputed                 0.9569
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 bin 0.5-1 comparator min                                              manuscript           0.711  recomputed                  0.711
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 bin 0.5-1 comparator max                                              manuscript          0.8528  recomputed                 0.8528
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 bin 0.5-1 CS mean below comparator min                                manuscript           False  recomputed                  False
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 bin 1-2 CS mean of patient means                                      manuscript          0.8335  recomputed                 0.8335
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 bin 1-2 CI low                                                        manuscript          0.6556  recomputed                 0.6556
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 bin 1-2 CI high                                                       manuscript          1.0115  recomputed                 1.0115
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 bin 1-2 comparator min                                                manuscript           0.711  recomputed                  0.711
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 bin 1-2 comparator max                                                manuscript          0.8528  recomputed                 0.8528
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 bin 1-2 CS mean below comparator min                                  manuscript           False  recomputed                  False
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 slope max abs deviation over patients                                 manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 mean slope per mm                                                     manuscript         -0.0465  recomputed                -0.0465
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 slope CI low                                                          manuscript         -0.1897  recomputed                -0.1897
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 slope CI high                                                         manuscript          0.0967  recomputed                 0.0967
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 slope n negative                                                      manuscript             3.0  recomputed                    3.0
+  ok  ESCHF[a14] fatty_acid_degradation_hsa00071 slope t p                                                             manuscript          0.4674  recomputed                 0.4674
+  ok  ESCHF[a14] oxphos_hsa00190 LOGO min                                                                              manuscript          0.1086  recomputed                 0.1086
+  ok  ESCHF[a14] oxphos_hsa00190 LOGO max                                                                              manuscript          0.1273  recomputed                 0.1273
+  ok  ESCHF[a14] oxphos_hsa00190 LOGO most influential gene                                                            manuscript         ATP5MC3  recomputed                ATP5MC3
+  ok  ESCHF[a14] oxphos_hsa00190 LOGO largest change                                                                   manuscript         -0.0104  recomputed                -0.0104
+  ok  ESCHF[a14] oxphos_hsa00190 members lower in CS                                                                   manuscript            15.0  recomputed                   15.0
+  ok  ESCHF[a14] oxphos_hsa00190 members higher in CS                                                                  manuscript            44.0  recomputed                   44.0
+  ok  ESCHF[a14] oxphos_hsa00190 per-gene CS - comparator, max abs deviation                                           manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[a14] oxphos_hsa00190 bin <0.25 CS mean of patient means                                                    manuscript          1.0618  recomputed                 1.0618
+  ok  ESCHF[a14] oxphos_hsa00190 bin <0.25 CI low                                                                      manuscript            1.01  recomputed                   1.01
+  ok  ESCHF[a14] oxphos_hsa00190 bin <0.25 CI high                                                                     manuscript          1.1136  recomputed                 1.1136
+  ok  ESCHF[a14] oxphos_hsa00190 bin <0.25 comparator min                                                              manuscript          0.9801  recomputed                 0.9801
+  ok  ESCHF[a14] oxphos_hsa00190 bin <0.25 comparator max                                                              manuscript          1.0866  recomputed                 1.0866
+  ok  ESCHF[a14] oxphos_hsa00190 bin <0.25 CS mean below comparator min                                                manuscript           False  recomputed                  False
+  ok  ESCHF[a14] oxphos_hsa00190 bin 0.25-0.5 CS mean of patient means                                                 manuscript          1.0911  recomputed                 1.0911
+  ok  ESCHF[a14] oxphos_hsa00190 bin 0.25-0.5 CI low                                                                   manuscript          1.0429  recomputed                 1.0429
+  ok  ESCHF[a14] oxphos_hsa00190 bin 0.25-0.5 CI high                                                                  manuscript          1.1393  recomputed                 1.1393
+  ok  ESCHF[a14] oxphos_hsa00190 bin 0.25-0.5 comparator min                                                           manuscript          0.9801  recomputed                 0.9801
+  ok  ESCHF[a14] oxphos_hsa00190 bin 0.25-0.5 comparator max                                                           manuscript          1.0866  recomputed                 1.0866
+  ok  ESCHF[a14] oxphos_hsa00190 bin 0.25-0.5 CS mean below comparator min                                             manuscript           False  recomputed                  False
+  ok  ESCHF[a14] oxphos_hsa00190 bin 0.5-1 CS mean of patient means                                                    manuscript          1.0944  recomputed                 1.0944
+  ok  ESCHF[a14] oxphos_hsa00190 bin 0.5-1 CI low                                                                      manuscript          1.0307  recomputed                 1.0307
+  ok  ESCHF[a14] oxphos_hsa00190 bin 0.5-1 CI high                                                                     manuscript          1.1581  recomputed                 1.1581
+  ok  ESCHF[a14] oxphos_hsa00190 bin 0.5-1 comparator min                                                              manuscript          0.9801  recomputed                 0.9801
+  ok  ESCHF[a14] oxphos_hsa00190 bin 0.5-1 comparator max                                                              manuscript          1.0866  recomputed                 1.0866
+  ok  ESCHF[a14] oxphos_hsa00190 bin 0.5-1 CS mean below comparator min                                                manuscript           False  recomputed                  False
+  ok  ESCHF[a14] oxphos_hsa00190 bin 1-2 CS mean of patient means                                                      manuscript          1.1003  recomputed                 1.1003
+  ok  ESCHF[a14] oxphos_hsa00190 bin 1-2 CI low                                                                        manuscript           1.012  recomputed                  1.012
+  ok  ESCHF[a14] oxphos_hsa00190 bin 1-2 CI high                                                                       manuscript          1.1886  recomputed                 1.1886
+  ok  ESCHF[a14] oxphos_hsa00190 bin 1-2 comparator min                                                                manuscript          0.9801  recomputed                 0.9801
+  ok  ESCHF[a14] oxphos_hsa00190 bin 1-2 comparator max                                                                manuscript          1.0866  recomputed                 1.0866
+  ok  ESCHF[a14] oxphos_hsa00190 bin 1-2 CS mean below comparator min                                                  manuscript           False  recomputed                  False
+  ok  ESCHF[a14] oxphos_hsa00190 slope max abs deviation over patients                                                 manuscript             0.0  recomputed                    0.0
+  ok  ESCHF[a14] oxphos_hsa00190 mean slope per mm                                                                     manuscript          0.0567  recomputed                 0.0567
+  ok  ESCHF[a14] oxphos_hsa00190 slope CI low                                                                          manuscript         -0.0576  recomputed                -0.0576
+  ok  ESCHF[a14] oxphos_hsa00190 slope CI high                                                                         manuscript           0.171  recomputed                  0.171
+  ok  ESCHF[a14] oxphos_hsa00190 slope n negative                                                                      manuscript             3.0  recomputed                    3.0
+  ok  ESCHF[a14] oxphos_hsa00190 slope t p                                                                             manuscript          0.2791  recomputed                 0.2791
+
+850 reproduced, 24 mismatched, 2 not addressable from committed data
+mismatched claims are documented in docs/DISCREPANCIES.md

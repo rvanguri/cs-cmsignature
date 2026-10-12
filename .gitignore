@@ -14,6 +14,7 @@ __pycache__/
 # temp / working artifacts (never commit)
 *.eoX*
 slurmlogs/
+logs/
 scripts/exploratory/
 results/exploratory/
 
@@ -31,6 +32,10 @@ cs-cmsignature-code.tar.gz
 *.h5ad
 *.h5
 raw/
+
+# publisher supplements, not redistributed (download per docs/data_availability.md)
+data/external/*.xlsx
+data/external/neyazi_clinical.tsv
 
 # local retest staging (side-by-side validation of committed results/, not committed)
 results_retest_2026-07-12/
