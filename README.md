@@ -1,7 +1,6 @@
 # Cardiomyocyte transcription in cardiac sarcoidosis
 
-Analysis code, derived inputs and result tables for the ESC Heart Failure short report of the same
-title. Every number in the manuscript text and figure legend is regenerated from the committed inputs and
+Analysis code, derived inputs and result tables. Every number in the manuscript text and figure legend is regenerated from the committed inputs and
 checked by `scripts/manuscript_results.py`.
 
 ## Data and design
