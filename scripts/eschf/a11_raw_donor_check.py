@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """A11 helper: which S1 CS subjects have snRNA samples in the raw GEO download on BigPurple
-(/gpfs/data/vangurilab/heartmap-cs/raw/neyazi; listing captured to data/external/neyazi_geo_snrna_sample_listing.txt).
+(<RAW>/neyazi; listing captured to data/external/neyazi_geo_snrna_sample_listing.txt).
 Sample names are GSM<id>_<subject>_<region>_<rep>."""
 import re, pandas as pd
 L = [l.strip() for l in open("data/external/neyazi_geo_snrna_sample_listing.txt") if l.strip()]

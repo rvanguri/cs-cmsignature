@@ -28,7 +28,7 @@ SLURM='#SBATCH --time=03:00:00
 #SBATCH --partition=cpu_short
 #SBATCH --mem=128G
 #SBATCH --cpus-per-task=4
-PY=/gpfs/scratch/vangur01/heartmap-cs/conda/heartmap/bin/python
+PY=/path/to/python
 COMP=/path/to/comparator_visium   # folder holding the six comparator Visium sections'
 
 D=data/spatial_first; S=results/spatial_first; DP=data/eschf/primary_v2; V=results/eschf/primary_v2

@@ -6,7 +6,7 @@ Read-only audit of the `cs-cmsignature` working tree (local HEAD `e376985`, with
 `CS_cardiomyocyte_ESCHF_ShortReport_v1.docx`. No analysis was rerun and no code or table was changed. This file is
 the only one added. Public record headers were read from GEO (series/sample records, E-utilities), CELLxGENE
 (curation API) and GitHub (repository API), as the handoff permits. "Not determinable" means the repository does not record
-the fact. The pipeline's raw inputs sit under `/gpfs/data/vangurilab/heartmap-cs/raw` (cluster), which was not accessed.
+the fact. The pipeline's raw inputs sit under `<RAW>` (cluster), which was not accessed.
 
 Line citations are to the current working tree unless prefixed `pre-slim-2026-09-14:`, the git tag holding the retired fetch/QC
 pipeline (removed from the tree in `25d9df1`).
@@ -74,7 +74,7 @@ Notes on §1 items the handoff asked for explicitly:
 
 - Twelve sections from nine patients are deposited; eleven sections from eight patients are analysed.
 - **The analysed files are a cluster copy.** The loaders glob `{RAW}/foong_spatial/**/*filtered_feature_bc_matrix*.h5` with
-  `RAW=/gpfs/data/vangurilab/heartmap-cs/raw` (`00_export_from_raw.py:15,52–56`; `a2a6_spot_export.py:43,85–95`), and parse a
+  `RAW=<RAW>` (`00_export_from_raw.py:15,52–56`; `a2a6_spot_export.py:43,85–95`), and parse a
   GSM prefix from each filename. The copy therefore uses GEO's flat `GSM…_` naming. No checksum or file size is recorded, so
   **identity with the GEO deposit is not determinable** without cluster access. The headers above are from the GEO copies.
 - **GEO metadata mismatch.** Every GSE314910 sample record states "Space Ranger Software (version 3.1.2)". The h5
